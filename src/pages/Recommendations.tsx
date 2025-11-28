@@ -1,13 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, RefreshCw, Filter } from "lucide-react";
+import { ArrowLeft, Sparkles, RefreshCw, Filter, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import OutfitCard from "@/components/OutfitCard";
-import { mockOutfits } from "@/data/mockOutfits";
+import { getRecommendations } from "@/data/mockOutfits";
+import { UserProfile } from "@/types/outfit";
 
 const Recommendations = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const profile = location.state?.profile;
+  const profile = location.state?.profile as UserProfile | undefined;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -17,10 +18,38 @@ const Recommendations = () => {
     }).format(value);
   };
 
-  // Filter outfits based on budget (mock implementation)
-  const filteredOutfits = mockOutfits.filter(
-    outfit => outfit.totalDiscountedPrice <= (profile?.budgetMax || 100000)
-  );
+  // Get personalized recommendations based on profile
+  const recommendations = getRecommendations({
+    gender: profile?.gender || "male",
+    occasion: profile?.occasion || "casual",
+    season: profile?.season || "summer",
+    budgetMax: profile?.budgetMax || 100000,
+    skinTone: profile?.skinTone || "medium",
+  });
+
+  const getOccasionLabel = (occasion: string) => {
+    const labels: Record<string, string> = {
+      "wedding": "Wedding",
+      "diwali": "Diwali",
+      "office": "Office",
+      "date-night": "Date Night",
+      "party": "Party",
+      "casual": "Casual",
+      "formal": "Formal Event",
+      "christmas": "Christmas",
+    };
+    return labels[occasion] || occasion;
+  };
+
+  const getSeasonLabel = (season: string) => {
+    const labels: Record<string, string> = {
+      "summer": "Summer",
+      "winter": "Winter",
+      "monsoon": "Monsoon",
+      "spring": "Spring",
+    };
+    return labels[season] || season;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,26 +90,37 @@ const Recommendations = () => {
           </h1>
           
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-6">
-            Based on your style profile, we've curated {filteredOutfits.length} stunning outfits 
+            Based on your style profile, we've curated {recommendations.length} stunning outfits 
             within your budget of {formatCurrency(profile?.budgetMax || 25000)}
           </p>
 
           {/* Profile Summary */}
           {profile && (
             <div className="flex flex-wrap justify-center gap-2 mt-6">
+              {profile.gender && (
+                <span className="px-4 py-2 rounded-full bg-secondary text-sm text-foreground capitalize flex items-center gap-2">
+                  <Heart className="w-3 h-3 text-primary" />
+                  {profile.gender === "female" ? "Women's Fashion" : profile.gender === "male" ? "Men's Fashion" : "All Fashion"}
+                </span>
+              )}
               {profile.occasion && (
                 <span className="px-4 py-2 rounded-full bg-secondary text-sm text-foreground capitalize">
-                  {profile.occasion.replace('-', ' ')}
+                  {getOccasionLabel(profile.occasion)}
                 </span>
               )}
               {profile.season && (
                 <span className="px-4 py-2 rounded-full bg-secondary text-sm text-foreground capitalize">
-                  {profile.season}
+                  {getSeasonLabel(profile.season)}
                 </span>
               )}
               {profile.skinTone && (
                 <span className="px-4 py-2 rounded-full bg-secondary text-sm text-foreground capitalize">
                   {profile.skinTone} Skin Tone
+                </span>
+              )}
+              {profile.bodyType && (
+                <span className="px-4 py-2 rounded-full bg-secondary text-sm text-foreground capitalize">
+                  {profile.bodyType} Build
                 </span>
               )}
             </div>
@@ -89,28 +129,46 @@ const Recommendations = () => {
 
         {/* Outfits List */}
         <div className="space-y-6 max-w-5xl mx-auto">
-          {filteredOutfits.map((outfit, index) => (
+          {recommendations.map((outfit, index) => (
             <OutfitCard key={outfit.id} outfit={outfit} index={index} />
           ))}
         </div>
 
+        {/* No Results Message */}
+        {recommendations.length === 0 && (
+          <div className="text-center py-16">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <Sparkles className="w-10 h-10 text-primary" />
+            </div>
+            <h3 className="font-serif text-2xl text-foreground mb-2">No Outfits Found</h3>
+            <p className="text-muted-foreground mb-6">
+              We couldn't find outfits matching your exact criteria. Try adjusting your budget or preferences.
+            </p>
+            <Button variant="luxury" onClick={() => navigate("/style-wizard")}>
+              Adjust Preferences
+            </Button>
+          </div>
+        )}
+
         {/* Load More / Regenerate */}
-        <div className="text-center mt-12 space-y-4">
-          <Button variant="luxuryOutline" size="lg">
-            <RefreshCw className="w-5 h-5 mr-2" />
-            Show More Outfits
-          </Button>
-          
-          <p className="text-sm text-muted-foreground">
-            Not finding what you love?{" "}
-            <button 
-              onClick={() => navigate("/style-wizard")}
-              className="text-primary hover:underline"
-            >
-              Adjust your preferences
-            </button>
-          </p>
-        </div>
+        {recommendations.length > 0 && (
+          <div className="text-center mt-12 space-y-4">
+            <Button variant="luxuryOutline" size="lg" onClick={() => window.location.reload()}>
+              <RefreshCw className="w-5 h-5 mr-2" />
+              Show More Outfits
+            </Button>
+            
+            <p className="text-sm text-muted-foreground">
+              Not finding what you love?{" "}
+              <button 
+                onClick={() => navigate("/style-wizard")}
+                className="text-primary hover:underline"
+              >
+                Adjust your preferences
+              </button>
+            </p>
+          </div>
+        )}
       </main>
 
       {/* Footer */}

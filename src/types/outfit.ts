@@ -31,6 +31,8 @@ export interface OutfitRecommendation {
   description: string;
   whyItSuits: string;
   colorPalette: string[];
+  occasion?: string[];
+  season?: string[];
   products: Product[];
   totalOriginalPrice: number;
   totalDiscountedPrice: number;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PhotoUpload from "@/components/StyleWizard/PhotoUpload";
 import AttributesForm from "@/components/StyleWizard/AttributesForm";
@@ -66,6 +66,25 @@ const StyleWizard = () => {
     }
   };
 
+  const getValidationMessage = () => {
+    switch (currentStep) {
+      case 2:
+        const missing = [];
+        if (!profile.gender) missing.push("gender");
+        if (!profile.skinTone) missing.push("skin tone");
+        if (!profile.hairColor) missing.push("hair color");
+        if (!profile.bodyType) missing.push("body type");
+        return missing.length > 0 ? `Please select your ${missing.join(", ")}` : "";
+      case 3:
+        if (!profile.occasion && !profile.season) return "Please select an occasion and season";
+        if (!profile.occasion) return "Please select an occasion";
+        if (!profile.season) return "Please select a season";
+        return "";
+      default:
+        return "";
+    }
+  };
+
   if (isProcessing) {
     return <ProcessingScreen onComplete={handleProcessingComplete} />;
   }
@@ -106,14 +125,15 @@ const StyleWizard = () => {
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-center gap-2 md:gap-4">
           {steps.map((step) => (
-            <div 
+            <button 
               key={step.id}
-              className={`flex items-center gap-2 ${
+              onClick={() => step.id < currentStep && setCurrentStep(step.id)}
+              className={`flex items-center gap-2 transition-all ${
                 step.id === currentStep 
                   ? 'text-foreground' 
                   : step.id < currentStep 
-                    ? 'text-primary' 
-                    : 'text-muted-foreground'
+                    ? 'text-primary cursor-pointer hover:scale-105' 
+                    : 'text-muted-foreground cursor-default'
               }`}
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-all ${
@@ -125,11 +145,11 @@ const StyleWizard = () => {
               }`}>
                 {step.id < currentStep ? '✓' : step.id}
               </div>
-              <div className="hidden md:block">
+              <div className="hidden md:block text-left">
                 <p className="text-sm font-medium">{step.title}</p>
                 <p className="text-xs text-muted-foreground">{step.subtitle}</p>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -172,6 +192,14 @@ const StyleWizard = () => {
             />
           )}
         </div>
+
+        {/* Validation Message */}
+        {!isStepValid() && getValidationMessage() && (
+          <div className="mt-6 flex items-center gap-2 text-primary bg-primary/10 px-4 py-3 rounded-xl">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <span className="text-sm">{getValidationMessage()}</span>
+          </div>
+        )}
 
         {/* Navigation Buttons */}
         <div className="flex items-center justify-between mt-10 pt-6 border-t border-border/50">
