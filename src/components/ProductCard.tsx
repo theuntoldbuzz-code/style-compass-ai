@@ -1,0 +1,96 @@
+import { ExternalLink, Star, Tag } from "lucide-react";
+import { Product } from "@/types/outfit";
+import { Button } from "@/components/ui/button";
+
+interface ProductCardProps {
+  product: Product;
+}
+
+const ProductCard = ({ product }: ProductCardProps) => {
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  return (
+    <div className="luxury-card overflow-hidden group hover:shadow-gold transition-all duration-500">
+      {/* Image */}
+      <div className="relative aspect-[3/4] overflow-hidden">
+        <img 
+          src={product.imageUrl} 
+          alt={product.name}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        
+        {/* Discount Badge */}
+        {product.discount > 0 && (
+          <div className="absolute top-3 left-3 bg-gradient-to-r from-primary to-gold-dark text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
+            <Tag className="w-3 h-3" />
+            {product.discount}% OFF
+          </div>
+        )}
+
+        {/* Store Badge */}
+        <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm text-foreground px-3 py-1 rounded-full text-xs font-medium">
+          {product.store}
+        </div>
+
+        {/* Quick View Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </div>
+
+      {/* Content */}
+      <div className="p-4">
+        {/* Brand & Category */}
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-primary text-sm font-medium">{product.brand}</span>
+          <span className="text-muted-foreground text-xs">{product.category}</span>
+        </div>
+
+        {/* Name */}
+        <h4 className="font-serif text-lg text-foreground mb-1 line-clamp-1">
+          {product.name}
+        </h4>
+
+        {/* Color */}
+        <p className="text-sm text-muted-foreground mb-3">
+          Color: {product.color}
+        </p>
+
+        {/* Rating */}
+        <div className="flex items-center gap-1 mb-3">
+          <Star className="w-4 h-4 fill-primary text-primary" />
+          <span className="text-sm font-medium text-foreground">{product.rating}</span>
+          <span className="text-xs text-muted-foreground">/ 5.0</span>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-baseline gap-2 mb-4">
+          <span className="font-serif text-xl text-foreground font-semibold">
+            {formatCurrency(product.discountedPrice)}
+          </span>
+          {product.discount > 0 && (
+            <span className="text-sm text-muted-foreground line-through">
+              {formatCurrency(product.originalPrice)}
+            </span>
+          )}
+        </div>
+
+        {/* Shop Button */}
+        <Button 
+          variant="luxury" 
+          className="w-full"
+          onClick={() => window.open(product.storeUrl, '_blank')}
+        >
+          Shop Now
+          <ExternalLink className="w-4 h-4 ml-2" />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default ProductCard;
