@@ -163,19 +163,19 @@ const Index = () => {
             <Button 
               variant="luxury" 
               size="xl"
-              onClick={() => navigate("/style-wizard")}
+              onClick={() => navigate("/style-quiz")}
               className="min-w-[220px]"
             >
-              Start Your Style Journey
-              <ArrowRight className="w-5 h-5 ml-2" />
+              Take Style Quiz
+              <Sparkles className="w-5 h-5 ml-2" />
             </Button>
             <Button 
-              variant="dark" 
+              variant="luxuryOutline" 
               size="xl"
-              onClick={() => navigate("/explore")}
+              onClick={() => navigate("/style-wizard")}
             >
-              <Compass className="w-5 h-5 mr-2" />
-              Explore Styles
+              Upload Photo
+              <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
 
