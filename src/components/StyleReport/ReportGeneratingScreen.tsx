@@ -115,8 +115,9 @@ const ReportGeneratingScreen = ({ onComplete, duration = 90 }: ReportGeneratingS
         </div>
 
         {/* Timer */}
-        <p className="text-sm text-muted-foreground mt-8">
-          ✨ 90-second magic in progress...
+        <p className="text-sm text-muted-foreground mt-8 flex items-center justify-center gap-2">
+          <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+          90-second magic in progress...
         </p>
       </div>
     </div>

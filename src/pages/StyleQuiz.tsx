@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Sparkles, ArrowRight, ArrowLeft, Check, Palette, 
-  User, Ruler, Calendar, Wand2, Star
+  User, Ruler, Calendar, Wand2, Star, Flame, Crown,
+  Flower2, Zap, Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -82,12 +83,12 @@ const questions = [
     icon: Wand2,
     type: "single",
     options: [
-      { value: "bold", label: "Bold & Trendy", desc: "Love standing out, trying new trends", emoji: "🔥" },
-      { value: "minimal", label: "Minimal & Clean", desc: "Less is more, timeless pieces", emoji: "✨" },
-      { value: "classic", label: "Classic & Elegant", desc: "Sophisticated, never goes out of style", emoji: "👑" },
-      { value: "boho", label: "Bohemian & Free", desc: "Flowy, artistic, nature-inspired", emoji: "🌸" },
-      { value: "edgy", label: "Edgy & Street", desc: "Urban, statement-making, cool", emoji: "⚡" },
-      { value: "romantic", label: "Romantic & Feminine", desc: "Soft, delicate, dreamy", emoji: "💕" },
+      { value: "bold", label: "Bold & Trendy", desc: "Love standing out, trying new trends", styleIcon: "Flame" },
+      { value: "minimal", label: "Minimal & Clean", desc: "Less is more, timeless pieces", styleIcon: "Sparkles" },
+      { value: "classic", label: "Classic & Elegant", desc: "Sophisticated, never goes out of style", styleIcon: "Crown" },
+      { value: "boho", label: "Bohemian & Free", desc: "Flowy, artistic, nature-inspired", styleIcon: "Flower2" },
+      { value: "edgy", label: "Edgy & Street", desc: "Urban, statement-making, cool", styleIcon: "Zap" },
+      { value: "romantic", label: "Romantic & Feminine", desc: "Soft, delicate, dreamy", styleIcon: "Heart" },
     ]
   },
   {
@@ -306,9 +307,16 @@ const StyleQuiz = () => {
                     </div>
                   )}
                   
-                  {/* Emoji for style personality */}
-                  {'emoji' in option && (
-                    <span className="text-2xl">{option.emoji}</span>
+                  {/* Icon for style personality */}
+                  {'styleIcon' in option && (
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                      {option.styleIcon === "Flame" && <Flame className="w-5 h-5 text-primary" />}
+                      {option.styleIcon === "Sparkles" && <Sparkles className="w-5 h-5 text-primary" />}
+                      {option.styleIcon === "Crown" && <Crown className="w-5 h-5 text-primary" />}
+                      {option.styleIcon === "Flower2" && <Flower2 className="w-5 h-5 text-primary" />}
+                      {option.styleIcon === "Zap" && <Zap className="w-5 h-5 text-primary" />}
+                      {option.styleIcon === "Heart" && <Heart className="w-5 h-5 text-primary" />}
+                    </div>
                   )}
                   
                   <div className="flex-1">
