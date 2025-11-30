@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, ArrowRight, Star, ShoppingBag, Palette, Zap, Heart, User, LogOut } from "lucide-react";
+import { Sparkles, ArrowRight, Star, ShoppingBag, Palette, Zap, Heart, User, LogOut, Compass } from "lucide-react";
 import heroImage from "@/assets/hero-fashion.jpg";
 import { Button } from "@/components/ui/button";
 import SplashScreen from "@/components/SplashScreen";
+import TrendingSection from "@/components/TrendingSection";
+import ColorPaletteForYou from "@/components/ColorPaletteForYou";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -72,6 +74,14 @@ const Index = () => {
         </div>
         
         <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/explore')}
+            className="text-muted-foreground hover:text-primary"
+          >
+            <Compass className="w-5 h-5" />
+          </Button>
           {!loading && user ? (
             <>
               <Button
@@ -89,6 +99,10 @@ const Index = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => navigate('/explore')}>
+                    <Compass className="w-4 h-4 mr-2" />
+                    Explore Styles
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/closet')}>
                     <Heart className="w-4 h-4 mr-2" />
                     My Closet
@@ -158,9 +172,10 @@ const Index = () => {
             <Button 
               variant="dark" 
               size="xl"
-              onClick={() => navigate("/style-wizard")}
+              onClick={() => navigate("/explore")}
             >
-              View Demo
+              <Compass className="w-5 h-5 mr-2" />
+              Explore Styles
             </Button>
           </div>
 
@@ -200,6 +215,12 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Trending Styles Section */}
+      <TrendingSection />
+
+      {/* Color Palette Section */}
+      <ColorPaletteForYou skinTone="medium" season="winter" />
 
       {/* Features Section */}
       <section className="relative z-10 container mx-auto px-4 py-16">

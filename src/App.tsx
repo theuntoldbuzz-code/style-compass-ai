@@ -9,6 +9,7 @@ import StyleWizard from "./pages/StyleWizard";
 import Recommendations from "./pages/Recommendations";
 import Auth from "./pages/Auth";
 import Closet from "./pages/Closet";
+import Explore from "./pages/Explore";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/closet" element={<Closet />} />
+            <Route path="/explore" element={<Explore />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
