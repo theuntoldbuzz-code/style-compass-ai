@@ -62,6 +62,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
             .signature-look h3 { color: #d4af37; margin-bottom: 10px; }
             .signature-look .pieces { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
             .signature-look .piece { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 12px; }
+            .section-icon { display: inline-block; width: 24px; height: 24px; background: #d4af37; border-radius: 6px; margin-right: 10px; vertical-align: middle; }
             @media print {
               body { background: #fff; color: #000; }
               .section { background: #f5f5f5; }
@@ -72,26 +73,26 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
         </head>
         <body>
           <div class="header">
-            <h1>✨ LuxFit AI</h1>
+            <h1>LuxFit AI</h1>
             <p>Your Personal Style Report • Generated ${new Date().toLocaleDateString()}</p>
           </div>
           
           <div class="section">
-            <h2>🎨 Skin Tone Analysis</h2>
+            <h2><span class="section-icon"></span>Skin Tone Analysis</h2>
             <p><strong>Undertone:</strong> ${report.skinToneAnalysis.undertone}</p>
             <p><strong>Season Type:</strong> ${report.skinToneAnalysis.seasonType}</p>
             <p style="margin-top: 10px;">${report.skinToneAnalysis.description}</p>
           </div>
           
           <div class="section">
-            <h2>👤 Body Type Analysis</h2>
+            <h2><span class="section-icon"></span>Body Type Analysis</h2>
             <p><strong>Body Type:</strong> ${report.bodyTypeAnalysis.type}</p>
             <p><strong>Strengths:</strong> ${report.bodyTypeAnalysis.strengths.join(', ')}</p>
             <p style="margin-top: 10px;">${report.bodyTypeAnalysis.stylingFocus}</p>
           </div>
           
           <div class="section">
-            <h2>✅ Your Best Colors</h2>
+            <h2><span class="section-icon"></span>Your Best Colors</h2>
             <div class="color-grid">
               ${report.bestColors.map(c => `
                 <div class="color-item">
@@ -106,7 +107,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
           </div>
           
           <div class="section">
-            <h2>❌ Colors to Avoid</h2>
+            <h2><span class="section-icon"></span>Colors to Avoid</h2>
             <div class="color-grid">
               ${report.colorsToAvoid.map(c => `
                 <div class="color-item">
@@ -121,7 +122,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
           </div>
           
           <div class="section">
-            <h2>👗 Your 3 Signature Looks</h2>
+            <h2><span class="section-icon"></span>Your 3 Signature Looks</h2>
             ${report.signatureLooks.map(look => `
               <div class="signature-look">
                 <h3>${look.name}</h3>
@@ -135,7 +136,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
           </div>
           
           <div class="section">
-            <h2>💡 Personalized Styling Tips</h2>
+            <h2><span class="section-icon"></span>Personalized Styling Tips</h2>
             <ul class="tips-list">
               ${report.stylingTips.map(tip => `<li>• ${tip}</li>`).join('')}
             </ul>

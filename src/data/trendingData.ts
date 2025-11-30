@@ -13,7 +13,7 @@ export const trendingCategories: TrendingCategory[] = [
     id: "top-trending",
     title: "Top Trending in India Today",
     subtitle: "What's hot right now",
-    icon: "🔥",
+    icon: "flame",
     products: [
       {
         id: "t1",
@@ -77,7 +77,7 @@ export const trendingCategories: TrendingCategory[] = [
     id: "under-999",
     title: "Most Bought Under ₹999",
     subtitle: "Budget-friendly favorites",
-    icon: "💰",
+    icon: "wallet",
     products: [
       {
         id: "b1",
@@ -141,7 +141,7 @@ export const trendingCategories: TrendingCategory[] = [
     id: "best-discounts",
     title: "Best Discounted Items Right Now",
     subtitle: "Grab before they're gone",
-    icon: "🏷️",
+    icon: "tag",
     products: [
       {
         id: "d1",

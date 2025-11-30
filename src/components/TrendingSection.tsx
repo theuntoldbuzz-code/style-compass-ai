@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TrendingUp, Flame, Tag, IndianRupee, ChevronRight, ExternalLink, Heart } from "lucide-react";
+import { TrendingUp, Flame, Tag, IndianRupee, ChevronRight, ExternalLink, Heart, Wallet } from "lucide-react";
 import { trendingCategories } from "@/data/trendingData";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -37,7 +37,7 @@ const TrendingSection = () => {
   const getCategoryIcon = (id: string) => {
     switch (id) {
       case "top-trending": return <Flame className="w-5 h-5" />;
-      case "under-999": return <IndianRupee className="w-5 h-5" />;
+      case "under-999": return <Wallet className="w-5 h-5" />;
       case "best-discounts": return <Tag className="w-5 h-5" />;
       default: return <TrendingUp className="w-5 h-5" />;
     }
@@ -74,7 +74,6 @@ const TrendingSection = () => {
             >
               {getCategoryIcon(category.id)}
               <span className="hidden sm:inline">{category.title}</span>
-              <span className="sm:hidden">{category.icon}</span>
             </button>
           ))}
         </div>

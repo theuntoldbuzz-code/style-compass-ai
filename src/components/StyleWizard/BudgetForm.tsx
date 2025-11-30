@@ -1,4 +1,4 @@
-import { Wallet, IndianRupee } from "lucide-react";
+import { Wallet, IndianRupee, Lightbulb } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
@@ -138,8 +138,9 @@ const BudgetForm = ({
 
       {/* Info Note */}
       <div className="text-center">
-        <p className="text-sm text-muted-foreground">
-          💡 We'll show you the best deals within your budget from top stores
+        <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+          <Lightbulb className="w-4 h-4 text-primary" />
+          We'll show you the best deals within your budget from top stores
         </p>
       </div>
     </div>
