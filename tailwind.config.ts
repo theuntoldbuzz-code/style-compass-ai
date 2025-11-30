@@ -57,14 +57,24 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Luxury Gold Colors
         gold: {
           DEFAULT: "hsl(var(--gold))",
           light: "hsl(var(--gold-light))",
           dark: "hsl(var(--gold-dark))",
         },
+        // Luxury Black Colors
         charcoal: {
           DEFAULT: "hsl(var(--charcoal))",
           light: "hsl(var(--charcoal-light))",
+        },
+        luxury: {
+          black: "hsl(var(--luxury-black))",
+          graphite: "hsl(var(--deep-graphite))",
+          matte: "hsl(var(--dark-matte))",
+        },
+        silver: {
+          grey: "hsl(var(--silver-grey))",
         },
       },
       fontFamily: {
@@ -75,8 +85,18 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        "2xl": "1rem",
-        "3xl": "1.5rem",
+        "xl": "12px",
+        "2xl": "18px",
+        "3xl": "28px",
+      },
+      boxShadow: {
+        "gold": "0 4px 16px hsl(45 66% 52% / 0.25)",
+        "gold-glow": "0 0 20px hsl(45 66% 52% / 0.35)",
+        "gold-intense": "0 0 25px hsl(45 66% 52% / 0.45)",
+        "card": "0 4px 20px hsl(0 0% 0% / 0.4)",
+        "card-depth": "0 12px 40px hsl(0 0% 0% / 0.45)",
+        "ambient": "0 0 50px hsl(0 0% 0% / 0.5)",
+        "elevated": "0 20px 60px hsl(0 0% 0% / 0.7)",
       },
       keyframes: {
         "accordion-down": {
@@ -104,8 +124,8 @@ export default {
           "100%": { backgroundPosition: "200% 0" },
         },
         "pulse-gold": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(var(--gold) / 0.3)" },
-          "50%": { boxShadow: "0 0 40px hsl(var(--gold) / 0.5)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsl(45 66% 52% / 0.3)" },
+          "50%": { boxShadow: "0 0 40px hsl(45 66% 52% / 0.5)" },
         },
         "float": {
           "0%, 100%": { transform: "translateY(0)" },
