@@ -7,55 +7,42 @@ import SplashScreen from "@/components/SplashScreen";
 import TrendingSection from "@/components/TrendingSection";
 import ColorPaletteForYou from "@/components/ColorPaletteForYou";
 import { useAuth } from "@/hooks/useAuth";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-const features = [
-  {
-    icon: Sparkles,
-    title: "AI-Powered Styling",
-    description: "Our AI analyzes your features to recommend perfect color palettes and styles"
-  },
-  {
-    icon: ShoppingBag,
-    title: "Price Comparison",
-    description: "Find the best deals across Amazon, Myntra, Ajio, and more stores"
-  },
-  {
-    icon: Palette,
-    title: "Skin Tone Matching",
-    description: "Outfits curated to complement your unique complexion"
-  },
-  {
-    icon: Zap,
-    title: "Instant Results",
-    description: "Get complete outfit recommendations in seconds"
-  }
-];
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+const features = [{
+  icon: Sparkles,
+  title: "AI-Powered Styling",
+  description: "Our AI analyzes your features to recommend perfect color palettes and styles"
+}, {
+  icon: ShoppingBag,
+  title: "Price Comparison",
+  description: "Find the best deals across Amazon, Myntra, Ajio, and more stores"
+}, {
+  icon: Palette,
+  title: "Skin Tone Matching",
+  description: "Outfits curated to complement your unique complexion"
+}, {
+  icon: Zap,
+  title: "Instant Results",
+  description: "Get complete outfit recommendations in seconds"
+}];
 const Index = () => {
   const navigate = useNavigate();
-  const { user, signOut, loading } = useAuth();
+  const {
+    user,
+    signOut,
+    loading
+  } = useAuth();
   const [showSplash, setShowSplash] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
-
   useEffect(() => {
     if (!showSplash) {
       setTimeout(() => setIsVisible(true), 100);
     }
   }, [showSplash]);
-
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
   }
-
-  return (
-    <div className="min-h-screen bg-background overflow-hidden">
+  return <div className="min-h-screen bg-background overflow-hidden">
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
@@ -74,22 +61,11 @@ const Index = () => {
         </div>
         
         <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/explore')}
-            className="text-muted-foreground hover:text-primary"
-          >
+          <Button variant="ghost" size="icon" onClick={() => navigate('/explore')} className="text-muted-foreground hover:text-primary">
             <Compass className="w-5 h-5" />
           </Button>
-          {!loading && user ? (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/closet')}
-                className="text-muted-foreground hover:text-primary"
-              >
+          {!loading && user ? <>
+              <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="text-muted-foreground hover:text-primary">
                 <Heart className="w-5 h-5" />
               </Button>
               <DropdownMenu>
@@ -114,20 +90,10 @@ const Index = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </>
-          ) : (
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/auth')}
-              className="text-muted-foreground hover:text-foreground"
-            >
+            </> : <Button variant="ghost" onClick={() => navigate('/auth')} className="text-muted-foreground hover:text-foreground">
               Sign In
-            </Button>
-          )}
-          <Button 
-            variant="luxuryOutline" 
-            onClick={() => navigate("/style-wizard")}
-          >
+            </Button>}
+          <Button variant="luxuryOutline" onClick={() => navigate("/style-wizard")}>
             Get Started
           </Button>
         </div>
@@ -136,9 +102,7 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative z-10 container mx-auto px-4 pt-12 md:pt-20 pb-16">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className={`text-center lg:text-left transition-all duration-1000 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}>
+          <div className={`text-center lg:text-left transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full text-primary text-sm font-medium mb-8">
             <Star className="w-4 h-4 fill-primary" />
@@ -160,20 +124,11 @@ const Index = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-            <Button 
-              variant="luxury" 
-              size="xl"
-              onClick={() => navigate("/style-quiz")}
-              className="min-w-[220px]"
-            >
+            <Button variant="luxury" size="xl" onClick={() => navigate("/style-quiz")} className="min-w-[220px]">
               Take Style Quiz
-              <Sparkles className="w-5 h-5 ml-2" />
+              
             </Button>
-            <Button 
-              variant="luxuryOutline" 
-              size="xl"
-              onClick={() => navigate("/style-wizard")}
-            >
+            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/style-wizard")}>
               Upload Photo
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
@@ -194,17 +149,11 @@ const Index = () => {
         </div>
 
           {/* Hero Image */}
-          <div className={`hidden lg:block transition-all duration-1000 delay-300 ${
-            isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
-          }`}>
+          <div className={`hidden lg:block transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-gold-dark/20 rounded-3xl blur-2xl" />
               <div className="relative rounded-2xl overflow-hidden border border-primary/20 shadow-gold">
-                <img 
-                  src={heroImage} 
-                  alt="Luxury fashion accessories" 
-                  className="w-full h-auto object-cover"
-                />
+                <img src={heroImage} alt="Luxury fashion accessories" className="w-full h-auto object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
                   <p className="text-sm text-primary font-medium mb-1">Featured Collection</p>
@@ -224,9 +173,7 @@ const Index = () => {
 
       {/* Features Section */}
       <section className="relative z-10 container mx-auto px-4 py-16">
-        <div className={`text-center mb-12 transition-all duration-1000 delay-300 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
+        <div className={`text-center mb-12 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">
             How <span className="text-gradient-gold">LuxFit AI</span> Works
           </h2>
@@ -235,16 +182,10 @@ const Index = () => {
           </p>
         </div>
 
-        <div className={`grid md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-1000 delay-500 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
+        <div className={`grid md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {features.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <div 
-                key={index}
-                className="luxury-card p-6 text-center group hover:shadow-gold transition-all duration-500 hover:-translate-y-2"
-              >
+          const IconComponent = feature.icon;
+          return <div key={index} className="luxury-card p-6 text-center group hover:shadow-gold transition-all duration-500 hover:-translate-y-2">
                 <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center group-hover:from-primary group-hover:to-gold-dark transition-all duration-500">
                   <IconComponent className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
                 </div>
@@ -254,17 +195,14 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">
                   {feature.description}
                 </p>
-              </div>
-            );
-          })}
+              </div>;
+        })}
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="relative z-10 container mx-auto px-4 py-16">
-        <div className={`luxury-card p-8 md:p-12 text-center max-w-3xl mx-auto relative overflow-hidden transition-all duration-1000 delay-700 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
+        <div className={`luxury-card p-8 md:p-12 text-center max-w-3xl mx-auto relative overflow-hidden transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {/* Decorative elements */}
           <div className="absolute top-0 left-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
           <div className="absolute bottom-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-2xl" />
@@ -276,11 +214,7 @@ const Index = () => {
             <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
               Join thousands of fashion-forward individuals who've discovered their perfect look with LuxFit AI
             </p>
-            <Button 
-              variant="luxury" 
-              size="xl"
-              onClick={() => navigate("/style-wizard")}
-            >
+            <Button variant="luxury" size="xl" onClick={() => navigate("/style-wizard")}>
               <Sparkles className="w-5 h-5 mr-2" />
               Get Your Personalized Outfits
             </Button>
@@ -300,8 +234,6 @@ const Index = () => {
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
