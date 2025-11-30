@@ -1,18 +1,40 @@
-import { ExternalLink, Star, Tag } from "lucide-react";
+import { ExternalLink, Star, Tag, Heart } from "lucide-react";
 import { Product } from "@/types/outfit";
 import { Button } from "@/components/ui/button";
+import { useCloset } from "@/hooks/useCloset";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { isItemSaved, saveItem, removeItem } = useCloset();
+  const isSaved = isItemSaved(product.id);
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
       maximumFractionDigits: 0,
     }).format(value);
+  };
+
+  const handleSaveToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    
+    if (isSaved) {
+      await removeItem(product.id);
+    } else {
+      await saveItem(product);
+    }
   };
 
   return (
@@ -24,6 +46,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
+        
+        {/* Save Button */}
+        <button
+          onClick={handleSaveToggle}
+          className={`absolute top-3 right-12 w-8 h-8 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-300 ${
+            isSaved 
+              ? 'bg-primary text-primary-foreground' 
+              : 'bg-background/80 text-muted-foreground hover:text-primary'
+          }`}
+        >
+          <Heart className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
+        </button>
         
         {/* Discount Badge */}
         {product.discount > 0 && (

@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronUp, Sparkles, Tag, Bookmark } from "lucide-react";
 import { OutfitRecommendation } from "@/types/outfit";
 import ProductCard from "./ProductCard";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useCloset } from "@/hooks/useCloset";
 
 interface OutfitCardProps {
   outfit: OutfitRecommendation;
@@ -11,8 +13,12 @@ interface OutfitCardProps {
 }
 
 const OutfitCard = ({ outfit, index }: OutfitCardProps) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { isOutfitSaved, saveOutfit, removeOutfit } = useCloset();
   const [isExpanded, setIsExpanded] = useState(index === 0);
-  const [isSaved, setIsSaved] = useState(false);
+  
+  const isSaved = isOutfitSaved(outfit.id);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -25,12 +31,19 @@ const OutfitCard = ({ outfit, index }: OutfitCardProps) => {
   const savings = outfit.totalOriginalPrice - outfit.totalDiscountedPrice;
   const savingsPercent = Math.round((savings / outfit.totalOriginalPrice) * 100);
 
-  const handleSave = () => {
-    setIsSaved(!isSaved);
-    toast({
-      title: isSaved ? "Removed from saved" : "Outfit saved!",
-      description: isSaved ? "Outfit removed from your collection" : "You can find this in your saved outfits",
-    });
+  const handleSave = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    
+    if (isSaved) {
+      await removeOutfit(outfit.id);
+    } else {
+      await saveOutfit(outfit);
+    }
   };
 
   return (
@@ -70,10 +83,7 @@ const OutfitCard = ({ outfit, index }: OutfitCardProps) => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSave();
-              }}
+              onClick={handleSave}
               className={isSaved ? 'text-primary' : 'text-muted-foreground'}
             >
               <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-primary' : ''}`} />
