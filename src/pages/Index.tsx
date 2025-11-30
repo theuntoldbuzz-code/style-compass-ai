@@ -1,9 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, ArrowRight, Star, ShoppingBag, Palette, Zap } from "lucide-react";
+import { Sparkles, ArrowRight, Star, ShoppingBag, Palette, Zap, Heart, User, LogOut } from "lucide-react";
 import heroImage from "@/assets/hero-fashion.jpg";
 import { Button } from "@/components/ui/button";
 import SplashScreen from "@/components/SplashScreen";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const features = [
   {
@@ -30,6 +38,7 @@ const features = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, signOut, loading } = useAuth();
   const [showSplash, setShowSplash] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -62,12 +71,52 @@ const Index = () => {
           </span>
         </div>
         
-        <Button 
-          variant="luxuryOutline" 
-          onClick={() => navigate("/style-wizard")}
-        >
-          Get Started
-        </Button>
+        <div className="flex items-center gap-3">
+          {!loading && user ? (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/closet')}
+                className="text-muted-foreground hover:text-primary"
+              >
+                <Heart className="w-5 h-5" />
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => navigate('/closet')}>
+                    <Heart className="w-4 h-4 mr-2" />
+                    My Closet
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut} className="text-destructive">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/auth')}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Sign In
+            </Button>
+          )}
+          <Button 
+            variant="luxuryOutline" 
+            onClick={() => navigate("/style-wizard")}
+          >
+            Get Started
+          </Button>
+        </div>
       </nav>
 
       {/* Hero Section */}
