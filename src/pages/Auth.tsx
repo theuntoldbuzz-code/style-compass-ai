@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Mail, Lock, User, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import fashionAuth from '@/assets/fashion-6.avif';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -161,7 +162,18 @@ const Auth = () => {
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">
+        {/* Fashion Side Image - Hidden on mobile */}
+        <div className="hidden lg:block fixed left-0 top-0 bottom-0 w-1/2">
+          <img 
+            src={fashionAuth} 
+            alt="Fashion inspiration" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-background" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/30" />
+        </div>
+        
+        <div className="w-full max-w-md lg:ml-auto lg:mr-[10%]">
           {/* Logo */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-3 mb-4">

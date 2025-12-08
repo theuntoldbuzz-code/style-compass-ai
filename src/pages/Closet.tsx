@@ -4,6 +4,7 @@ import {
   Sparkles, ArrowLeft, Heart, ShoppingBag, 
   ExternalLink, Star, Trash2, Tag 
 } from 'lucide-react';
+import fashionEmpty from '@/assets/fashion-9.avif';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
@@ -155,15 +156,27 @@ interface EmptyStateProps {
 }
 
 const EmptyState = ({ icon: Icon, title, description, actionLabel, onAction }: EmptyStateProps) => (
-  <div className="luxury-card p-12 text-center max-w-md mx-auto">
-    <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
-      <Icon className="w-8 h-8 text-primary" />
+  <div className="luxury-card overflow-hidden max-w-2xl mx-auto">
+    <div className="grid md:grid-cols-2">
+      <div className="relative aspect-square md:aspect-auto">
+        <img 
+          src={fashionEmpty} 
+          alt="Fashion inspiration" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent md:bg-gradient-to-r" />
+      </div>
+      <div className="p-8 md:p-12 flex flex-col items-center justify-center text-center">
+        <div className="w-16 h-16 mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
+          <Icon className="w-8 h-8 text-primary" />
+        </div>
+        <h3 className="font-serif text-xl text-foreground mb-2">{title}</h3>
+        <p className="text-muted-foreground mb-6">{description}</p>
+        <Button variant="luxury" onClick={onAction}>
+          {actionLabel}
+        </Button>
+      </div>
     </div>
-    <h3 className="font-serif text-xl text-foreground mb-2">{title}</h3>
-    <p className="text-muted-foreground mb-6">{description}</p>
-    <Button variant="luxury" onClick={onAction}>
-      {actionLabel}
-    </Button>
   </div>
 );
 

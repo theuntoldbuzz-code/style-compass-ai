@@ -5,6 +5,8 @@ import {
   User, Ruler, Calendar, Wand2, Star, Flame, Crown,
   Flower2, Zap, Heart
 } from "lucide-react";
+import fashionQuiz1 from "@/assets/fashion-7.avif";
+import fashionQuiz2 from "@/assets/fashion-8.avif";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
@@ -187,6 +189,14 @@ const StyleQuiz = () => {
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-primary/5 rounded-full blur-3xl animate-pulse" />
+        </div>
+        
+        {/* Decorative Fashion Images */}
+        <div className="hidden lg:block fixed left-8 top-1/2 -translate-y-1/2 w-48 aspect-[3/4] rounded-2xl overflow-hidden opacity-30 rotate-[-6deg]">
+          <img src={fashionQuiz1} alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="hidden lg:block fixed right-8 top-1/2 -translate-y-1/2 w-48 aspect-[3/4] rounded-2xl overflow-hidden opacity-30 rotate-[6deg]">
+          <img src={fashionQuiz2} alt="" className="w-full h-full object-cover" />
         </div>
         
         <div className="luxury-card p-8 md:p-12 text-center max-w-lg relative z-10 animate-fade-in">

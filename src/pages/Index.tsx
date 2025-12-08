@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, ArrowRight, Star, ShoppingBag, Palette, Zap, Heart, User, LogOut, Compass } from "lucide-react";
-import heroImage from "@/assets/hero-fashion.jpg";
+import heroImage from "@/assets/fashion-1.avif";
+import fashionImage2 from "@/assets/fashion-2.avif";
+import fashionImage3 from "@/assets/fashion-3.avif";
+import fashionImage4 from "@/assets/fashion-4.avif";
+import fashionImage5 from "@/assets/fashion-5.avif";
 import { Button } from "@/components/ui/button";
 import SplashScreen from "@/components/SplashScreen";
 import TrendingSection from "@/components/TrendingSection";
@@ -160,6 +164,49 @@ const Index = () => {
                   <p className="text-foreground font-serif text-lg">AI-Curated Luxury Picks</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Fashion Gallery Section */}
+      <section className="relative z-10 container mx-auto px-4 py-16">
+        <div className={`text-center mb-12 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">
+            Curated <span className="text-gradient-gold">Fashion</span> Inspiration
+          </h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Explore premium styles handpicked by our AI to inspire your next look
+          </p>
+        </div>
+        
+        <div className={`grid grid-cols-2 md:grid-cols-4 gap-4 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card">
+            <img src={fashionImage2} alt="Luxury fashion" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-sm text-primary font-medium">Casual Elegance</p>
+            </div>
+          </div>
+          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card md:translate-y-8">
+            <img src={fashionImage3} alt="Premium style" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-sm text-primary font-medium">Evening Glamour</p>
+            </div>
+          </div>
+          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card">
+            <img src={fashionImage4} alt="Designer wear" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-sm text-primary font-medium">Street Style</p>
+            </div>
+          </div>
+          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card md:translate-y-8">
+            <img src={fashionImage5} alt="Haute couture" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-sm text-primary font-medium">Haute Couture</p>
             </div>
           </div>
         </div>
