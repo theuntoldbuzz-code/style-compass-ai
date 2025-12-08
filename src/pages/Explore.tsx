@@ -4,6 +4,7 @@ import {
   Sparkles, ArrowLeft, Heart, ExternalLink, Tag, Star, 
   Filter, Grid, LayoutGrid, ChevronDown, ShoppingBag
 } from "lucide-react";
+import fashionExplore from "@/assets/fashion-10.avif";
 import { Button } from "@/components/ui/button";
 import { infiniteScrollProducts } from "@/data/trendingData";
 import { useAuth } from "@/hooks/useAuth";
@@ -295,10 +296,21 @@ const Explore = () => {
 
         {/* End Message */}
         {!hasMore && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center gap-2 bg-primary/10 px-6 py-3 rounded-full">
-              <Sparkles className="w-5 h-5 text-primary" />
-              <span className="text-foreground font-medium">You've seen it all! Check back tomorrow for more.</span>
+          <div className="luxury-card overflow-hidden max-w-2xl mx-auto my-12">
+            <div className="grid md:grid-cols-2">
+              <div className="relative aspect-video md:aspect-auto">
+                <img 
+                  src={fashionExplore} 
+                  alt="Fashion inspiration" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent md:bg-gradient-to-r" />
+              </div>
+              <div className="p-8 flex flex-col items-center justify-center text-center">
+                <Sparkles className="w-8 h-8 text-primary mb-4" />
+                <h3 className="font-serif text-xl text-foreground mb-2">You've seen it all!</h3>
+                <p className="text-muted-foreground">Check back tomorrow for fresh fashion inspiration.</p>
+              </div>
             </div>
           </div>
         )}
