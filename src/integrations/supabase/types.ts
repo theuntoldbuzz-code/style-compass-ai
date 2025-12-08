@@ -14,6 +14,132 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_clicks: {
+        Row: {
+          affiliate_url: string
+          clicked_at: string
+          id: string
+          ip_address: string | null
+          product_id: string
+          referrer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          affiliate_url: string
+          clicked_at?: string
+          id?: string
+          ip_address?: string | null
+          product_id: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          affiliate_url?: string
+          clicked_at?: string
+          id?: string
+          ip_address?: string | null
+          product_id?: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      photo_analyses: {
+        Row: {
+          analyzed_at: string | null
+          avoid_colors: Json | null
+          body_type: string | null
+          created_at: string
+          hair_color: string | null
+          id: string
+          measurements: Json | null
+          photo_id: string
+          photo_url: string
+          recommended_colors: Json | null
+          skin_tone: string | null
+        }
+        Insert: {
+          analyzed_at?: string | null
+          avoid_colors?: Json | null
+          body_type?: string | null
+          created_at?: string
+          hair_color?: string | null
+          id?: string
+          measurements?: Json | null
+          photo_id: string
+          photo_url: string
+          recommended_colors?: Json | null
+          skin_tone?: string | null
+        }
+        Update: {
+          analyzed_at?: string | null
+          avoid_colors?: Json | null
+          body_type?: string | null
+          created_at?: string
+          hair_color?: string | null
+          id?: string
+          measurements?: Json | null
+          photo_id?: string
+          photo_url?: string
+          recommended_colors?: Json | null
+          skin_tone?: string | null
+        }
+        Relationships: []
+      }
+      products_catalog: {
+        Row: {
+          affiliate_url: string
+          body_types: Json | null
+          brand: string | null
+          category: string | null
+          color: string | null
+          created_at: string
+          discounted_price: number | null
+          id: string
+          image_url: string | null
+          name: string
+          occasion: Json | null
+          price: number
+          product_id: string
+          rating: number | null
+          store: string | null
+        }
+        Insert: {
+          affiliate_url: string
+          body_types?: Json | null
+          brand?: string | null
+          category?: string | null
+          color?: string | null
+          created_at?: string
+          discounted_price?: number | null
+          id?: string
+          image_url?: string | null
+          name: string
+          occasion?: Json | null
+          price: number
+          product_id: string
+          rating?: number | null
+          store?: string | null
+        }
+        Update: {
+          affiliate_url?: string
+          body_types?: Json | null
+          brand?: string | null
+          category?: string | null
+          color?: string | null
+          created_at?: string
+          discounted_price?: number | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          occasion?: Json | null
+          price?: number
+          product_id?: string
+          rating?: number | null
+          store?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

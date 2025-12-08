@@ -5,3 +5,15 @@ verify_jwt = false
 
 [functions.style-ai-chat]
 verify_jwt = false
+
+[functions.photos-upload]
+verify_jwt = false
+
+[functions.photos-analysis]
+verify_jwt = false
+
+[functions.recommendations]
+verify_jwt = false
+
+[functions.products-redirect]
+verify_jwt = false
