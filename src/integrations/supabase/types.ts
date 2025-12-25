@@ -57,6 +57,7 @@ export type Database = {
           photo_url: string
           recommended_colors: Json | null
           skin_tone: string | null
+          user_id: string | null
         }
         Insert: {
           analyzed_at?: string | null
@@ -70,6 +71,7 @@ export type Database = {
           photo_url: string
           recommended_colors?: Json | null
           skin_tone?: string | null
+          user_id?: string | null
         }
         Update: {
           analyzed_at?: string | null
@@ -83,6 +85,7 @@ export type Database = {
           photo_url?: string
           recommended_colors?: Json | null
           skin_tone?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
