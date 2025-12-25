@@ -17,6 +17,28 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Authenticate user - require authentication for photo uploads
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required to upload photos' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired authentication token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const userId = user.id;
+    console.log(`Photo upload initiated by user: ${userId}`);
+
     // Parse multipart form data
     const formData = await req.formData();
     const file = formData.get('file') as File;
@@ -37,10 +59,20 @@ serve(async (req) => {
       );
     }
 
-    // Generate unique photo ID
+    // Validate file size (max 10MB)
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxFileSize) {
+      return new Response(
+        JSON.stringify({ error: 'File size exceeds 10MB limit' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Generate unique photo ID and organize by user ID for storage policies
     const photoId = crypto.randomUUID();
     const fileExtension = file.name.split('.').pop() || 'jpg';
-    const filePath = `uploads/${photoId}.${fileExtension}`;
+    // Organize files by user ID: {userId}/{photoId}.{ext}
+    const filePath = `${userId}/${photoId}.${fileExtension}`;
 
     // Upload to Supabase Storage
     const arrayBuffer = await file.arrayBuffer();
@@ -66,12 +98,13 @@ serve(async (req) => {
 
     const photoUrl = urlData.publicUrl;
 
-    // Store in photo_analyses table (analysis will be added later)
+    // Store in photo_analyses table with user_id (analysis will be added later)
     const { error: dbError } = await supabase
       .from('photo_analyses')
       .insert({
         photo_id: photoId,
         photo_url: photoUrl,
+        user_id: userId,
       });
 
     if (dbError) {
