@@ -54,6 +54,54 @@ serve(async (req) => {
       }
     }
 
+    // Helper function to validate photo URLs (SSRF prevention)
+    const isValidPhotoUrl = (url: string): boolean => {
+      try {
+        const photoUrl = new URL(url);
+        
+        // Only accept HTTPS URLs
+        if (photoUrl.protocol !== 'https:') {
+          console.log('Rejected non-HTTPS URL:', url);
+          return false;
+        }
+        
+        // Block private IP ranges, localhost, and cloud metadata endpoints
+        const hostname = photoUrl.hostname.toLowerCase();
+        if (
+          hostname === 'localhost' ||
+          hostname === '127.0.0.1' ||
+          hostname === '0.0.0.0' ||
+          /^10\./.test(hostname) ||
+          /^172\.(1[6-9]|2[0-9]|3[01])\./.test(hostname) ||
+          /^192\.168\./.test(hostname) ||
+          /^169\.254\./.test(hostname) ||  // Cloud metadata
+          /^::1$/.test(hostname) ||  // IPv6 localhost
+          /^fe80:/i.test(hostname)  // IPv6 link-local
+        ) {
+          console.log('Rejected private/internal URL:', url);
+          return false;
+        }
+        
+        // Check URL length
+        if (url.length > 500) {
+          console.log('Rejected URL exceeding length limit');
+          return false;
+        }
+        
+        // Only allow URLs from Supabase storage (recommended approach)
+        const supabaseHost = new URL(supabaseUrl).host;
+        if (!photoUrl.host.endsWith(supabaseHost) && !photoUrl.host.includes('supabase')) {
+          console.log('Warning: URL not from Supabase storage:', photoUrl.host);
+          // Still allow but log for monitoring - could be made stricter
+        }
+        
+        return true;
+      } catch {
+        console.log('Invalid URL format:', url);
+        return false;
+      }
+    };
+
     // Support both GET with query params and POST with body
     let photoId: string | null = null;
     let photoUrl: string | null = null;
@@ -71,6 +119,14 @@ serve(async (req) => {
       photoUrl = url.searchParams.get('photo_url');
     }
 
+    // Validate photo URL if provided directly (SSRF prevention)
+    if (photoUrl && !isValidPhotoUrl(photoUrl)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid photo URL. Only HTTPS URLs from trusted sources are allowed.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     if (!photoUrl && !imageBase64 && !photoId) {
       return new Response(
         JSON.stringify({ error: 'photo_url, image_base64, or photo_id is required' }),
@@ -78,7 +134,7 @@ serve(async (req) => {
       );
     }
 
-    // If we have photoId, try to get the URL from database
+    // If we have photoId, try to get the URL from database (safer approach - URLs already validated during upload)
     if (photoId && !photoUrl && !imageBase64) {
       const { data: existing } = await supabase
         .from('photo_analyses')

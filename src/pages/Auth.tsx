@@ -21,34 +21,14 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
-  const [otp, setOtp] = useState('');
   const [step, setStep] = useState<AuthStep>('email');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [generatedOtp, setGeneratedOtp] = useState('');
 
   useEffect(() => {
     if (user && !loading) {
       navigate('/');
     }
   }, [user, loading, navigate]);
-
-  const generateOtp = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
-
-  const sendOtpEmail = async (email: string, otp: string, type: 'signup' | 'login', fullName?: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('send-auth-email', {
-        body: { email, otp, type, fullName },
-      });
-      
-      if (error) throw error;
-      return { success: true };
-    } catch (error) {
-      console.error('Error sending OTP email:', error);
-      return { success: false, error };
-    }
-  };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,66 +56,8 @@ const Auth = () => {
     setIsSubmitting(true);
 
     try {
-      const newOtp = generateOtp();
-      setGeneratedOtp(newOtp);
-      
-      const result = await sendOtpEmail(
-        email, 
-        newOtp, 
-        isLogin ? 'login' : 'signup',
-        fullName
-      );
-      
-      if (result.success) {
-        setStep('otp');
-        toast({
-          title: 'Verification Code Sent',
-          description: `We've sent a 6-digit code to ${email}`,
-        });
-      } else {
-        throw new Error('Failed to send verification code');
-      }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to send verification code. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleOtpSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (otp.length !== 6) {
-      toast({
-        title: 'Invalid Code',
-        description: 'Please enter the complete 6-digit code',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
-    setIsSubmitting(true);
-
-    try {
-      if (otp !== generatedOtp) {
-        toast({
-          title: 'Invalid Code',
-          description: 'The verification code is incorrect. Please try again.',
-          variant: 'destructive',
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Generate a secure password from the OTP + email hash
-      const tempPassword = `${otp}${email}${Date.now()}`;
-      
       if (isLogin) {
-        // For login, try to sign in with a magic link approach
+        // For login, use Supabase's native OTP authentication
         const { error } = await supabase.auth.signInWithOtp({
           email,
           options: {
@@ -144,56 +66,59 @@ const Auth = () => {
         });
         
         if (error) {
-          // If OTP login fails, try password login with stored credentials
-          toast({
-            title: 'Login Successful',
-            description: 'Welcome back to LuxFit AI!',
-          });
-          navigate('/');
+          if (error.message.includes('User not found') || error.message.includes('Signups not allowed')) {
+            toast({
+              title: 'Account Not Found',
+              description: 'No account exists with this email. Please sign up first.',
+              variant: 'destructive',
+            });
+            setIsLogin(false);
+          } else {
+            throw error;
+          }
         } else {
+          setStep('otp');
           toast({
             title: 'Check Your Email',
-            description: 'Click the link we sent to complete login.',
+            description: `We've sent a magic link to ${email}. Click it to sign in.`,
           });
         }
       } else {
-        // For signup, create account with email/password then auto-login
-        const { error: signUpError } = await supabase.auth.signUp({
+        // For signup, use Supabase's native OTP with user creation
+        const { error } = await supabase.auth.signInWithOtp({
           email,
-          password: tempPassword,
           options: {
-            emailRedirectTo: `${window.location.origin}/`,
+            shouldCreateUser: true,
             data: {
               full_name: fullName,
             }
           }
         });
         
-        if (signUpError) {
-          if (signUpError.message.includes('already registered')) {
+        if (error) {
+          if (error.message.includes('already registered')) {
             toast({
               title: 'Account Exists',
               description: 'This email is already registered. Please log in instead.',
               variant: 'destructive',
             });
             setIsLogin(true);
-            setStep('email');
           } else {
-            throw signUpError;
+            throw error;
           }
         } else {
+          setStep('otp');
           toast({
-            title: 'Account Created!',
-            description: 'Welcome to LuxFit AI!',
+            title: 'Check Your Email',
+            description: `We've sent a magic link to ${email}. Click it to complete signup.`,
           });
-          navigate('/');
         }
       }
     } catch (error) {
       console.error('Auth error:', error);
       toast({
         title: 'Error',
-        description: 'An unexpected error occurred. Please try again.',
+        description: 'Failed to send verification email. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -201,32 +126,30 @@ const Auth = () => {
     }
   };
 
-  const handleResendOtp = async () => {
+  const handleResendEmail = async () => {
     setIsSubmitting(true);
     try {
-      const newOtp = generateOtp();
-      setGeneratedOtp(newOtp);
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: !isLogin,
+          data: isLogin ? undefined : { full_name: fullName },
+        }
+      });
       
-      const result = await sendOtpEmail(
-        email, 
-        newOtp, 
-        isLogin ? 'login' : 'signup',
-        fullName
-      );
-      
-      if (result.success) {
-        toast({
-          title: 'Code Resent',
-          description: `A new verification code has been sent to ${email}`,
-        });
-        setOtp('');
-      } else {
-        throw new Error('Failed to resend code');
+      if (error) {
+        throw error;
       }
+
+      toast({
+        title: 'Email Resent',
+        description: `A new magic link has been sent to ${email}`,
+      });
     } catch (error) {
+      console.error('Resend error:', error);
       toast({
         title: 'Error',
-        description: 'Failed to resend code. Please try again.',
+        description: 'Failed to resend email. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -259,7 +182,6 @@ const Auth = () => {
           onClick={() => {
             if (step === 'otp') {
               setStep('email');
-              setOtp('');
             } else {
               navigate('/');
             }
@@ -297,7 +219,7 @@ const Auth = () => {
             <h1 className="font-serif text-2xl text-foreground mb-2">
               {step === 'email' 
                 ? (isLogin ? 'Welcome Back' : 'Create Account')
-                : 'Enter Verification Code'
+                : 'Check Your Email'
               }
             </h1>
             <p className="text-muted-foreground">
@@ -305,7 +227,7 @@ const Auth = () => {
                 ? (isLogin
                     ? 'Sign in to access your virtual closet'
                     : 'Join LuxFit AI and discover your perfect style')
-                : `We've sent a 6-digit code to ${email}`
+                : `We've sent a magic link to ${email}. Click it to continue.`
               }
             </p>
           </div>
@@ -363,7 +285,7 @@ const Auth = () => {
                   {isSubmitting ? (
                     <span className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                      Sending code...
+                      Sending link...
                     </span>
                   ) : (
                     'Continue with Email'
@@ -371,55 +293,27 @@ const Auth = () => {
                 </Button>
               </form>
             ) : (
-              <form onSubmit={handleOtpSubmit} className="space-y-6">
-                {/* OTP Input */}
-                <div className="flex flex-col items-center gap-4">
-                  <InputOTP
-                    value={otp}
-                    onChange={setOtp}
-                    maxLength={6}
-                    className="gap-2"
-                  >
-                    <InputOTPGroup className="gap-2">
-                      <InputOTPSlot index={0} className="w-12 h-14 text-xl border-border bg-background/50" />
-                      <InputOTPSlot index={1} className="w-12 h-14 text-xl border-border bg-background/50" />
-                      <InputOTPSlot index={2} className="w-12 h-14 text-xl border-border bg-background/50" />
-                      <InputOTPSlot index={3} className="w-12 h-14 text-xl border-border bg-background/50" />
-                      <InputOTPSlot index={4} className="w-12 h-14 text-xl border-border bg-background/50" />
-                      <InputOTPSlot index={5} className="w-12 h-14 text-xl border-border bg-background/50" />
-                    </InputOTPGroup>
-                  </InputOTP>
+              <div className="space-y-6 text-center">
+                <div className="p-4 bg-primary/10 rounded-lg">
+                  <Mail className="w-12 h-12 mx-auto text-primary mb-3" />
+                  <p className="text-foreground font-medium">Check your inbox</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Click the magic link we sent to complete {isLogin ? 'sign in' : 'sign up'}.
+                  </p>
                 </div>
 
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  variant="luxury"
-                  className="w-full"
-                  disabled={isSubmitting || otp.length !== 6}
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                      Verifying...
-                    </span>
-                  ) : (
-                    'Verify & Continue'
-                  )}
-                </Button>
-
-                {/* Resend Code */}
+                {/* Resend Email */}
                 <div className="text-center">
                   <button
                     type="button"
-                    onClick={handleResendOtp}
+                    onClick={handleResendEmail}
                     disabled={isSubmitting}
                     className="text-primary hover:underline text-sm disabled:opacity-50"
                   >
-                    Didn't receive the code? Resend
+                    Didn't receive the email? Resend
                   </button>
                 </div>
-              </form>
+              </div>
             )}
 
             {step === 'email' && (
