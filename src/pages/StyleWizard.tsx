@@ -8,6 +8,7 @@ import OccasionForm from "@/components/StyleWizard/OccasionForm";
 import BudgetForm from "@/components/StyleWizard/BudgetForm";
 import ProcessingScreen from "@/components/ProcessingScreen";
 import { UserProfile } from "@/types/outfit";
+import { PhotoAnalysisResult } from "@/types/styleReport";
 
 const steps = [
   { id: 1, title: "Photo", subtitle: "Upload your photo" },
@@ -47,8 +48,8 @@ const StyleWizard = () => {
     }
   };
 
-  const handleProcessingComplete = () => {
-    navigate("/recommendations", { state: { profile } });
+  const handleProcessingComplete = (photoAnalysis?: PhotoAnalysisResult | null) => {
+    navigate("/recommendations", { state: { profile, photoAnalysis } });
   };
 
   const isStepValid = () => {
@@ -86,7 +87,7 @@ const StyleWizard = () => {
   };
 
   if (isProcessing) {
-    return <ProcessingScreen onComplete={handleProcessingComplete} />;
+    return <ProcessingScreen onComplete={handleProcessingComplete} photo={profile.photo} />;
   }
 
   return (
