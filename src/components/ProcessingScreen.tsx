@@ -1,23 +1,91 @@
-import { useEffect, useState } from "react";
-import { Sparkles, Scan, Palette, ShoppingBag } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
+import { Sparkles, Scan, Palette, ShoppingBag, AlertCircle, CheckCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { PhotoAnalysisResult } from "@/types/styleReport";
 
 interface ProcessingScreenProps {
-  onComplete: () => void;
+  onComplete: (photoAnalysis?: PhotoAnalysisResult | null) => void;
+  photo?: File | null;
 }
 
 const processingSteps = [
-  { icon: Scan, text: "Analyzing your photo", duration: 1500 },
-  { icon: Palette, text: "Detecting color preferences", duration: 1200 },
-  { icon: ShoppingBag, text: "Finding matching outfits", duration: 1300 },
-  { icon: Sparkles, text: "Comparing prices across stores", duration: 1000 },
+  { icon: Scan, text: "Analyzing your photo with AI", duration: 3000 },
+  { icon: Palette, text: "Detecting your unique coloring", duration: 2000 },
+  { icon: ShoppingBag, text: "Finding matching outfits", duration: 1500 },
+  { icon: Sparkles, text: "Personalizing recommendations", duration: 1500 },
 ];
 
-const ProcessingScreen = ({ onComplete }: ProcessingScreenProps) => {
+const noPhotoSteps = [
+  { icon: Palette, text: "Analyzing your style profile", duration: 1500 },
+  { icon: ShoppingBag, text: "Finding matching outfits", duration: 1300 },
+  { icon: Sparkles, text: "Personalizing recommendations", duration: 1200 },
+];
+
+const ProcessingScreen = ({ onComplete, photo }: ProcessingScreenProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [photoAnalysis, setPhotoAnalysis] = useState<PhotoAnalysisResult | null>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [analysisComplete, setAnalysisComplete] = useState(false);
+
+  const steps = photo ? processingSteps : noPhotoSteps;
+
+  const analyzePhoto = useCallback(async () => {
+    if (!photo) {
+      setAnalysisComplete(true);
+      return null;
+    }
+
+    try {
+      // Convert photo to base64
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(photo);
+      });
+
+      const imageBase64 = await base64Promise;
+
+      console.log("Sending photo for AI analysis...");
+
+      const { data, error } = await supabase.functions.invoke('photos-analysis', {
+        body: {
+          image_base64: imageBase64,
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      console.log("Photo analysis result:", data);
+
+      if (!data.isHuman) {
+        setAnalysisError(data.error || "Please upload a clear photo of yourself");
+        return null;
+      }
+
+      setPhotoAnalysis(data);
+      return data as PhotoAnalysisResult;
+    } catch (err) {
+      console.error("Photo analysis error:", err);
+      setAnalysisError(err instanceof Error ? err.message : "Failed to analyze photo");
+      return null;
+    } finally {
+      setAnalysisComplete(true);
+    }
+  }, [photo]);
 
   useEffect(() => {
-    const totalDuration = processingSteps.reduce((acc, step) => acc + step.duration, 0);
+    // Start photo analysis immediately if photo exists
+    if (photo) {
+      analyzePhoto();
+    }
+  }, [photo, analyzePhoto]);
+
+  useEffect(() => {
+    const totalDuration = steps.reduce((acc, step) => acc + step.duration, 0);
     let elapsed = 0;
 
     const progressInterval = setInterval(() => {
@@ -27,8 +95,8 @@ const ProcessingScreen = ({ onComplete }: ProcessingScreenProps) => {
 
       // Calculate which step we're on
       let stepElapsed = 0;
-      for (let i = 0; i < processingSteps.length; i++) {
-        stepElapsed += processingSteps[i].duration;
+      for (let i = 0; i < steps.length; i++) {
+        stepElapsed += steps[i].duration;
         if (elapsed < stepElapsed) {
           setCurrentStep(i);
           break;
@@ -37,12 +105,22 @@ const ProcessingScreen = ({ onComplete }: ProcessingScreenProps) => {
 
       if (elapsed >= totalDuration) {
         clearInterval(progressInterval);
-        setTimeout(onComplete, 500);
+        // Wait for analysis to complete if we have a photo
+        if (photo && !analysisComplete) {
+          const checkInterval = setInterval(() => {
+            if (analysisComplete) {
+              clearInterval(checkInterval);
+              setTimeout(() => onComplete(photoAnalysis), 500);
+            }
+          }, 100);
+        } else {
+          setTimeout(() => onComplete(photoAnalysis), 500);
+        }
       }
     }, 50);
 
     return () => clearInterval(progressInterval);
-  }, [onComplete]);
+  }, [steps, onComplete, photo, analysisComplete, photoAnalysis]);
 
   return (
     <div className="fixed inset-0 bg-background flex items-center justify-center">
@@ -62,7 +140,7 @@ const ProcessingScreen = ({ onComplete }: ProcessingScreenProps) => {
             {/* Center icon */}
             <div className="absolute inset-4 rounded-full bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold animate-pulse-gold">
               {(() => {
-                const IconComponent = processingSteps[currentStep]?.icon || Sparkles;
+                const IconComponent = steps[currentStep]?.icon || Sparkles;
                 return <IconComponent className="w-12 h-12 text-primary-foreground" />;
               })()}
             </div>
@@ -71,11 +149,34 @@ const ProcessingScreen = ({ onComplete }: ProcessingScreenProps) => {
 
         {/* Current step text */}
         <h2 className="font-serif text-2xl md:text-3xl text-foreground mb-3 animate-fade-in">
-          {processingSteps[currentStep]?.text}
+          {steps[currentStep]?.text}
         </h2>
         <p className="text-muted-foreground mb-8">
-          Creating your perfect look...
+          {photo ? "Our AI is studying your unique features..." : "Creating your perfect look..."}
         </p>
+
+        {/* Analysis status */}
+        {photo && analysisComplete && (
+          <div className={`mb-6 p-4 rounded-xl ${
+            analysisError 
+              ? 'bg-destructive/10 border border-destructive/20' 
+              : 'bg-primary/10 border border-primary/20'
+          }`}>
+            <div className="flex items-center justify-center gap-2">
+              {analysisError ? (
+                <>
+                  <AlertCircle className="w-5 h-5 text-destructive" />
+                  <span className="text-sm text-destructive">{analysisError}</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-5 h-5 text-primary" />
+                  <span className="text-sm text-primary">Photo analyzed successfully!</span>
+                </>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Progress bar */}
         <div className="w-full h-1 bg-secondary rounded-full overflow-hidden mb-4">
@@ -87,7 +188,7 @@ const ProcessingScreen = ({ onComplete }: ProcessingScreenProps) => {
 
         {/* Step indicators */}
         <div className="flex justify-center gap-3">
-          {processingSteps.map((step, index) => (
+          {steps.map((step, index) => (
             <div 
               key={index}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${

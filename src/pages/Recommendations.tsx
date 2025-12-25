@@ -6,7 +6,7 @@ import OutfitCard from "@/components/OutfitCard";
 import { getRecommendations } from "@/data/mockOutfits";
 import { occasionCategories, getOccasionOutfits } from "@/data/occasionOutfits";
 import { UserProfile } from "@/types/outfit";
-import { StyleReport } from "@/types/styleReport";
+import { StyleReport, PhotoAnalysisResult } from "@/types/styleReport";
 import StyleReportCard from "@/components/StyleReport/StyleReportCard";
 import OccasionSection from "@/components/StyleReport/OccasionSection";
 import ReportGeneratingScreen from "@/components/StyleReport/ReportGeneratingScreen";
@@ -16,6 +16,7 @@ const Recommendations = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const profile = location.state?.profile as UserProfile | undefined;
+  const photoAnalysisFromWizard = location.state?.photoAnalysis as PhotoAnalysisResult | undefined;
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedReport, setGeneratedReport] = useState<StyleReport | null>(null);
   const [activeTab, setActiveTab] = useState<"outfits" | "report" | "occasions">("outfits");
@@ -48,7 +49,8 @@ const Recommendations = () => {
       setIsGenerating(false);
       return;
     }
-    const report = await generateReport(profile);
+    // Pass photo analysis to generate a more personalized report
+    const report = await generateReport(profile, photoAnalysisFromWizard);
     if (report) {
       setGeneratedReport(report);
       setActiveTab("report");

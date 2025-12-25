@@ -12,6 +12,20 @@ interface StyleReportRequest {
   bodyType: string;
   occasion: string;
   season: string;
+  // Enhanced fields from photo analysis
+  photoAnalysis?: {
+    skin_undertone?: string;
+    face_shape?: string;
+    style_personality?: string;
+    measurements?: {
+      estimated_height_range: string;
+      body_proportions: string;
+      shoulder_type: string;
+    };
+    recommended_colors?: string[];
+    avoid_colors?: string[];
+    style_notes?: string[];
+  };
 }
 
 serve(async (req) => {
@@ -20,61 +34,125 @@ serve(async (req) => {
   }
 
   try {
-    const { gender, skinTone, hairColor, bodyType, occasion, season } = await req.json() as StyleReportRequest;
+    const requestData = await req.json() as StyleReportRequest;
+    const { gender, skinTone, hairColor, bodyType, occasion, season, photoAnalysis } = requestData;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are LuxFit AI, a world-class personal fashion stylist and color analyst. Generate a comprehensive, personalized style report in JSON format. Be specific, practical, and luxurious in your recommendations.
+    console.log("Generating style report for:", { gender, skinTone, hairColor, bodyType, occasion, season });
+    console.log("Photo analysis available:", !!photoAnalysis);
 
-Your response must be valid JSON with this exact structure:
+    const systemPrompt = `You are LuxFit AI, a world-renowned personal stylist, color analyst, and image consultant with 20+ years of experience working with celebrities, executives, and fashion-conscious individuals. You combine scientific color theory, body architecture analysis, and current fashion trends to create transformative style guides.
+
+Your expertise includes:
+- Seasonal Color Analysis (12-season system)
+- Body Geometry and Proportions
+- Face Shape Styling
+- Personal Style Identity
+- Occasion-Appropriate Dressing
+- Cultural and Regional Fashion Sensibilities
+
+Generate an AUTHENTIC, DETAILED, and GENUINELY VALUABLE style report. This should feel like a premium consultation worth ₹25,000+. Be specific, use the person's actual features, and provide insights they couldn't easily find elsewhere.
+
+Your response must be valid JSON with this EXACT structure:
 {
   "skinToneAnalysis": {
-    "undertone": "warm/cool/neutral",
-    "description": "2-3 sentences about their skin tone characteristics",
-    "seasonType": "Spring/Summer/Autumn/Winter"
+    "undertone": "warm/cool/neutral - be specific like 'warm with golden undertones' or 'cool with pink undertones'",
+    "description": "3-4 sentences explaining their unique coloring, what makes it special, and how light interacts with their skin. Reference their specific hair color and how it complements their skin.",
+    "seasonType": "One of: Bright Spring, True Spring, Light Spring, Light Summer, True Summer, Soft Summer, Soft Autumn, True Autumn, Deep Autumn, Deep Winter, True Winter, Bright Winter",
+    "colorTemperature": "Explanation of whether they should lean warm or cool and why",
+    "metalPreference": "Gold, Silver, Rose Gold, or Mixed - with explanation"
   },
   "bodyTypeAnalysis": {
-    "type": "the body type",
-    "strengths": ["3 body features to highlight"],
-    "stylingFocus": "2-3 sentences on how to dress this body type"
+    "type": "Their body type with a positive, empowering description",
+    "strengths": ["4 specific body features to celebrate and highlight"],
+    "stylingFocus": "3-4 sentences on silhouettes, cuts, and proportions that will make them look incredible",
+    "avoidStyles": ["2-3 specific cuts or styles that won't flatter as much and why"],
+    "fitTips": "Specific advice on how clothes should fit their unique proportions"
   },
   "bestColors": [
-    {"color": "color name", "hex": "#hexcode", "reason": "why it suits them"}
+    {"color": "Specific color name", "hex": "#accurate_hexcode", "reason": "Why this color makes THEM look amazing, referencing their specific features", "howToWear": "Specific suggestion for using this color"},
+    // Include 8 colors - mix of neutrals, accent colors, and statement colors
   ],
   "colorsToAvoid": [
-    {"color": "color name", "hex": "#hexcode", "reason": "why to avoid"}
+    {"color": "Specific color name", "hex": "#hexcode", "reason": "Why this color doesn't work for their specific coloring", "alternative": "A better alternative color"}
   ],
   "bestPatterns": [
-    {"pattern": "pattern name", "reason": "why it works"}
+    {"pattern": "Pattern name", "reason": "Why it works for their body type and style", "examples": "Specific examples of how to incorporate"}
   ],
   "signatureLooks": [
     {
-      "name": "look name",
-      "description": "detailed description",
-      "keyPieces": ["piece1", "piece2", "piece3"],
-      "occasion": "when to wear"
+      "name": "Evocative name for the look",
+      "description": "Rich, visual description that paints a picture",
+      "keyPieces": ["5-6 specific pieces with details like fabric, cut, color"],
+      "occasion": "When to wear this look",
+      "stylingNotes": "How to put it together, accessories, finishing touches",
+      "confidenceBooster": "Why this look will make them feel amazing"
     }
+    // Include 4 signature looks for different occasions
   ],
-  "stylingTips": ["5 personalized styling tips"],
+  "stylingTips": [
+    "8-10 highly personalized, actionable tips specific to their features, lifestyle, and goals"
+  ],
   "accessoryGuide": {
-    "jewelry": "recommendation",
-    "bags": "recommendation",
-    "shoes": "recommendation"
+    "jewelry": "Detailed recommendations for necklaces, earrings, bracelets, rings - mentioning metals, styles, and scales that work",
+    "bags": "Specific bag styles, sizes, and colors that complement their frame and lifestyle",
+    "shoes": "Heel heights, toe shapes, and styles that elongate and flatter",
+    "scarves": "How to use scarves and which colors/patterns work best",
+    "belts": "Belt styles and where to place them on their body"
+  },
+  "shoppingGuide": {
+    "investmentPieces": ["5 pieces worth spending more on for their body type and lifestyle"],
+    "budgetFriendly": ["5 pieces they can buy affordably without sacrificing style"],
+    "brandsToExplore": ["5-6 brands that cater well to their body type and style preferences"]
+  },
+  "seasonalWardrobe": {
+    "capsuleEssentials": ["10 versatile pieces that form the foundation of their wardrobe"],
+    "statementPieces": ["3 bold pieces that express their style personality"],
+    "layeringTips": "How to layer for the specified season while looking polished"
   }
 }`;
 
-    const userPrompt = `Generate a personalized style report for:
+    // Build a detailed user prompt incorporating photo analysis if available
+    let userPrompt = `Generate a comprehensive, personalized style report for this individual:
+
+BASIC PROFILE:
 - Gender: ${gender}
 - Skin Tone: ${skinTone}
 - Hair Color: ${hairColor}
 - Body Type: ${bodyType}
 - Primary Occasion: ${occasion}
-- Season: ${season}
+- Season: ${season}`;
 
-Create a luxurious, detailed style analysis with specific color hex codes and practical recommendations. Include 6 best colors and 4 colors to avoid. Provide 3 signature looks and 4 best patterns.`;
+    if (photoAnalysis) {
+      userPrompt += `
+
+AI PHOTO ANALYSIS (use this for even more personalized recommendations):
+- Skin Undertone: ${photoAnalysis.skin_undertone || 'Not analyzed'}
+- Face Shape: ${photoAnalysis.face_shape || 'Not analyzed'}
+- Style Personality: ${photoAnalysis.style_personality || 'Not analyzed'}
+- Height Range: ${photoAnalysis.measurements?.estimated_height_range || 'Not analyzed'}
+- Body Proportions: ${photoAnalysis.measurements?.body_proportions || 'Not analyzed'}
+- Shoulder Type: ${photoAnalysis.measurements?.shoulder_type || 'Not analyzed'}
+- AI Recommended Colors: ${photoAnalysis.recommended_colors?.join(', ') || 'Not analyzed'}
+- AI Colors to Avoid: ${photoAnalysis.avoid_colors?.join(', ') || 'Not analyzed'}
+- AI Style Notes: ${photoAnalysis.style_notes?.join('; ') || 'Not analyzed'}`;
+    }
+
+    userPrompt += `
+
+Create a LUXURIOUS, AUTHENTIC style consultation. This should feel like advice from a personal stylist who truly sees and understands this person. Include:
+- 8 best colors with accurate hex codes
+- 4 colors to avoid with alternatives
+- 4 pattern recommendations
+- 4 complete signature looks (one for ${occasion}, plus 3 other versatile occasions)
+- 8-10 personalized styling tips
+- Comprehensive accessory and shopping guidance
+
+Make every recommendation SPECIFIC to their unique combination of features. Avoid generic advice.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -88,7 +166,6 @@ Create a luxurious, detailed style analysis with specific color hex codes and pr
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        temperature: 0.7,
       }),
     });
 
@@ -116,6 +193,8 @@ Create a luxurious, detailed style analysis with specific color hex codes and pr
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
     
+    console.log("Style report generated, parsing response...");
+
     // Parse the JSON from the response
     let styleReport;
     try {
@@ -125,12 +204,14 @@ Create a luxurious, detailed style analysis with specific color hex codes and pr
       styleReport = JSON.parse(jsonStr.trim());
     } catch (parseError) {
       console.error("Failed to parse AI response:", parseError);
-      console.error("Raw content:", content);
-      return new Response(JSON.stringify({ error: "Failed to parse style report" }), {
+      console.error("Raw content:", content?.substring(0, 500));
+      return new Response(JSON.stringify({ error: "Failed to parse style report. Please try again." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    console.log("Style report parsed successfully");
 
     return new Response(JSON.stringify({ report: styleReport }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

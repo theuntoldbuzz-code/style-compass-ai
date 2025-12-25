@@ -6,50 +6,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Mock analysis data generator
-function generateMockAnalysis(photoId: string) {
-  const bodyTypes = ['hourglass', 'pear', 'apple', 'rectangle', 'inverted-triangle'];
-  const skinTones = ['fair', 'light', 'medium', 'olive', 'tan', 'deep'];
-  const hairColors = ['black', 'brown', 'blonde', 'red', 'gray', 'auburn'];
-  
-  const recommendedPalettes = {
-    'fair': ['#E8D5B7', '#F5E6D3', '#C9B8A5', '#8B7355', '#4A4A4A', '#2C3E50', '#8E44AD', '#E74C3C'],
-    'medium': ['#D4A574', '#C19A6B', '#8B4513', '#F5DEB3', '#FFE4B5', '#2E8B57', '#4169E1', '#DC143C'],
-    'olive': ['#DAA520', '#B8860B', '#CD853F', '#8B4513', '#556B2F', '#6B8E23', '#483D8B', '#8B0000'],
-    'deep': ['#FFD700', '#FF8C00', '#FF6347', '#00CED1', '#7B68EE', '#DC143C', '#228B22', '#4169E1'],
-  };
-
-  const avoidColors = {
-    'fair': ['#FFFF00', '#00FF00', '#FF69B4'],
-    'medium': ['#808080', '#C0C0C0', '#FFFFFF'],
-    'olive': ['#FFC0CB', '#FFB6C1', '#FFDAB9'],
-    'deep': ['#F0F8FF', '#FFFAFA', '#FFFFF0'],
-  };
-
-  const selectedSkinTone = skinTones[Math.floor(Math.random() * skinTones.length)];
-  const skinCategory = ['fair', 'light'].includes(selectedSkinTone) ? 'fair' : 
-                       ['medium', 'olive'].includes(selectedSkinTone) ? 'medium' : 
-                       selectedSkinTone === 'tan' ? 'olive' : 'deep';
-
-  return {
-    body_type: bodyTypes[Math.floor(Math.random() * bodyTypes.length)],
-    skin_tone: selectedSkinTone,
-    hair_color: hairColors[Math.floor(Math.random() * hairColors.length)],
-    measurements: {
-      estimated_height: `${Math.floor(Math.random() * 30 + 150)}cm`,
-      shoulder_width: `${Math.floor(Math.random() * 10 + 38)}cm`,
-      bust: `${Math.floor(Math.random() * 15 + 80)}cm`,
-      waist: `${Math.floor(Math.random() * 20 + 60)}cm`,
-      hips: `${Math.floor(Math.random() * 20 + 85)}cm`,
-    },
-    recommended_colors: recommendedPalettes[skinCategory] || recommendedPalettes['medium'],
-    avoid_colors: avoidColors[skinCategory] || avoidColors['medium'],
-    style_notes: [
-      'Balanced proportions suit most silhouettes',
-      'Consider structured pieces for a polished look',
-      'Earth tones complement your natural coloring',
-    ],
-  };
+interface AnalysisResult {
+  isHuman: boolean;
+  confidence: number;
+  body_type: string | null;
+  skin_tone: string | null;
+  skin_undertone?: string | null;
+  hair_color: string | null;
+  face_shape: string | null;
+  style_personality: string | null;
+  measurements: {
+    estimated_height_range: string;
+    body_proportions: string;
+    shoulder_type: string;
+  } | null;
+  recommended_colors: string[];
+  avoid_colors: string[];
+  style_notes: string[];
+  error?: string;
 }
 
 serve(async (req) => {
@@ -61,92 +35,247 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Extract photo_id from URL path
-    const url = new URL(req.url);
-    const pathParts = url.pathname.split('/');
-    const photoId = pathParts[pathParts.length - 1] || url.searchParams.get('photo_id');
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
+    }
 
-    if (!photoId) {
+    // Support both GET with query params and POST with body
+    let photoId: string | null = null;
+    let photoUrl: string | null = null;
+    let imageBase64: string | null = null;
+
+    if (req.method === 'POST') {
+      const body = await req.json();
+      photoId = body.photo_id;
+      photoUrl = body.photo_url;
+      imageBase64 = body.image_base64;
+    } else {
+      const url = new URL(req.url);
+      const pathParts = url.pathname.split('/');
+      photoId = pathParts[pathParts.length - 1] || url.searchParams.get('photo_id');
+      photoUrl = url.searchParams.get('photo_url');
+    }
+
+    if (!photoUrl && !imageBase64 && !photoId) {
       return new Response(
-        JSON.stringify({ error: 'photo_id is required' }),
+        JSON.stringify({ error: 'photo_url, image_base64, or photo_id is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Check if analysis already exists
-    const { data: existing, error: fetchError } = await supabase
-      .from('photo_analyses')
-      .select('*')
-      .eq('photo_id', photoId)
-      .maybeSingle();
+    // If we have photoId, try to get the URL from database
+    if (photoId && !photoUrl && !imageBase64) {
+      const { data: existing } = await supabase
+        .from('photo_analyses')
+        .select('photo_url')
+        .eq('photo_id', photoId)
+        .maybeSingle();
+      
+      if (existing?.photo_url) {
+        photoUrl = existing.photo_url;
+      }
+    }
 
-    if (fetchError) {
-      console.error('Fetch error:', fetchError);
+    // Prepare the image content for Gemini
+    let imageContent: { type: string; image_url?: { url: string }; text?: string }[];
+    
+    if (imageBase64) {
+      imageContent = [
+        {
+          type: "image_url",
+          image_url: { url: imageBase64 }
+        },
+        {
+          type: "text",
+          text: `Analyze this image for fashion styling purposes. 
+
+FIRST, determine if this is a photo of a real human person. If it's not a human (e.g., an object, animal, cartoon, AI-generated art, or no person visible), respond with:
+{"isHuman": false, "confidence": 0, "error": "Please upload a clear photo of yourself for personalized style analysis."}
+
+If it IS a human photo, provide a detailed analysis in this exact JSON format:
+{
+  "isHuman": true,
+  "confidence": 95,
+  "body_type": "one of: hourglass, pear, apple, rectangle, inverted-triangle, athletic",
+  "skin_tone": "specific tone like: fair with pink undertones, light olive, medium warm, deep with golden undertones, etc.",
+  "hair_color": "specific color like: jet black, dark brown, chestnut, auburn, blonde, etc.",
+  "face_shape": "oval, round, square, heart, oblong, diamond",
+  "style_personality": "one of: Classic Elegant, Romantic Feminine, Natural Casual, Dramatic Bold, Creative Artistic, Sporty Chic",
+  "measurements": {
+    "estimated_height_range": "petite (under 5'3), average (5'3-5'6), tall (over 5'6)",
+    "body_proportions": "balanced, long torso, long legs, short torso",
+    "shoulder_type": "narrow, balanced, broad"
+  },
+  "recommended_colors": ["6-8 specific colors with hex codes that would flatter this person based on their coloring"],
+  "avoid_colors": ["3-4 colors to avoid with hex codes"],
+  "style_notes": ["4-5 specific, actionable styling observations for this person"]
+}
+
+Be specific and personalized. Analyze actual visible features.`
+        }
+      ];
+    } else if (photoUrl) {
+      imageContent = [
+        {
+          type: "image_url",
+          image_url: { url: photoUrl }
+        },
+        {
+          type: "text",
+          text: `Analyze this image for fashion styling purposes.
+
+FIRST, determine if this is a photo of a real human person. If it's not a human (e.g., an object, animal, cartoon, AI-generated art, or no person visible), respond with:
+{"isHuman": false, "confidence": 0, "error": "Please upload a clear photo of yourself for personalized style analysis."}
+
+If it IS a human photo, provide a detailed analysis in this exact JSON format:
+{
+  "isHuman": true,
+  "confidence": 95,
+  "body_type": "one of: hourglass, pear, apple, rectangle, inverted-triangle, athletic",
+  "skin_tone": "specific tone like: fair with pink undertones, light olive, medium warm, deep with golden undertones, etc.",
+  "skin_undertone": "warm, cool, or neutral",
+  "hair_color": "specific color like: jet black, dark brown, chestnut, auburn, blonde, etc.",
+  "face_shape": "oval, round, square, heart, oblong, diamond",
+  "style_personality": "one of: Classic Elegant, Romantic Feminine, Natural Casual, Dramatic Bold, Creative Artistic, Sporty Chic",
+  "measurements": {
+    "estimated_height_range": "petite (under 5'3), average (5'3-5'6), tall (over 5'6)",
+    "body_proportions": "balanced, long torso, long legs, short torso",
+    "shoulder_type": "narrow, balanced, broad"
+  },
+  "recommended_colors": ["6-8 specific colors with hex codes that would flatter this person based on their coloring"],
+  "avoid_colors": ["3-4 colors to avoid with hex codes"],
+  "style_notes": ["4-5 specific, actionable styling observations for this person"]
+}
+
+Be specific and personalized. Analyze actual visible features.`
+        }
+      ];
+    } else {
       return new Response(
-        JSON.stringify({ error: 'Failed to fetch photo analysis' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'No image provided for analysis' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // If analysis exists and has been processed, return it
-    if (existing && existing.body_type) {
+    console.log("Sending image to Gemini for analysis...");
+
+    // Call Gemini API via Lovable AI Gateway
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "user",
+            content: imageContent
+          }
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "AI credits depleted. Please add credits to continue." }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const errorText = await response.text();
+      console.error("AI gateway error:", response.status, errorText);
+      return new Response(JSON.stringify({ error: "Failed to analyze photo" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content;
+    
+    console.log("Gemini response received:", content?.substring(0, 200));
+
+    // Parse the JSON from the response
+    let analysisResult: AnalysisResult;
+    try {
+      // Extract JSON from potential markdown code blocks
+      const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || content.match(/```\n?([\s\S]*?)\n?```/);
+      const jsonStr = jsonMatch ? jsonMatch[1] : content;
+      analysisResult = JSON.parse(jsonStr.trim());
+    } catch (parseError) {
+      console.error("Failed to parse AI response:", parseError);
+      console.error("Raw content:", content);
+      return new Response(JSON.stringify({ 
+        error: "Failed to analyze the image. Please try with a clearer photo.",
+        isHuman: false 
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // If not a human photo, return early
+    if (!analysisResult.isHuman) {
+      console.log("Photo is not a human:", analysisResult.error);
       return new Response(
         JSON.stringify({
-          photo_id: existing.photo_id,
-          photo_url: existing.photo_url,
-          analysis: {
-            body_type: existing.body_type,
-            skin_tone: existing.skin_tone,
-            hair_color: existing.hair_color,
-            measurements: existing.measurements,
-            recommended_colors: existing.recommended_colors,
-            avoid_colors: existing.avoid_colors,
-          },
-          analyzed_at: existing.analyzed_at,
+          isHuman: false,
+          error: analysisResult.error || "Please upload a photo of yourself for personalized style analysis.",
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Generate mock analysis
-    const mockAnalysis = generateMockAnalysis(photoId);
-
-    // Update the record with analysis
-    if (existing) {
-      const { error: updateError } = await supabase
+    // Store analysis in database if we have a photoId
+    if (photoId) {
+      const { error: upsertError } = await supabase
         .from('photo_analyses')
-        .update({
-          body_type: mockAnalysis.body_type,
-          skin_tone: mockAnalysis.skin_tone,
-          hair_color: mockAnalysis.hair_color,
-          measurements: mockAnalysis.measurements,
-          recommended_colors: mockAnalysis.recommended_colors,
-          avoid_colors: mockAnalysis.avoid_colors,
+        .upsert({
+          photo_id: photoId,
+          photo_url: photoUrl || '',
+          body_type: analysisResult.body_type,
+          skin_tone: analysisResult.skin_tone,
+          hair_color: analysisResult.hair_color,
+          measurements: analysisResult.measurements,
+          recommended_colors: analysisResult.recommended_colors,
+          avoid_colors: analysisResult.avoid_colors,
           analyzed_at: new Date().toISOString(),
-        })
-        .eq('photo_id', photoId);
+        }, { onConflict: 'photo_id' });
 
-      if (updateError) {
-        console.error('Update error:', updateError);
+      if (upsertError) {
+        console.error('Database upsert error:', upsertError);
       }
     }
 
-    console.log(`Analysis generated for photo: ${photoId}`);
+    console.log(`Analysis completed successfully for photo: ${photoId || 'direct-upload'}`);
 
     return new Response(
       JSON.stringify({
+        isHuman: true,
         photo_id: photoId,
-        photo_url: existing?.photo_url || null,
+        photo_url: photoUrl,
         analysis: {
-          body_type: mockAnalysis.body_type,
-          skin_tone: mockAnalysis.skin_tone,
-          hair_color: mockAnalysis.hair_color,
-          measurements: mockAnalysis.measurements,
-          recommended_colors: mockAnalysis.recommended_colors,
-          avoid_colors: mockAnalysis.avoid_colors,
-          style_notes: mockAnalysis.style_notes,
+          body_type: analysisResult.body_type,
+          skin_tone: analysisResult.skin_tone,
+          skin_undertone: analysisResult.skin_undertone,
+          hair_color: analysisResult.hair_color,
+          face_shape: analysisResult.face_shape,
+          style_personality: analysisResult.style_personality,
+          measurements: analysisResult.measurements,
+          recommended_colors: analysisResult.recommended_colors,
+          avoid_colors: analysisResult.avoid_colors,
+          style_notes: analysisResult.style_notes,
         },
         analyzed_at: new Date().toISOString(),
       }),
