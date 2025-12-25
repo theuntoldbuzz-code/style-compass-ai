@@ -42,6 +42,18 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    // Get user_id from authorization header
+    const authHeader = req.headers.get('Authorization');
+    let userId: string | null = null;
+    
+    if (authHeader) {
+      const token = authHeader.replace('Bearer ', '');
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      if (!authError && user) {
+        userId = user.id;
+      }
+    }
+
     // Support both GET with query params and POST with body
     let photoId: string | null = null;
     let photoUrl: string | null = null;
@@ -237,13 +249,14 @@ Be specific and personalized. Analyze actual visible features.`
       );
     }
 
-    // Store analysis in database if we have a photoId
-    if (photoId) {
+    // Store analysis in database if we have a photoId and userId
+    if (photoId && userId) {
       const { error: upsertError } = await supabase
         .from('photo_analyses')
         .upsert({
           photo_id: photoId,
           photo_url: photoUrl || '',
+          user_id: userId,
           body_type: analysisResult.body_type,
           skin_tone: analysisResult.skin_tone,
           hair_color: analysisResult.hair_color,
