@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Mail, User, ArrowLeft } from 'lucide-react';
+import { Sparkles, Mail, User, ArrowLeft, Chrome } from 'lucide-react';
 import fashionAuth from '@/assets/fashion-6.avif';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ type AuthStep = 'email' | 'otp';
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user, loading, signInWithGoogle } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
@@ -424,6 +424,36 @@ const Auth = () => {
 
             {step === 'email' && (
               <>
+                {/* Divider */}
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                  </div>
+                </div>
+
+                {/* Google Sign In */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full gap-2"
+                  onClick={async () => {
+                    const { error } = await signInWithGoogle();
+                    if (error) {
+                      toast({
+                        title: 'Google Sign In Failed',
+                        description: error.message,
+                        variant: 'destructive',
+                      });
+                    }
+                  }}
+                >
+                  <Chrome className="w-5 h-5" />
+                  Continue with Google
+                </Button>
+
                 {/* Toggle Auth Mode */}
                 <p className="text-center text-muted-foreground mt-6">
                   {isLogin ? "Don't have an account? " : 'Already have an account? '}
