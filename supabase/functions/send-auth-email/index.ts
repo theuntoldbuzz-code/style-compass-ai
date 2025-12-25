@@ -14,8 +14,100 @@ interface AuthEmailRequest {
   fullName?: string;
 }
 
-const getEmailTemplate = (otp: string, type: string, fullName?: string) => {
-  const name = fullName || "there";
+// Input validation constants
+const MAX_NAME_LENGTH = 100;
+const MAX_OTP_LENGTH = 10;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const VALID_TYPES = ['signup', 'login', 'magic_link'];
+
+// Sanitize HTML to prevent injection
+function sanitizeForHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
+// Validate email
+function validateEmail(email: unknown): string {
+  if (typeof email !== 'string') {
+    throw new Error('Email must be a string');
+  }
+  const trimmed = email.trim().toLowerCase();
+  if (trimmed.length === 0) {
+    throw new Error('Email is required');
+  }
+  if (trimmed.length > 254) {
+    throw new Error('Email is too long');
+  }
+  if (!EMAIL_PATTERN.test(trimmed)) {
+    throw new Error('Invalid email format');
+  }
+  // Check for email header injection attempts
+  if (trimmed.includes('\n') || trimmed.includes('\r') || trimmed.includes('\0')) {
+    throw new Error('Invalid email format');
+  }
+  return trimmed;
+}
+
+// Validate OTP
+function validateOtp(otp: unknown): string {
+  if (typeof otp !== 'string') {
+    throw new Error('OTP must be a string');
+  }
+  const trimmed = otp.trim();
+  if (trimmed.length === 0) {
+    throw new Error('OTP is required');
+  }
+  if (trimmed.length > MAX_OTP_LENGTH) {
+    throw new Error('Invalid OTP format');
+  }
+  // Only allow alphanumeric OTP
+  if (!/^[A-Za-z0-9]+$/.test(trimmed)) {
+    throw new Error('Invalid OTP format');
+  }
+  return trimmed;
+}
+
+// Validate type
+function validateType(type: unknown): "signup" | "login" | "magic_link" {
+  if (typeof type !== 'string' || !VALID_TYPES.includes(type)) {
+    throw new Error('Invalid email type');
+  }
+  return type as "signup" | "login" | "magic_link";
+}
+
+// Validate and sanitize full name
+function validateFullName(name: unknown): string {
+  if (name === undefined || name === null) return 'there';
+  if (typeof name !== 'string') return 'there';
+  const trimmed = name.trim();
+  if (trimmed.length === 0) return 'there';
+  // Sanitize for HTML and truncate
+  return sanitizeForHtml(trimmed.substring(0, MAX_NAME_LENGTH));
+}
+
+// Validate request
+function validateRequest(body: unknown): AuthEmailRequest {
+  if (!body || typeof body !== 'object') {
+    throw new Error('Invalid request body');
+  }
+  const b = body as Record<string, unknown>;
+  
+  return {
+    email: validateEmail(b.email),
+    otp: validateOtp(b.otp),
+    type: validateType(b.type),
+    fullName: validateFullName(b.fullName),
+  };
+}
+
+const getEmailTemplate = (otp: string, type: string, fullName: string) => {
+  // OTP is already validated to be alphanumeric, but sanitize name for safety
+  const safeName = fullName;
+  const safeOtp = sanitizeForHtml(otp);
   
   if (type === "signup") {
     return {
@@ -48,7 +140,7 @@ const getEmailTemplate = (otp: string, type: string, fullName?: string) => {
                   <tr>
                     <td style="padding: 20px 40px;">
                       <p style="margin: 0 0 20px; color: #a0a0a0; font-size: 16px; line-height: 1.6;">
-                        Hello ${name},
+                        Hello ${safeName},
                       </p>
                       <p style="margin: 0 0 30px; color: #a0a0a0; font-size: 16px; line-height: 1.6;">
                         Thank you for joining LuxFit AI! Use the verification code below to complete your registration:
@@ -57,7 +149,7 @@ const getEmailTemplate = (otp: string, type: string, fullName?: string) => {
                       <!-- OTP Code -->
                       <div style="background: linear-gradient(135deg, #1f1f1f 0%, #171717 100%); border: 1px solid #3a3a3a; border-radius: 12px; padding: 30px; text-align: center; margin-bottom: 30px;">
                         <p style="margin: 0 0 10px; color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Your Verification Code</p>
-                        <p style="margin: 0; font-size: 36px; font-weight: 700; letter-spacing: 8px; background: linear-gradient(135deg, #d4af37, #f4e4bc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${otp}</p>
+                        <p style="margin: 0; font-size: 36px; font-weight: 700; letter-spacing: 8px; background: linear-gradient(135deg, #d4af37, #f4e4bc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${safeOtp}</p>
                       </div>
                       
                       <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.6;">
@@ -114,7 +206,7 @@ const getEmailTemplate = (otp: string, type: string, fullName?: string) => {
                 <tr>
                   <td style="padding: 20px 40px;">
                     <p style="margin: 0 0 20px; color: #a0a0a0; font-size: 16px; line-height: 1.6;">
-                      Hello ${name},
+                      Hello ${safeName},
                     </p>
                     <p style="margin: 0 0 30px; color: #a0a0a0; font-size: 16px; line-height: 1.6;">
                       Use the code below to log in to your LuxFit AI account:
@@ -123,7 +215,7 @@ const getEmailTemplate = (otp: string, type: string, fullName?: string) => {
                     <!-- OTP Code -->
                     <div style="background: linear-gradient(135deg, #1f1f1f 0%, #171717 100%); border: 1px solid #3a3a3a; border-radius: 12px; padding: 30px; text-align: center; margin-bottom: 30px;">
                       <p style="margin: 0 0 10px; color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Your Login Code</p>
-                      <p style="margin: 0; font-size: 36px; font-weight: 700; letter-spacing: 8px; background: linear-gradient(135deg, #d4af37, #f4e4bc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${otp}</p>
+                      <p style="margin: 0; font-size: 36px; font-weight: 700; letter-spacing: 8px; background: linear-gradient(135deg, #d4af37, #f4e4bc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${safeOtp}</p>
                     </div>
                     
                     <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.6;">
@@ -158,11 +250,12 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, otp, type, fullName }: AuthEmailRequest = await req.json();
+    const rawBody = await req.json();
+    const { email, otp, type, fullName } = validateRequest(rawBody);
     
     console.log(`Sending ${type} email to ${email}`);
     
-    const { subject, html } = getEmailTemplate(otp, type, fullName);
+    const { subject, html } = getEmailTemplate(otp, type, fullName || 'there');
 
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -193,9 +286,11 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     console.error("Error sending email:", errorMessage);
+    // Don't expose detailed validation errors to prevent enumeration
+    const isValidationError = errorMessage.includes('Email') || errorMessage.includes('OTP') || errorMessage.includes('Invalid');
     return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
-      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      JSON.stringify({ success: false, error: isValidationError ? errorMessage : "Failed to send email" }),
+      { status: isValidationError ? 400 : 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
 };

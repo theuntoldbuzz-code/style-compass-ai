@@ -6,6 +6,37 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Input validation constants
+const MAX_BUDGET = 1000000; // 10 lakh rupees
+const MIN_BUDGET = 0;
+const VALID_OCCASIONS = ['office', 'casual', 'formal', 'wedding', 'festive', 'party', 'date-night', 'brunch', 'traditional', 'college', 'weekend', 'club', 'winter', 'all'];
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+// Validate and sanitize budget
+function validateBudget(value: unknown, defaultValue: number): number {
+  if (value === undefined || value === null) return defaultValue;
+  const num = typeof value === 'string' ? parseFloat(value) : Number(value);
+  if (isNaN(num)) return defaultValue;
+  return Math.max(MIN_BUDGET, Math.min(MAX_BUDGET, Math.floor(num)));
+}
+
+// Validate occasion
+function validateOccasion(value: unknown): string {
+  if (typeof value !== 'string') return 'all';
+  const normalized = value.toLowerCase().trim();
+  if (normalized.length > 50) return 'all';
+  if (!VALID_OCCASIONS.includes(normalized)) return 'all';
+  return normalized;
+}
+
+// Validate UUID
+function validateUUID(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!UUID_PATTERN.test(trimmed)) return null;
+  return trimmed;
+}
+
 // Mock product data (would come from CSV/database in production)
 const mockProducts = [
   {
@@ -172,11 +203,16 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const body = await req.json();
-    const { photo_id, budget_min = 0, budget_max = 50000, occasion = 'all' } = body;
+    
+    // Validate and sanitize all inputs
+    const photo_id = validateUUID(body.photo_id);
+    const budget_min = validateBudget(body.budget_min, 0);
+    const budget_max = validateBudget(body.budget_max, 50000);
+    const occasion = validateOccasion(body.occasion);
 
     console.log(`Generating recommendations - photo_id: ${photo_id}, budget: ${budget_min}-${budget_max}, occasion: ${occasion}`);
 
-    // Get photo analysis if photo_id provided
+    // Get photo analysis if photo_id provided (uses parameterized query via Supabase client)
     let userAnalysis = null;
     if (photo_id) {
       const { data } = await supabase
@@ -187,7 +223,7 @@ serve(async (req) => {
       userAnalysis = data;
     }
 
-    // First try to get products from database
+    // First try to get products from database (uses parameterized query via Supabase client)
     let { data: dbProducts } = await supabase
       .from('products_catalog')
       .select('*')
@@ -239,7 +275,7 @@ serve(async (req) => {
       store: p.store,
       rating: p.rating,
       color: p.color,
-      redirect_url: `${supabaseUrl}/functions/v1/products-redirect?product_id=${p.product_id}`,
+      redirect_url: `${supabaseUrl}/functions/v1/products-redirect?product_id=${encodeURIComponent(p.product_id)}`,
     }));
 
     return new Response(
@@ -262,7 +298,7 @@ serve(async (req) => {
     console.error('Error in recommendations:', error);
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: 'An error occurred processing recommendations' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

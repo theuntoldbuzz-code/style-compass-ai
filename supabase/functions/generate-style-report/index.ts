@@ -12,7 +12,6 @@ interface StyleReportRequest {
   bodyType: string;
   occasion: string;
   season: string;
-  // Enhanced fields from photo analysis
   photoAnalysis?: {
     skin_undertone?: string;
     face_shape?: string;
@@ -28,14 +27,122 @@ interface StyleReportRequest {
   };
 }
 
+// Input validation constants
+const MAX_STRING_LENGTH = 100;
+const MAX_STYLE_NOTES = 10;
+const MAX_COLORS = 20;
+const VALID_HEX_PATTERN = /^#[0-9A-Fa-f]{6}$/;
+
+// Allowed values for enumerated fields
+const VALID_GENDERS = ['male', 'female', 'non-binary', 'other'];
+const VALID_SEASONS = ['spring', 'summer', 'autumn', 'fall', 'winter', 'monsoon', 'all'];
+const VALID_OCCASIONS = ['office', 'casual', 'formal', 'wedding', 'festive', 'party', 'date-night', 'brunch', 'traditional', 'all'];
+const VALID_BODY_TYPES = ['hourglass', 'pear', 'apple', 'rectangle', 'inverted-triangle', 'athletic', 'plus-size', 'petite', 'tall'];
+
+// Sanitize string input
+function sanitizeString(value: unknown, fieldName: string, maxLength = MAX_STRING_LENGTH): string {
+  if (value === undefined || value === null) {
+    return '';
+  }
+  if (typeof value !== 'string') {
+    throw new Error(`${fieldName} must be a string`);
+  }
+  return value.trim().substring(0, maxLength);
+}
+
+// Validate enumerated value
+function validateEnum(value: string, allowedValues: string[], fieldName: string): string {
+  const normalized = value.toLowerCase().trim();
+  if (!allowedValues.includes(normalized)) {
+    // Return a default rather than throwing for flexibility
+    console.warn(`Invalid ${fieldName}: ${value}. Using default.`);
+    return allowedValues[0];
+  }
+  return normalized;
+}
+
+// Validate color array
+function validateColors(colors: unknown): string[] {
+  if (!colors) return [];
+  if (!Array.isArray(colors)) return [];
+  return colors
+    .filter((c): c is string => typeof c === 'string')
+    .slice(0, MAX_COLORS)
+    .map(c => c.trim().substring(0, 50));
+}
+
+// Validate style notes
+function validateStyleNotes(notes: unknown): string[] {
+  if (!notes) return [];
+  if (!Array.isArray(notes)) return [];
+  return notes
+    .filter((n): n is string => typeof n === 'string')
+    .slice(0, MAX_STYLE_NOTES)
+    .map(n => n.trim().substring(0, 200));
+}
+
+// Validate photo analysis object
+function validatePhotoAnalysis(analysis: unknown): StyleReportRequest['photoAnalysis'] | undefined {
+  if (!analysis || typeof analysis !== 'object') return undefined;
+  
+  const a = analysis as Record<string, unknown>;
+  
+  return {
+    skin_undertone: sanitizeString(a.skin_undertone, 'skin_undertone', 50) || undefined,
+    face_shape: sanitizeString(a.face_shape, 'face_shape', 50) || undefined,
+    style_personality: sanitizeString(a.style_personality, 'style_personality', 100) || undefined,
+    measurements: a.measurements && typeof a.measurements === 'object' ? {
+      estimated_height_range: sanitizeString((a.measurements as Record<string, unknown>).estimated_height_range, 'height_range', 50),
+      body_proportions: sanitizeString((a.measurements as Record<string, unknown>).body_proportions, 'body_proportions', 100),
+      shoulder_type: sanitizeString((a.measurements as Record<string, unknown>).shoulder_type, 'shoulder_type', 50),
+    } : undefined,
+    recommended_colors: validateColors(a.recommended_colors),
+    avoid_colors: validateColors(a.avoid_colors),
+    style_notes: validateStyleNotes(a.style_notes),
+  };
+}
+
+// Validate entire request
+function validateRequest(body: unknown): StyleReportRequest {
+  if (!body || typeof body !== 'object') {
+    throw new Error('Invalid request body');
+  }
+  
+  const b = body as Record<string, unknown>;
+  
+  const gender = sanitizeString(b.gender, 'gender');
+  const skinTone = sanitizeString(b.skinTone, 'skinTone');
+  const hairColor = sanitizeString(b.hairColor, 'hairColor');
+  const bodyType = sanitizeString(b.bodyType, 'bodyType');
+  const occasion = sanitizeString(b.occasion, 'occasion');
+  const season = sanitizeString(b.season, 'season');
+  
+  // Require basic fields
+  if (!gender || !skinTone || !bodyType) {
+    throw new Error('Missing required fields: gender, skinTone, and bodyType are required');
+  }
+  
+  return {
+    gender: validateEnum(gender, VALID_GENDERS, 'gender'),
+    skinTone,
+    hairColor: hairColor || 'Not specified',
+    bodyType: validateEnum(bodyType, VALID_BODY_TYPES, 'bodyType'),
+    occasion: validateEnum(occasion || 'casual', VALID_OCCASIONS, 'occasion'),
+    season: validateEnum(season || 'all', VALID_SEASONS, 'season'),
+    photoAnalysis: validatePhotoAnalysis(b.photoAnalysis),
+  };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const requestData = await req.json() as StyleReportRequest;
+    const rawBody = await req.json();
+    const requestData = validateRequest(rawBody);
     const { gender, skinTone, hairColor, bodyType, occasion, season, photoAnalysis } = requestData;
+    
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -218,8 +325,10 @@ Make every recommendation SPECIFIC to their unique combination of features. Avoi
     });
   } catch (error) {
     console.error("Error in generate-style-report:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
-      status: 500,
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const isValidationError = errorMessage.includes('required') || errorMessage.includes('must be');
+    return new Response(JSON.stringify({ error: isValidationError ? errorMessage : "An error occurred" }), {
+      status: isValidationError ? 400 : 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

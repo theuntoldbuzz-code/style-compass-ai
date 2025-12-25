@@ -15,18 +15,73 @@ interface RequestBody {
   history?: ChatMessage[];
 }
 
+// Input validation constants
+const MAX_MESSAGE_LENGTH = 2000;
+const MAX_HISTORY_LENGTH = 20;
+const MAX_HISTORY_ITEM_LENGTH = 1000;
+
+// Validate and sanitize chat message
+function validateMessage(message: unknown): string {
+  if (typeof message !== 'string') {
+    throw new Error('Message must be a string');
+  }
+  const trimmed = message.trim();
+  if (trimmed.length === 0) {
+    throw new Error('Message cannot be empty');
+  }
+  if (trimmed.length > MAX_MESSAGE_LENGTH) {
+    throw new Error(`Message exceeds maximum length of ${MAX_MESSAGE_LENGTH} characters`);
+  }
+  return trimmed;
+}
+
+// Validate chat history
+function validateHistory(history: unknown): ChatMessage[] {
+  if (!history) return [];
+  if (!Array.isArray(history)) {
+    throw new Error('History must be an array');
+  }
+  const historyArray: unknown[] = history.length > MAX_HISTORY_LENGTH 
+    ? history.slice(-MAX_HISTORY_LENGTH) 
+    : history;
+  
+  return historyArray.map((item: unknown, index: number) => {
+    if (typeof item !== 'object' || item === null) {
+      throw new Error(`History item ${index} is invalid`);
+    }
+    const { role, content } = item as Record<string, unknown>;
+    if (role !== 'user' && role !== 'assistant') {
+      throw new Error(`History item ${index} has invalid role`);
+    }
+    if (typeof content !== 'string') {
+      throw new Error(`History item ${index} has invalid content`);
+    }
+    const truncatedContent = content.length > MAX_HISTORY_ITEM_LENGTH 
+      ? content.substring(0, MAX_HISTORY_ITEM_LENGTH) + '...' 
+      : content;
+    return { role, content: truncatedContent };
+  });
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { message, history = [] }: RequestBody = await req.json();
+    const body = await req.json();
+    
+    // Validate inputs
+    const message = validateMessage(body.message);
+    const history = validateHistory(body.history);
+    
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
+
+    console.log(`Processing chat message (${message.length} chars, ${history.length} history items)`);
 
     const systemPrompt = `You are StyleAI, a friendly and knowledgeable Indian fashion advisor chatbot. You help users with:
 
@@ -99,9 +154,12 @@ This combo works great because..."`;
 
   } catch (error) {
     console.error("Style AI Chat error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    // Return user-friendly error for validation failures
+    const isValidationError = errorMessage.includes('Message') || errorMessage.includes('History');
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ error: isValidationError ? errorMessage : "An error occurred processing your request" }),
+      { status: isValidationError ? 400 : 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });

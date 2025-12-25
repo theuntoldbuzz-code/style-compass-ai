@@ -91,12 +91,20 @@ serve(async (req) => {
       );
     }
 
-    // Get public URL
-    const { data: urlData } = supabase.storage
+    // Generate signed URL for private bucket (24 hours expiry)
+    const { data: urlData, error: signError } = await supabase.storage
       .from('user-photos')
-      .getPublicUrl(filePath);
+      .createSignedUrl(filePath, 60 * 60 * 24); // 24 hour expiry
 
-    const photoUrl = urlData.publicUrl;
+    if (signError || !urlData) {
+      console.error('Failed to create signed URL:', signError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate photo URL' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const photoUrl = urlData.signedUrl;
 
     // Store in photo_analyses table with user_id (analysis will be added later)
     const { error: dbError } = await supabase
