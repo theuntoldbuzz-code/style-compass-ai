@@ -24,6 +24,13 @@ interface StyleReportCardProps {
 const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportCardProps) => {
   const reportRef = useRef<HTMLDivElement>(null);
 
+  // HTML escape function to prevent XSS
+  const escapeHtml = (str: string): string => {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  };
+
   const handleDownload = () => {
     // Create a printable version
     const printWindow = window.open('', '_blank');
@@ -79,16 +86,16 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
           
           <div class="section">
             <h2><span class="section-icon"></span>Skin Tone Analysis</h2>
-            <p><strong>Undertone:</strong> ${report.skinToneAnalysis.undertone}</p>
-            <p><strong>Season Type:</strong> ${report.skinToneAnalysis.seasonType}</p>
-            <p style="margin-top: 10px;">${report.skinToneAnalysis.description}</p>
+            <p><strong>Undertone:</strong> ${escapeHtml(report.skinToneAnalysis.undertone)}</p>
+            <p><strong>Season Type:</strong> ${escapeHtml(report.skinToneAnalysis.seasonType)}</p>
+            <p style="margin-top: 10px;">${escapeHtml(report.skinToneAnalysis.description)}</p>
           </div>
           
           <div class="section">
             <h2><span class="section-icon"></span>Body Type Analysis</h2>
-            <p><strong>Body Type:</strong> ${report.bodyTypeAnalysis.type}</p>
-            <p><strong>Strengths:</strong> ${report.bodyTypeAnalysis.strengths.join(', ')}</p>
-            <p style="margin-top: 10px;">${report.bodyTypeAnalysis.stylingFocus}</p>
+            <p><strong>Body Type:</strong> ${escapeHtml(report.bodyTypeAnalysis.type)}</p>
+            <p><strong>Strengths:</strong> ${report.bodyTypeAnalysis.strengths.map(s => escapeHtml(s)).join(', ')}</p>
+            <p style="margin-top: 10px;">${escapeHtml(report.bodyTypeAnalysis.stylingFocus)}</p>
           </div>
           
           <div class="section">
@@ -96,10 +103,10 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
             <div class="color-grid">
               ${report.bestColors.map(c => `
                 <div class="color-item">
-                  <div class="color-swatch" style="background-color: ${c.hex}"></div>
+                  <div class="color-swatch" style="background-color: ${escapeHtml(c.hex)}"></div>
                   <div class="color-info">
-                    <div class="color-name">${c.color}</div>
-                    <div class="color-reason">${c.reason}</div>
+                    <div class="color-name">${escapeHtml(c.color)}</div>
+                    <div class="color-reason">${escapeHtml(c.reason)}</div>
                   </div>
                 </div>
               `).join('')}
@@ -111,10 +118,10 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
             <div class="color-grid">
               ${report.colorsToAvoid.map(c => `
                 <div class="color-item">
-                  <div class="color-swatch" style="background-color: ${c.hex}"></div>
+                  <div class="color-swatch" style="background-color: ${escapeHtml(c.hex)}"></div>
                   <div class="color-info">
-                    <div class="color-name">${c.color}</div>
-                    <div class="color-reason">${c.reason}</div>
+                    <div class="color-name">${escapeHtml(c.color)}</div>
+                    <div class="color-reason">${escapeHtml(c.reason)}</div>
                   </div>
                 </div>
               `).join('')}
@@ -125,11 +132,11 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
             <h2><span class="section-icon"></span>Your 3 Signature Looks</h2>
             ${report.signatureLooks.map(look => `
               <div class="signature-look">
-                <h3>${look.name}</h3>
-                <p>${look.description}</p>
-                <p style="margin-top: 8px; font-size: 12px; color: #888;">Best for: ${look.occasion}</p>
+                <h3>${escapeHtml(look.name)}</h3>
+                <p>${escapeHtml(look.description)}</p>
+                <p style="margin-top: 8px; font-size: 12px; color: #888;">Best for: ${escapeHtml(look.occasion)}</p>
                 <div class="pieces">
-                  ${look.keyPieces.map(piece => `<span class="piece">${piece}</span>`).join('')}
+                  ${look.keyPieces.map(piece => `<span class="piece">${escapeHtml(piece)}</span>`).join('')}
                 </div>
               </div>
             `).join('')}
@@ -138,7 +145,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
           <div class="section">
             <h2><span class="section-icon"></span>Personalized Styling Tips</h2>
             <ul class="tips-list">
-              ${report.stylingTips.map(tip => `<li>• ${tip}</li>`).join('')}
+              ${report.stylingTips.map(tip => `<li>• ${escapeHtml(tip)}</li>`).join('')}
             </ul>
           </div>
         </body>
