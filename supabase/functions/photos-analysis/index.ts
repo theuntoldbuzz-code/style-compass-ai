@@ -58,11 +58,11 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const GEMINI_API_KEY = Deno.env.get('GOOGLE_GEMINI_API_KEY');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    if (!GEMINI_API_KEY) {
+      throw new Error("GOOGLE_GEMINI_API_KEY is not configured");
     }
 
     // Get user_id from authorization header
@@ -170,53 +170,7 @@ serve(async (req) => {
       }
     }
 
-    // Prepare the image content for Gemini
-    let imageContent: { type: string; image_url?: { url: string }; text?: string }[];
-    
-    if (imageBase64) {
-      imageContent = [
-        {
-          type: "image_url",
-          image_url: { url: imageBase64 }
-        },
-        {
-          type: "text",
-          text: `Analyze this image for fashion styling purposes. 
-
-FIRST, determine if this is a photo of a real human person. If it's not a human (e.g., an object, animal, cartoon, AI-generated art, or no person visible), respond with:
-{"isHuman": false, "confidence": 0, "error": "Please upload a clear photo of yourself for personalized style analysis."}
-
-If it IS a human photo, provide a detailed analysis in this exact JSON format:
-{
-  "isHuman": true,
-  "confidence": 95,
-  "body_type": "one of: hourglass, pear, apple, rectangle, inverted-triangle, athletic",
-  "skin_tone": "specific tone like: fair with pink undertones, light olive, medium warm, deep with golden undertones, etc.",
-  "hair_color": "specific color like: jet black, dark brown, chestnut, auburn, blonde, etc.",
-  "face_shape": "oval, round, square, heart, oblong, diamond",
-  "style_personality": "one of: Classic Elegant, Romantic Feminine, Natural Casual, Dramatic Bold, Creative Artistic, Sporty Chic",
-  "measurements": {
-    "estimated_height_range": "petite (under 5'3), average (5'3-5'6), tall (over 5'6)",
-    "body_proportions": "balanced, long torso, long legs, short torso",
-    "shoulder_type": "narrow, balanced, broad"
-  },
-  "recommended_colors": ["6-8 specific colors with hex codes that would flatter this person based on their coloring"],
-  "avoid_colors": ["3-4 colors to avoid with hex codes"],
-  "style_notes": ["4-5 specific, actionable styling observations for this person"]
-}
-
-Be specific and personalized. Analyze actual visible features.`
-        }
-      ];
-    } else if (photoUrl) {
-      imageContent = [
-        {
-          type: "image_url",
-          image_url: { url: photoUrl }
-        },
-        {
-          type: "text",
-          text: `Analyze this image for fashion styling purposes.
+    const analysisPrompt = `Analyze this image for fashion styling purposes.
 
 FIRST, determine if this is a photo of a real human person. If it's not a human (e.g., an object, animal, cartoon, AI-generated art, or no person visible), respond with:
 {"isHuman": false, "confidence": 0, "error": "Please upload a clear photo of yourself for personalized style analysis."}
@@ -241,9 +195,55 @@ If it IS a human photo, provide a detailed analysis in this exact JSON format:
   "style_notes": ["4-5 specific, actionable styling observations for this person"]
 }
 
-Be specific and personalized. Analyze actual visible features.`
-        }
-      ];
+Be specific and personalized. Analyze actual visible features.`;
+
+    // Prepare the request for Google Generative AI API
+    let requestBody: any;
+    
+    if (imageBase64) {
+      // Extract the base64 data and mime type
+      const matches = imageBase64.match(/^data:(.+);base64,(.+)$/);
+      if (matches) {
+        const mimeType = matches[1];
+        const base64Data = matches[2];
+        requestBody = {
+          contents: [{
+            parts: [
+              { text: analysisPrompt },
+              { inlineData: { mimeType, data: base64Data } }
+            ]
+          }]
+        };
+      } else {
+        // Assume it's raw base64 JPEG
+        requestBody = {
+          contents: [{
+            parts: [
+              { text: analysisPrompt },
+              { inlineData: { mimeType: "image/jpeg", data: imageBase64 } }
+            ]
+          }]
+        };
+      }
+    } else if (photoUrl) {
+      // For URL-based images, we need to fetch and convert to base64
+      console.log("Fetching image from URL:", photoUrl);
+      const imageResponse = await fetch(photoUrl);
+      if (!imageResponse.ok) {
+        throw new Error("Failed to fetch image from URL");
+      }
+      const imageBuffer = await imageResponse.arrayBuffer();
+      const base64Data = btoa(String.fromCharCode(...new Uint8Array(imageBuffer)));
+      const contentType = imageResponse.headers.get('content-type') || 'image/jpeg';
+      
+      requestBody = {
+        contents: [{
+          parts: [
+            { text: analysisPrompt },
+            { inlineData: { mimeType: contentType, data: base64Data } }
+          ]
+        }]
+      };
     } else {
       return new Response(
         JSON.stringify({ error: 'No image provided for analysis' }),
@@ -253,39 +253,29 @@ Be specific and personalized. Analyze actual visible features.`
 
     console.log("Sending image to Gemini for analysis...");
 
-    // Call Gemini API via Lovable AI Gateway
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          {
-            role: "user",
-            content: imageContent
-          }
-        ],
-      }),
-    });
+    // Call Google Generative AI API directly
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Gemini API error:", response.status, errorText);
+      
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits depleted. Please add credits to continue." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
+      
       return new Response(JSON.stringify({ error: "Failed to analyze photo" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -293,7 +283,7 @@ Be specific and personalized. Analyze actual visible features.`
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
     
     console.log("Gemini response received:", content?.substring(0, 200));
 

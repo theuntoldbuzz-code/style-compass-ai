@@ -83,6 +83,37 @@ function validateHistory(history: unknown): ChatMessage[] {
   });
 }
 
+// Convert chat messages to Gemini format
+function convertToGeminiFormat(systemPrompt: string, history: ChatMessage[], userMessage: string) {
+  const contents: any[] = [];
+  
+  // Add system instruction as the first user message
+  contents.push({
+    role: "user",
+    parts: [{ text: systemPrompt + "\n\nNow respond to the user's questions." }]
+  });
+  contents.push({
+    role: "model",
+    parts: [{ text: "I understand! I'm StyleAI, ready to help with fashion advice. What would you like to know?" }]
+  });
+  
+  // Add history
+  for (const msg of history) {
+    contents.push({
+      role: msg.role === "user" ? "user" : "model",
+      parts: [{ text: msg.content }]
+    });
+  }
+  
+  // Add current user message
+  contents.push({
+    role: "user",
+    parts: [{ text: userMessage }]
+  });
+  
+  return contents;
+}
+
 serve(async (req) => {
   const origin = req.headers.get('origin');
   const corsHeaders = getCorsHeaders(origin);
@@ -98,10 +129,10 @@ serve(async (req) => {
     const message = validateMessage(body.message);
     const history = validateHistory(body.history);
     
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const GEMINI_API_KEY = Deno.env.get("GOOGLE_GEMINI_API_KEY");
 
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    if (!GEMINI_API_KEY) {
+      throw new Error("GOOGLE_GEMINI_API_KEY is not configured");
     }
 
     console.log(`Processing chat message (${message.length} chars, ${history.length} history items)`);
@@ -131,44 +162,41 @@ Example format for outfit suggestions:
 
 This combo works great because..."`;
 
-    const messages = [
-      { role: "system", content: systemPrompt },
-      ...history,
-      { role: "user", content: message }
-    ];
+    const contents = convertToGeminiFormat(systemPrompt, history, message);
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages,
-        temperature: 0.7,
-        max_tokens: 500,
-      }),
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents,
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 500,
+          },
+        }),
+      }
+    );
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Gemini API error:", response.status, errorText);
+      
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Too many requests. Please try again in a moment." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Service temporarily unavailable. Please try again later." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      throw new Error(`AI gateway error: ${response.status}`);
+      throw new Error(`Gemini API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const assistantResponse = data.choices?.[0]?.message?.content || "I'm not sure how to help with that. Could you rephrase your question?";
+    const assistantResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 
+      "I'm not sure how to help with that. Could you rephrase your question?";
 
     return new Response(
       JSON.stringify({ response: assistantResponse }),
