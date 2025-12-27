@@ -58,11 +58,11 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const GEMINI_API_KEY = Deno.env.get('GOOGLE_GEMINI_API_KEY');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    if (!GEMINI_API_KEY) {
-      throw new Error("GOOGLE_GEMINI_API_KEY is not configured");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
 
     // Get user_id from authorization header
@@ -197,36 +197,16 @@ If it IS a human photo, provide a detailed analysis in this exact JSON format:
 
 Be specific and personalized. Analyze actual visible features.`;
 
-    // Prepare the request for Google Generative AI API
-    let requestBody: any;
-    
+    // Prepare image as a data URL for the AI gateway
+    let imageDataUrl: string | null = null;
+
     if (imageBase64) {
-      // Extract the base64 data and mime type
-      const matches = imageBase64.match(/^data:(.+);base64,(.+)$/);
-      if (matches) {
-        const mimeType = matches[1];
-        const base64Data = matches[2];
-        requestBody = {
-          contents: [{
-            parts: [
-              { text: analysisPrompt },
-              { inlineData: { mimeType, data: base64Data } }
-            ]
-          }]
-        };
-      } else {
-        // Assume it's raw base64 JPEG
-        requestBody = {
-          contents: [{
-            parts: [
-              { text: analysisPrompt },
-              { inlineData: { mimeType: "image/jpeg", data: imageBase64 } }
-            ]
-          }]
-        };
-      }
+      // If it's already a data URL, keep it; otherwise assume raw base64 jpeg
+      imageDataUrl = imageBase64.startsWith('data:')
+        ? imageBase64
+        : `data:image/jpeg;base64,${imageBase64}`;
     } else if (photoUrl) {
-      // For URL-based images, we need to fetch and convert to base64
+      // For URL-based images, fetch and convert to base64
       console.log("Fetching image from URL:", photoUrl);
       const imageResponse = await fetch(photoUrl);
       if (!imageResponse.ok) {
@@ -235,57 +215,78 @@ Be specific and personalized. Analyze actual visible features.`;
       const imageBuffer = await imageResponse.arrayBuffer();
       const base64Data = btoa(String.fromCharCode(...new Uint8Array(imageBuffer)));
       const contentType = imageResponse.headers.get('content-type') || 'image/jpeg';
-      
-      requestBody = {
-        contents: [{
-          parts: [
-            { text: analysisPrompt },
-            { inlineData: { mimeType: contentType, data: base64Data } }
-          ]
-        }]
-      };
-    } else {
+      imageDataUrl = `data:${contentType};base64,${base64Data}`;
+    }
+
+    if (!imageDataUrl) {
       return new Response(
         JSON.stringify({ error: 'No image provided for analysis' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log("Sending image to Gemini for analysis...");
+    console.log("Sending image to Lovable AI gateway for analysis...");
 
-    // Call Google Generative AI API directly
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      }
-    );
+    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a fashion photo analysis assistant. Return ONLY valid JSON. Do not wrap in markdown or code blocks.",
+          },
+          {
+            role: "user",
+            content: [
+              { type: "text", text: analysisPrompt },
+              { type: "image_url", image_url: { url: imageDataUrl } },
+            ],
+          },
+        ],
+      }),
+    });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Gemini API error:", response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
+    if (!aiResponse.ok) {
+      const errorText = await aiResponse.text();
+      console.error("AI gateway error:", aiResponse.status, errorText);
+
+      if (aiResponse.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please wait a few seconds and try again." }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      
+
+      if (aiResponse.status === 402) {
+        return new Response(JSON.stringify({ error: "AI credits are exhausted. Please add credits and try again." }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       return new Response(JSON.stringify({ error: "Failed to analyze photo" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const data = await response.json();
-    const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    
-    console.log("Gemini response received:", content?.substring(0, 200));
+    const data = await aiResponse.json();
+    const content = data.choices?.[0]?.message?.content;
+
+    console.log("AI response received:", typeof content === "string" ? content.substring(0, 200) : "<non-text>");
+
+    if (!content || typeof content !== "string") {
+      return new Response(JSON.stringify({ error: "Failed to analyze photo" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Parse the JSON from the response
     let analysisResult: AnalysisResult;
