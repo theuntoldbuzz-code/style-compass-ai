@@ -56,6 +56,13 @@ const ProcessingScreen = ({ onComplete, photo }: ProcessingScreenProps) => {
       });
 
       if (error) {
+        const status = (error as any)?.context?.status ?? (error as any)?.status;
+        if (status === 429) {
+          throw new Error("AI is busy right now. Please wait a few seconds and try again.");
+        }
+        if (status === 402) {
+          throw new Error("AI credits are exhausted. Please try again later.");
+        }
         throw new Error(error.message);
       }
 
