@@ -25,6 +25,23 @@ function getCorsHeaders(origin: string | null): Record<string, string> {
   };
 }
 
+function parseRetryAfterMs(resp: Response, bodyText: string): number {
+  const header = resp.headers.get("retry-after");
+  if (header) {
+    const s = Number(header);
+    if (!Number.isNaN(s) && s > 0) return Math.min(s * 1000, 8000);
+  }
+
+  // Best-effort parse for provider-like error payloads that include retryDelay: "25s"
+  const match = bodyText.match(/"retryDelay"\s*:\s*"(\d+)s"/);
+  if (match) {
+    const s = Number(match[1]);
+    if (!Number.isNaN(s) && s > 0) return Math.min(s * 1000, 8000);
+  }
+
+  return 1200;
+}
+
 interface StyleReportRequest {
   gender: string;
   skinTone: string;
@@ -165,11 +182,9 @@ serve(async (req) => {
     const rawBody = await req.json();
     const requestData = validateRequest(rawBody);
     const { gender, skinTone, hairColor, bodyType, occasion, season, photoAnalysis } = requestData;
-    
-    const GEMINI_API_KEY = Deno.env.get("GOOGLE_GEMINI_API_KEY");
-    
-    if (!GEMINI_API_KEY) {
-      throw new Error("GOOGLE_GEMINI_API_KEY is not configured");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
 
     console.log("Generating style report for:", { gender, skinTone, hairColor, bodyType, occasion, season });
@@ -284,31 +299,63 @@ Create a LUXURIOUS, AUTHENTIC style consultation. This should feel like advice f
 
 Make every recommendation SPECIFIC to their unique combination of features. Avoid generic advice.`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
-      {
+    // Use Lovable AI Gateway (OpenAI-compatible) to avoid direct provider quota issues.
+    const requestPayload = {
+      model: "google/gemini-3-flash-preview",
+      temperature: 0.7,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      stream: false,
+    };
+
+    const aiUrl = "https://ai.gateway.lovable.dev/v1/chat/completions";
+    let response: Response | null = null;
+    let lastErrorText = "";
+
+    // Retry a couple of times on transient 429s.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      response = await fetch(aiUrl, {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
-          }],
-          generationConfig: {
-            temperature: 0.7,
-          },
-        }),
-      }
-    );
+        body: JSON.stringify(requestPayload),
+      });
+
+      if (response.ok) break;
+
+      lastErrorText = await response.text();
+      if (response.status !== 429 || attempt === 2) break;
+
+      const waitMs = parseRetryAfterMs(response, lastErrorText);
+      console.warn(`AI gateway 429; retrying in ${waitMs}ms (attempt ${attempt + 1}/3)`);
+      await new Promise((r) => setTimeout(r, waitMs));
+    }
+
+    if (!response) {
+      return new Response(JSON.stringify({ error: "Failed to contact AI" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Gemini API error:", response.status, errorText);
+      const errorText = lastErrorText || await response.text();
+      console.error("AI gateway error:", response.status, errorText);
       
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
           status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "AI credits are exhausted. Please try again later." }), {
+          status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -320,7 +367,14 @@ Make every recommendation SPECIFIC to their unique combination of features. Avoi
     }
 
     const data = await response.json();
-    const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const content = data?.choices?.[0]?.message?.content as string | undefined;
+    if (!content || typeof content !== "string") {
+      console.error("Empty AI response received");
+      return new Response(JSON.stringify({ error: "Empty AI response. Please try again." }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     
     console.log("Style report generated, parsing response...");
 
