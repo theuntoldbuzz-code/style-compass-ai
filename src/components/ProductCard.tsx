@@ -1,4 +1,5 @@
-import { ExternalLink, Star, Tag, Heart } from "lucide-react";
+import { useState } from "react";
+import { ExternalLink, Star, Tag, Heart, ShoppingBag } from "lucide-react";
 import { Product } from "@/types/outfit";
 import { Button } from "@/components/ui/button";
 import { useCloset } from "@/hooks/useCloset";
@@ -14,6 +15,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { user } = useAuth();
   const { isItemSaved, saveItem, removeItem } = useCloset();
   const isSaved = isItemSaved(product.id);
+  const [imgError, setImgError] = useState(false);
+  const hasImage = product.imageUrl && product.imageUrl !== "" && product.imageUrl !== "/placeholder.svg" && !imgError;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -40,12 +43,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <div className="luxury-card overflow-hidden group hover:shadow-gold transition-all duration-500">
       {/* Image */}
-      <div className="relative aspect-[3/4] overflow-hidden">
-        <img 
-          src={product.imageUrl} 
-          alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        />
+      <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+        {hasImage ? (
+          <img 
+            src={product.imageUrl} 
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-muted/50">
+            <ShoppingBag className="w-12 h-12 text-muted-foreground/40" />
+            <span className="text-xs text-muted-foreground/60 font-medium px-4 text-center line-clamp-2">{product.brand} · {product.category}</span>
+          </div>
+        )}
         
         {/* Save Button */}
         <button

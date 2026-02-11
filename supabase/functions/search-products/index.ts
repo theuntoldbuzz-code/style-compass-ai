@@ -71,10 +71,11 @@ For EACH item, find a real product and provide:
 7. Direct product URL
 8. Color
 9. Rating (out of 5)
+10. Product image URL (the direct image URL from the product listing page, e.g. from Myntra CDN or Amazon product images)
 
 IMPORTANT: The TOTAL combined price of ALL items must be within ₹${budgetMin} to ₹${budgetMax}.
 Return EXACTLY 4-6 products that form a complete outfit.
-Format as JSON array with objects having: name, brand, category, price, originalPrice, store, storeUrl, color, rating.`;
+Format as JSON array with objects having: name, brand, category, price, originalPrice, store, storeUrl, color, rating, imageUrl.`;
 
       try {
         const perplexityResponse = await fetch("https://api.perplexity.ai/chat/completions", {
@@ -89,7 +90,7 @@ Format as JSON array with objects having: name, brand, category, price, original
               {
                 role: "system",
                 content:
-                  "You are a fashion product search assistant. Return ONLY a valid JSON array of product objects. No markdown, no explanation, just the JSON array. Each object must have: name, brand, category, price (number), originalPrice (number), store, storeUrl, color, rating (number).",
+                  "You are a fashion product search assistant. Return ONLY a valid JSON array of product objects. No markdown, no explanation, just the JSON array. Each object must have: name, brand, category, price (number), originalPrice (number), store, storeUrl, color, rating (number), imageUrl (string - the direct product image URL from the e-commerce site). For imageUrl, provide the actual product image URL from the store's CDN (e.g., assets.myntassets.com, m.media-amazon.com, rukminim2.flixcart.com).",
               },
               { role: "user", content: searchPrompt },
             ],
@@ -157,7 +158,7 @@ Format as JSON array with objects having: name, brand, category, price, original
           name: String(p.name || "Unknown Product"),
           brand: String(p.brand || "Unknown"),
           category: String(p.category || "Fashion"),
-          imageUrl: "", // Will be handled by frontend placeholder
+          imageUrl: String(p.imageUrl || p.image_url || p.image || ""),
           originalPrice: Number(p.originalPrice || p.price || 0),
           discountedPrice: Number(p.price || p.discountedPrice || 0),
           discount: p.originalPrice && p.price
