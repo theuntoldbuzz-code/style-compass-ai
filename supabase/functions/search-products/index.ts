@@ -71,11 +71,10 @@ For EACH item, find a real product and provide:
 7. Direct product URL
 8. Color
 9. Rating (out of 5)
-10. Product image URL (the direct image URL from the product listing page, e.g. from Myntra CDN or Amazon product images)
 
 IMPORTANT: The TOTAL combined price of ALL items must be within ₹${budgetMin} to ₹${budgetMax}.
 Return EXACTLY 4-6 products that form a complete outfit.
-Format as JSON array with objects having: name, brand, category, price, originalPrice, store, storeUrl, color, rating, imageUrl.`;
+Format as JSON array with objects having: name, brand, category, price, originalPrice, store, storeUrl, color, rating.`;
 
       try {
         const perplexityResponse = await fetch("https://api.perplexity.ai/chat/completions", {
@@ -90,7 +89,7 @@ Format as JSON array with objects having: name, brand, category, price, original
               {
                 role: "system",
                 content:
-                  "You are a fashion product search assistant. Return ONLY a valid JSON array of product objects. No markdown, no explanation, just the JSON array. Each object must have: name, brand, category, price (number), originalPrice (number), store, storeUrl, color, rating (number), imageUrl (string - the direct product image URL from the e-commerce site). For imageUrl, provide the actual product image URL from the store's CDN (e.g., assets.myntassets.com, m.media-amazon.com, rukminim2.flixcart.com).",
+                  "You are a fashion product search assistant. Return ONLY a valid JSON array of product objects. No markdown, no explanation, just the JSON array. Each object must have: name, brand, category, price (number), originalPrice (number), store, storeUrl, color, rating (number).",
               },
               { role: "user", content: searchPrompt },
             ],
@@ -142,23 +141,23 @@ Format as JSON array with objects having: name, brand, category, price, original
             ? jsonMatch[1] || jsonMatch[0]
             : content;
           products = JSON.parse(jsonStr.trim());
-        } catch {
-          console.error(`Failed to parse products for "${look.name}":`, content.substring(0, 300));
+        } catch (parseErr) {
+          console.error(`Failed to parse products for "${look.name}":`, content.substring(0, 500));
           continue;
         }
 
         if (!Array.isArray(products) || products.length === 0) {
-          console.error(`No products array for "${look.name}"`);
+          console.error(`No products array for "${look.name}", raw type: ${typeof products}, content preview: ${content.substring(0, 200)}`);
           continue;
         }
 
-        // Normalize products
+        // Map citation indices to real URLs
         const normalizedProducts = products.slice(0, 6).map((p: any, idx: number) => ({
           id: `${look.name.replace(/\s+/g, "-").toLowerCase()}-${idx}`,
           name: String(p.name || "Unknown Product"),
           brand: String(p.brand || "Unknown"),
           category: String(p.category || "Fashion"),
-          imageUrl: String(p.imageUrl || p.image_url || p.image || ""),
+          imageUrl: "", // Will be populated by OG image fetching below
           originalPrice: Number(p.originalPrice || p.price || 0),
           discountedPrice: Number(p.price || p.discountedPrice || 0),
           discount: p.originalPrice && p.price
@@ -169,6 +168,21 @@ Format as JSON array with objects having: name, brand, category, price, original
           rating: Number(p.rating || 4.0),
           color: String(p.color || ""),
         }));
+
+        // Construct proper search URLs for each product so "Shop Now" links work
+        for (const product of normalizedProducts) {
+          const searchQuery = encodeURIComponent(`${product.brand} ${product.name}`);
+          const store = (product.store || "").toLowerCase();
+          if (store.includes("myntra")) {
+            product.storeUrl = `https://www.myntra.com/${searchQuery.replace(/%20/g, "-").toLowerCase()}`;
+          } else if (store.includes("ajio")) {
+            product.storeUrl = `https://www.ajio.com/search/?text=${searchQuery}`;
+          } else if (store.includes("amazon")) {
+            product.storeUrl = `https://www.amazon.in/s?k=${searchQuery}`;
+          } else if (store.includes("flipkart")) {
+            product.storeUrl = `https://www.flipkart.com/search?q=${searchQuery}`;
+          }
+        }
 
         const totalOriginal = normalizedProducts.reduce(
           (sum: number, p: any) => sum + p.originalPrice,

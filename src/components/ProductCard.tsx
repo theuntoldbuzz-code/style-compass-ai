@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExternalLink, Star, Tag, Heart, ShoppingBag } from "lucide-react";
+import { ExternalLink, Star, Tag, Heart, Shirt, Footprints, Watch, Gem, ShoppingBag } from "lucide-react";
 import { Product } from "@/types/outfit";
 import { Button } from "@/components/ui/button";
 import { useCloset } from "@/hooks/useCloset";
@@ -17,6 +17,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const isSaved = isItemSaved(product.id);
   const [imgError, setImgError] = useState(false);
   const hasImage = product.imageUrl && product.imageUrl !== "" && product.imageUrl !== "/placeholder.svg" && !imgError;
+
+  const getCategoryIcon = (category: string) => {
+    const cat = category.toLowerCase();
+    if (cat.includes('shoe') || cat.includes('sandal') || cat.includes('heel') || cat.includes('boot')) return Footprints;
+    if (cat.includes('watch') || cat.includes('accessory') || cat.includes('bag') || cat.includes('belt')) return Watch;
+    if (cat.includes('jewel') || cat.includes('necklace') || cat.includes('earring') || cat.includes('ring')) return Gem;
+    if (cat.includes('shirt') || cat.includes('top') || cat.includes('tee') || cat.includes('kurta') || cat.includes('dress') || cat.includes('jacket') || cat.includes('pants') || cat.includes('jeans') || cat.includes('skirt')) return Shirt;
+    return ShoppingBag;
+  };
+  const CategoryIcon = getCategoryIcon(product.category);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -52,9 +62,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-muted/50">
-            <ShoppingBag className="w-12 h-12 text-muted-foreground/40" />
-            <span className="text-xs text-muted-foreground/60 font-medium px-4 text-center line-clamp-2">{product.brand} · {product.category}</span>
+          <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-muted via-muted/80 to-muted/60 relative">
+            <div className="absolute inset-0 opacity-[0.03]" style={{
+              backgroundImage: `repeating-linear-gradient(45deg, currentColor 0px, currentColor 1px, transparent 1px, transparent 12px)`
+            }} />
+            <CategoryIcon className="w-16 h-16 text-primary/30" strokeWidth={1} />
+            <div className="text-center px-4 space-y-1">
+              <p className="text-sm font-semibold text-foreground/70">{product.brand}</p>
+              <p className="text-xs text-muted-foreground">{product.category} · {product.color}</p>
+            </div>
+            <div className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+              View on {product.store} →
+            </div>
           </div>
         )}
         
