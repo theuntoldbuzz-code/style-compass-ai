@@ -169,18 +169,29 @@ Format as JSON array with objects having: name, brand, category, price, original
           color: String(p.color || ""),
         }));
 
-        // Construct proper search URLs for each product so "Shop Now" links work
+        // Always construct working search URLs regardless of what Perplexity returns
         for (const product of normalizedProducts) {
-          const searchQuery = encodeURIComponent(`${product.brand} ${product.name}`);
+          const searchQuery = encodeURIComponent(`${product.brand} ${product.name}`.trim());
           const store = (product.store || "").toLowerCase();
           if (store.includes("myntra")) {
-            product.storeUrl = `https://www.myntra.com/${searchQuery.replace(/%20/g, "-").toLowerCase()}`;
+            product.storeUrl = `https://www.myntra.com/${encodeURIComponent(product.name.replace(/\s+/g, "-").toLowerCase())}`;
           } else if (store.includes("ajio")) {
             product.storeUrl = `https://www.ajio.com/search/?text=${searchQuery}`;
           } else if (store.includes("amazon")) {
             product.storeUrl = `https://www.amazon.in/s?k=${searchQuery}`;
           } else if (store.includes("flipkart")) {
             product.storeUrl = `https://www.flipkart.com/search?q=${searchQuery}`;
+          } else if (store.includes("tata") || store.includes("cliq")) {
+            product.storeUrl = `https://www.tatacliq.com/search/?searchCategory=all&text=${searchQuery}`;
+          } else if (store.includes("nykaa")) {
+            product.storeUrl = `https://www.nykaafashion.com/search/result/?q=${searchQuery}`;
+          } else if (store.includes("h&m") || store.includes("hm")) {
+            product.storeUrl = `https://www2.hm.com/en_in/search-results.html?q=${searchQuery}`;
+          } else if (store.includes("zara")) {
+            product.storeUrl = `https://www.zara.com/in/en/search?searchTerm=${searchQuery}`;
+          } else {
+            // Fallback: Google Shopping search for any unknown store
+            product.storeUrl = `https://www.google.com/search?tbm=shop&q=${searchQuery}`;
           }
         }
 
