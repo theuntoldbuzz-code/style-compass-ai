@@ -80,10 +80,14 @@ Total combined price must be within budget. Return EXACTLY 4-6 products as a JSO
               color: String(p.color || ""),
             };
 
-            // Build working search URLs
+            // Build working search URLs - use storeUrl from AI if it looks valid
+            const aiUrl = String(p.storeUrl || p.url || "");
             const searchQuery = encodeURIComponent(`${product.brand} ${product.name}`.trim());
             const store = product.store.toLowerCase();
-            if (store.includes("myntra")) {
+            
+            if (aiUrl.startsWith("http") && !aiUrl.includes("google.com")) {
+              product.storeUrl = aiUrl;
+            } else if (store.includes("myntra")) {
               product.storeUrl = `https://www.myntra.com/${encodeURIComponent(product.name.replace(/\s+/g, "-").toLowerCase())}`;
             } else if (store.includes("ajio")) {
               product.storeUrl = `https://www.ajio.com/search/?text=${searchQuery}`;
@@ -96,7 +100,8 @@ Total combined price must be within budget. Return EXACTLY 4-6 products as a JSO
             } else if (store.includes("zara")) {
               product.storeUrl = `https://www.zara.com/in/en/search?searchTerm=${searchQuery}`;
             } else {
-              product.storeUrl = `https://www.google.com/search?tbm=shop&q=${searchQuery}`;
+              // Fallback to Amazon India search instead of Google (which gets blocked)
+              product.storeUrl = `https://www.amazon.in/s?k=${searchQuery}`;
             }
 
             return product;
