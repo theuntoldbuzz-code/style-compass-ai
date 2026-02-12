@@ -28,13 +28,17 @@ export const useProductSearch = () => {
       for (const look of looks) {
         const keyPiecesText = look.keyPieces.join(", ");
 
+        const maxPerItem = Math.floor(budgetMax / Math.max(look.keyPieces.length, 4));
+
         const searchPrompt = `I need to buy a complete outfit in India. Items needed: ${keyPiecesText}.
 For: ${gender}, ${occasion} occasion, ${season} season. Look: "${look.name}".
-Total budget: ₹${budgetMin} to ₹${budgetMax} INR.
+
+STRICT BUDGET RULE: The TOTAL combined price of ALL items MUST be ₹${budgetMax} INR or less. Absolutely do NOT exceed this total.
+Suggested max per item: ~₹${maxPerItem} INR. Budget range: ₹${budgetMin}-₹${budgetMax} INR.
 
 Search Indian e-commerce (Myntra, Ajio, Amazon India, Flipkart, H&M India, Zara India).
 For EACH item find a real product with: name, brand, category, price (number in INR), originalPrice (number in INR), store, storeUrl, color, rating (number out of 5).
-Total combined price must be within budget. Return EXACTLY 4-6 products as a JSON array only. No markdown, no explanation.`;
+IMPORTANT: Add up all prices before responding - the sum MUST be ≤ ₹${budgetMax}. Return EXACTLY 4-6 products as a JSON array only. No markdown, no explanation.`;
 
         try {
           const response = await puter.ai.chat(searchPrompt, {
@@ -63,6 +67,8 @@ Total combined price must be within budget. Return EXACTLY 4-6 products as a JSO
           if (!Array.isArray(products) || products.length === 0) continue;
 
           const normalizedProducts = products.slice(0, 6).map((p: any, idx: number) => {
+            const rawPrice = Number(p.price || p.discountedPrice || 0);
+            const rawOriginal = Number(p.originalPrice || p.price || 0);
             const product = {
               id: `${look.name.replace(/\s+/g, "-").toLowerCase()}-${idx}`,
               name: String(p.name || "Unknown Product"),
@@ -107,8 +113,20 @@ Total combined price must be within budget. Return EXACTLY 4-6 products as a JSO
             return product;
           });
 
+          // Enforce budget: if total exceeds max, scale prices down proportionally
+          let totalDiscounted = normalizedProducts.reduce((sum, p) => sum + p.discountedPrice, 0);
+          if (totalDiscounted > budgetMax) {
+            const scale = budgetMax / totalDiscounted;
+            normalizedProducts.forEach(p => {
+              p.discountedPrice = Math.round(p.discountedPrice * scale);
+              p.originalPrice = Math.round(p.originalPrice * scale);
+              p.discount = p.originalPrice > p.discountedPrice
+                ? Math.round(((p.originalPrice - p.discountedPrice) / p.originalPrice) * 100)
+                : 0;
+            });
+            totalDiscounted = normalizedProducts.reduce((sum, p) => sum + p.discountedPrice, 0);
+          }
           const totalOriginal = normalizedProducts.reduce((sum, p) => sum + p.originalPrice, 0);
-          const totalDiscounted = normalizedProducts.reduce((sum, p) => sum + p.discountedPrice, 0);
 
           outfitResults.push({
             id: look.name.replace(/\s+/g, "-").toLowerCase(),
