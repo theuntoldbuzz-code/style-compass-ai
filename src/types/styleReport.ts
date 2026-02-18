@@ -1,4 +1,5 @@
 export interface StyleReport {
+  styleProfileSummary?: string;
   skinToneAnalysis: {
     undertone: string;
     description: string;
@@ -13,6 +14,14 @@ export interface StyleReport {
     avoidStyles?: string[];
     fitTips?: string;
   };
+  colorStrategy?: {
+    whyTheseColors?: string;
+    coreColors?: string[];
+    accentColors?: string[];
+    useSparingly?: string[];
+    everydayCombos?: string;
+    statementCombos?: string;
+  };
   bestColors: Array<{
     color: string;
     hex: string;
@@ -25,6 +34,31 @@ export interface StyleReport {
     reason: string;
     alternative?: string;
   }>;
+  heightProportionStyling?: {
+    techniques?: string;
+    lengths?: string;
+    visualTricks?: string;
+    footwearGuidance?: string;
+  };
+  lifestyleOutfitDirection?: {
+    dailyWear?: string;
+    primaryOccasion?: string;
+    balanceTip?: string;
+  };
+  stylePersonalityDeepDive?: {
+    essence?: string;
+    fabrics?: string;
+    textures?: string;
+    prints?: string;
+    accessoriesDirection?: string;
+    standoutFactor?: string;
+  };
+  budgetStrategy?: {
+    philosophy?: string;
+    investIn?: string[];
+    saveOn?: string[];
+    maxValueTip?: string;
+  };
   bestPatterns: Array<{
     pattern: string;
     reason: string;
@@ -38,7 +72,16 @@ export interface StyleReport {
     stylingNotes?: string;
     confidenceBooster?: string;
   }>;
+  essentialWardrobe?: {
+    tops?: string[];
+    bottoms?: string[];
+    layering?: string[];
+    footwear?: string[];
+    accessories?: string[];
+  };
   stylingTips: string[];
+  stylingDos?: string[];
+  stylingDonts?: string[];
   accessoryGuide: {
     jewelry: string;
     bags: string;
@@ -56,6 +99,7 @@ export interface StyleReport {
     statementPieces: string[];
     layeringTips: string;
   };
+  finalStylistNote?: string;
 }
 
 export interface PhotoAnalysisResult {
