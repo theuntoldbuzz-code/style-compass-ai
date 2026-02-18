@@ -3,14 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { 
   Sparkles, ArrowRight, ArrowLeft, Check, Palette, 
   User, Ruler, Calendar, Wand2, Star, Flame, Crown,
-  Flower2, Zap, Heart
+  Flower2, Zap, Heart, UserCircle, Loader2
 } from "lucide-react";
 import fashionQuiz1 from "@/assets/fashion-7.avif";
 import fashionQuiz2 from "@/assets/fashion-8.avif";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { supabase } from "@/integrations/supabase/client";
+import { StyleReport } from "@/types/styleReport";
+import { toast } from "@/hooks/use-toast";
+import StyleReportCard from "@/components/StyleReport/StyleReportCard";
 
 interface QuizAnswer {
+  gender: string;
   preferredColors: string[];
   bodyType: string;
   heightShape: string;
@@ -64,6 +69,19 @@ const questions = [
     ]
   },
   {
+    id: "gender",
+    title: "What's your gender?",
+    subtitle: "This helps us tailor recommendations to your preferences",
+    icon: UserCircle,
+    type: "single",
+    options: [
+      { value: "male", label: "Male", desc: "Men's fashion & styling" },
+      { value: "female", label: "Female", desc: "Women's fashion & styling" },
+      { value: "non-binary", label: "Non-Binary", desc: "Gender-neutral styling" },
+      { value: "other", label: "Prefer not to say", desc: "Universal fashion advice" },
+    ]
+  },
+  {
     id: "occasion",
     title: "What do you dress for most often?",
     subtitle: "We'll prioritize outfits for your lifestyle",
@@ -112,6 +130,7 @@ const StyleQuiz = () => {
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer>({
+    gender: "",
     preferredColors: [],
     bodyType: "",
     heightShape: "",
@@ -120,6 +139,9 @@ const StyleQuiz = () => {
     budget: ""
   });
   const [isComplete, setIsComplete] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedReport, setGeneratedReport] = useState<StyleReport | null>(null);
+  const [generationStage, setGenerationStage] = useState("");
 
   const question = questions[currentQuestion];
   const progress = ((currentQuestion + 1) / questions.length) * 100;
@@ -165,23 +187,128 @@ const StyleQuiz = () => {
     }
   };
 
-  const handleGetResults = () => {
-    // Map quiz answers to UserProfile format
-    const profile = {
-      gender: "unisex",
-      skinTone: "medium",
-      hairColor: "black",
-      bodyType: answers.bodyType,
-      occasion: answers.occasion,
-      season: "summer",
-      budgetMin: answers.budget === "budget" ? 0 : answers.budget === "mid" ? 1500 : answers.budget === "premium" ? 5000 : 15000,
-      budgetMax: answers.budget === "budget" ? 1500 : answers.budget === "mid" ? 5000 : answers.budget === "premium" ? 15000 : 50000,
-      preferredColors: answers.preferredColors,
-      stylePersonality: answers.stylePersonality,
-      heightShape: answers.heightShape,
-    };
-    navigate("/recommendations", { state: { profile, fromQuiz: true } });
+  const handleGenerateReport = async () => {
+    setIsGenerating(true);
+    setGenerationStage("Analyzing your style preferences...");
+
+    try {
+      const stages = [
+        "Analyzing your style preferences...",
+        "Crafting your color palette...",
+        "Building your signature looks...",
+        "Finalizing your personalized report...",
+      ];
+      let stageIdx = 0;
+      const stageInterval = setInterval(() => {
+        stageIdx++;
+        if (stageIdx < stages.length) {
+          setGenerationStage(stages[stageIdx]);
+        }
+      }, 4000);
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({ title: "Please sign in", description: "You need to be logged in to generate a style report.", variant: "destructive" });
+        setIsGenerating(false);
+        clearInterval(stageInterval);
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('generate-style-report', {
+        body: {
+          gender: answers.gender,
+          preferredColors: answers.preferredColors,
+          bodyType: answers.bodyType,
+          heightShape: answers.heightShape,
+          occasion: answers.occasion,
+          stylePersonality: answers.stylePersonality,
+          budget: answers.budget,
+        },
+      });
+
+      clearInterval(stageInterval);
+
+      if (error) {
+        const status = (error as any)?.context?.status ?? (error as any)?.status;
+        if (status === 429) {
+          throw new Error("AI is busy right now. Please wait a few seconds and try again.");
+        }
+        if (status === 402) {
+          throw new Error("AI credits are exhausted. Please try again later.");
+        }
+        throw new Error(error.message || "Failed to generate report");
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      if (data?.report) {
+        setGeneratedReport(data.report);
+      } else {
+        throw new Error("No report data received");
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to generate report";
+      toast({ title: "Error", description: msg, variant: "destructive" });
+    } finally {
+      setIsGenerating(false);
+    }
   };
+
+  // Show generated report
+  if (generatedReport) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <button
+              onClick={() => { setGeneratedReport(null); setIsComplete(true); }}
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="hidden sm:inline">Back to Summary</span>
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <span className="font-serif text-lg">LuxFit AI</span>
+            </div>
+            <div className="w-20" />
+          </div>
+        </header>
+        <main className="container mx-auto px-4 py-8 max-w-4xl">
+          <StyleReportCard report={generatedReport} />
+        </main>
+      </div>
+    );
+  }
+
+  // Show generating screen
+  if (isGenerating) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-primary/5 rounded-full blur-3xl animate-pulse" />
+        </div>
+        <div className="luxury-card p-8 md:p-12 text-center max-w-lg relative z-10">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-gold flex items-center justify-center shadow-gold">
+            <Loader2 className="w-10 h-10 text-primary-foreground animate-spin" />
+          </div>
+          <h2 className="font-serif text-2xl text-foreground mb-4">
+            Generating Your <span className="text-gradient-gold">Style Report</span>
+          </h2>
+          <p className="text-muted-foreground mb-6">{generationStage}</p>
+          <Progress value={65} className="h-2" />
+          <p className="text-xs text-muted-foreground mt-4">
+            Our AI stylist is crafting a premium, personalized fashion consultation just for you
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (isComplete) {
     return (
@@ -191,7 +318,6 @@ const StyleQuiz = () => {
           <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-primary/5 rounded-full blur-3xl animate-pulse" />
         </div>
         
-        {/* Decorative Fashion Images */}
         <div className="hidden lg:block fixed left-8 top-1/2 -translate-y-1/2 w-48 aspect-[3/4] rounded-2xl overflow-hidden opacity-30 rotate-[-6deg]">
           <img src={fashionQuiz1} alt="" className="w-full h-full object-cover" />
         </div>
@@ -208,11 +334,14 @@ const StyleQuiz = () => {
           </h2>
           <p className="text-muted-foreground mb-8">
             Based on your answers, we've created a personalized style profile just for you. 
-            Get ready to discover outfits that match your unique personality!
+            Get your AI-powered fashion report now!
           </p>
           
-          {/* Summary */}
           <div className="grid grid-cols-2 gap-3 mb-8 text-left">
+            <div className="bg-secondary/50 rounded-xl p-3">
+              <p className="text-xs text-muted-foreground">Gender</p>
+              <p className="text-sm font-medium text-foreground capitalize">{answers.gender || "Not set"}</p>
+            </div>
             <div className="bg-secondary/50 rounded-xl p-3">
               <p className="text-xs text-muted-foreground">Style</p>
               <p className="text-sm font-medium text-foreground capitalize">{answers.stylePersonality}</p>
@@ -226,14 +355,18 @@ const StyleQuiz = () => {
               <p className="text-sm font-medium text-foreground capitalize">{answers.bodyType}</p>
             </div>
             <div className="bg-secondary/50 rounded-xl p-3">
+              <p className="text-xs text-muted-foreground">Height</p>
+              <p className="text-sm font-medium text-foreground capitalize">{answers.heightShape}</p>
+            </div>
+            <div className="bg-secondary/50 rounded-xl p-3">
               <p className="text-xs text-muted-foreground">Budget</p>
               <p className="text-sm font-medium text-foreground capitalize">{answers.budget}</p>
             </div>
           </div>
           
-          <Button variant="luxury" size="xl" onClick={handleGetResults} className="w-full">
+          <Button variant="luxury" size="xl" onClick={handleGenerateReport} className="w-full">
             <Sparkles className="w-5 h-5 mr-2" />
-            See My Personalized Looks
+            Generate My Style Report
           </Button>
         </div>
       </div>
@@ -253,7 +386,7 @@ const StyleQuiz = () => {
       {/* Header */}
       <header className="relative z-10 container mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
-          <button onClick={() => navigate("/")} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={() => currentQuestion > 0 ? handleBack() : navigate("/")} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-5 h-5" />
             <span className="hidden sm:inline">Back</span>
           </button>
@@ -263,7 +396,6 @@ const StyleQuiz = () => {
           <div className="w-20" />
         </div>
         
-        {/* Progress */}
         <div className="mt-4">
           <Progress value={progress} className="h-2" />
         </div>
@@ -304,10 +436,9 @@ const StyleQuiz = () => {
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-start gap-4">
-                  {/* Color swatches for color question */}
                   {'colors' in option && (
                     <div className="flex gap-1">
-                      {option.colors.map((color, i) => (
+                      {(option as any).colors.map((color: string, i: number) => (
                         <div
                           key={i}
                           className="w-6 h-6 rounded-full border border-border/50"
@@ -317,15 +448,14 @@ const StyleQuiz = () => {
                     </div>
                   )}
                   
-                  {/* Icon for style personality */}
                   {'styleIcon' in option && (
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      {option.styleIcon === "Flame" && <Flame className="w-5 h-5 text-primary" />}
-                      {option.styleIcon === "Sparkles" && <Sparkles className="w-5 h-5 text-primary" />}
-                      {option.styleIcon === "Crown" && <Crown className="w-5 h-5 text-primary" />}
-                      {option.styleIcon === "Flower2" && <Flower2 className="w-5 h-5 text-primary" />}
-                      {option.styleIcon === "Zap" && <Zap className="w-5 h-5 text-primary" />}
-                      {option.styleIcon === "Heart" && <Heart className="w-5 h-5 text-primary" />}
+                      {(option as any).styleIcon === "Flame" && <Flame className="w-5 h-5 text-primary" />}
+                      {(option as any).styleIcon === "Sparkles" && <Sparkles className="w-5 h-5 text-primary" />}
+                      {(option as any).styleIcon === "Crown" && <Crown className="w-5 h-5 text-primary" />}
+                      {(option as any).styleIcon === "Flower2" && <Flower2 className="w-5 h-5 text-primary" />}
+                      {(option as any).styleIcon === "Zap" && <Zap className="w-5 h-5 text-primary" />}
+                      {(option as any).styleIcon === "Heart" && <Heart className="w-5 h-5 text-primary" />}
                     </div>
                   )}
                   

@@ -1,179 +1,25 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-// CORS configuration - restrict to allowed origins
-const ALLOWED_ORIGINS = [
-  'http://localhost:5173',
-  'http://localhost:8080',
-  'http://localhost:3000',
-];
-
-// Check if origin is allowed (includes Lovable preview domains)
-function isAllowedOrigin(origin: string | null): boolean {
-  if (!origin) return false;
-  if (ALLOWED_ORIGINS.includes(origin)) return true;
-  if (/^https:\/\/[a-z0-9-]+\.lovable\.app$/.test(origin)) return true;
-  if (/^https:\/\/[a-z0-9-]+\.lovableproject\.com$/.test(origin)) return true;
-  return false;
-}
-
-function getCorsHeaders(origin: string | null): Record<string, string> {
-  const allowedOrigin = isAllowedOrigin(origin) ? origin! : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Allow-Credentials': 'true',
-  };
-}
-
-function parseRetryAfterMs(resp: Response, bodyText: string): number {
-  const header = resp.headers.get("retry-after");
-  if (header) {
-    const s = Number(header);
-    if (!Number.isNaN(s) && s > 0) return Math.min(s * 1000, 8000);
-  }
-
-  // Best-effort parse for provider-like error payloads that include retryDelay: "25s"
-  const match = bodyText.match(/"retryDelay"\s*:\s*"(\d+)s"/);
-  if (match) {
-    const s = Number(match[1]);
-    if (!Number.isNaN(s) && s > 0) return Math.min(s * 1000, 8000);
-  }
-
-  return 1200;
-}
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
+};
 
 interface StyleReportRequest {
   gender: string;
-  skinTone: string;
-  hairColor: string;
+  preferredColors: string[];
   bodyType: string;
+  heightShape: string;
   occasion: string;
-  season: string;
-  photoAnalysis?: {
-    skin_undertone?: string;
-    face_shape?: string;
-    style_personality?: string;
-    measurements?: {
-      estimated_height_range: string;
-      body_proportions: string;
-      shoulder_type: string;
-    };
-    recommended_colors?: string[];
-    avoid_colors?: string[];
-    style_notes?: string[];
-  };
-}
-
-// Input validation constants
-const MAX_STRING_LENGTH = 100;
-const MAX_STYLE_NOTES = 10;
-const MAX_COLORS = 20;
-const VALID_HEX_PATTERN = /^#[0-9A-Fa-f]{6}$/;
-
-// Allowed values for enumerated fields
-const VALID_GENDERS = ['male', 'female', 'non-binary', 'other'];
-const VALID_SEASONS = ['spring', 'summer', 'autumn', 'fall', 'winter', 'monsoon', 'all'];
-const VALID_OCCASIONS = ['office', 'casual', 'formal', 'wedding', 'festive', 'party', 'date-night', 'brunch', 'traditional', 'all'];
-const VALID_BODY_TYPES = ['hourglass', 'pear', 'apple', 'rectangle', 'inverted-triangle', 'athletic', 'plus-size', 'petite', 'tall'];
-
-// Sanitize string input
-function sanitizeString(value: unknown, fieldName: string, maxLength = MAX_STRING_LENGTH): string {
-  if (value === undefined || value === null) {
-    return '';
-  }
-  if (typeof value !== 'string') {
-    throw new Error(`${fieldName} must be a string`);
-  }
-  return value.trim().substring(0, maxLength);
-}
-
-// Validate enumerated value
-function validateEnum(value: string, allowedValues: string[], fieldName: string): string {
-  const normalized = value.toLowerCase().trim();
-  if (!allowedValues.includes(normalized)) {
-    // Return a default rather than throwing for flexibility
-    console.warn(`Invalid ${fieldName}: ${value}. Using default.`);
-    return allowedValues[0];
-  }
-  return normalized;
-}
-
-// Validate color array
-function validateColors(colors: unknown): string[] {
-  if (!colors) return [];
-  if (!Array.isArray(colors)) return [];
-  return colors
-    .filter((c): c is string => typeof c === 'string')
-    .slice(0, MAX_COLORS)
-    .map(c => c.trim().substring(0, 50));
-}
-
-// Validate style notes
-function validateStyleNotes(notes: unknown): string[] {
-  if (!notes) return [];
-  if (!Array.isArray(notes)) return [];
-  return notes
-    .filter((n): n is string => typeof n === 'string')
-    .slice(0, MAX_STYLE_NOTES)
-    .map(n => n.trim().substring(0, 200));
-}
-
-// Validate photo analysis object
-function validatePhotoAnalysis(analysis: unknown): StyleReportRequest['photoAnalysis'] | undefined {
-  if (!analysis || typeof analysis !== 'object') return undefined;
-  
-  const a = analysis as Record<string, unknown>;
-  
-  return {
-    skin_undertone: sanitizeString(a.skin_undertone, 'skin_undertone', 50) || undefined,
-    face_shape: sanitizeString(a.face_shape, 'face_shape', 50) || undefined,
-    style_personality: sanitizeString(a.style_personality, 'style_personality', 100) || undefined,
-    measurements: a.measurements && typeof a.measurements === 'object' ? {
-      estimated_height_range: sanitizeString((a.measurements as Record<string, unknown>).estimated_height_range, 'height_range', 50),
-      body_proportions: sanitizeString((a.measurements as Record<string, unknown>).body_proportions, 'body_proportions', 100),
-      shoulder_type: sanitizeString((a.measurements as Record<string, unknown>).shoulder_type, 'shoulder_type', 50),
-    } : undefined,
-    recommended_colors: validateColors(a.recommended_colors),
-    avoid_colors: validateColors(a.avoid_colors),
-    style_notes: validateStyleNotes(a.style_notes),
-  };
-}
-
-// Validate entire request
-function validateRequest(body: unknown): StyleReportRequest {
-  if (!body || typeof body !== 'object') {
-    throw new Error('Invalid request body');
-  }
-  
-  const b = body as Record<string, unknown>;
-  
-  const gender = sanitizeString(b.gender, 'gender');
-  const skinTone = sanitizeString(b.skinTone, 'skinTone');
-  const hairColor = sanitizeString(b.hairColor, 'hairColor');
-  const bodyType = sanitizeString(b.bodyType, 'bodyType');
-  const occasion = sanitizeString(b.occasion, 'occasion');
-  const season = sanitizeString(b.season, 'season');
-  
-  // Require basic fields
-  if (!gender || !skinTone || !bodyType) {
-    throw new Error('Missing required fields: gender, skinTone, and bodyType are required');
-  }
-  
-  return {
-    gender: validateEnum(gender, VALID_GENDERS, 'gender'),
-    skinTone,
-    hairColor: hairColor || 'Not specified',
-    bodyType: validateEnum(bodyType, VALID_BODY_TYPES, 'bodyType'),
-    occasion: validateEnum(occasion || 'casual', VALID_OCCASIONS, 'occasion'),
-    season: validateEnum(season || 'all', VALID_SEASONS, 'season'),
-    photoAnalysis: validatePhotoAnalysis(b.photoAnalysis),
-  };
+  stylePersonality: string;
+  budget: string;
+  skinTone?: string;
+  hairColor?: string;
+  season?: string;
+  photoAnalysis?: Record<string, unknown>;
 }
 
 serve(async (req) => {
-  const origin = req.headers.get('origin');
-  const corsHeaders = getCorsHeaders(origin);
-  
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -189,179 +35,256 @@ serve(async (req) => {
     }
 
     const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.49.1");
-    const supabaseAuth = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+    
     const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
       return new Response(
         JSON.stringify({ error: 'Invalid or expired token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    const userId = claimsData.claims.sub;
-    console.log(`Authenticated user: ${userId}`);
+    console.log(`Authenticated user: ${user.id}`);
 
     const rawBody = await req.json();
-    const requestData = validateRequest(rawBody);
-    const { gender, skinTone, hairColor, bodyType, occasion, season, photoAnalysis } = requestData;
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    const {
+      gender = 'male',
+      preferredColors = [],
+      bodyType = 'rectangle',
+      heightShape = 'average',
+      occasion = 'casual',
+      stylePersonality = 'classic',
+      budget = 'mid',
+      skinTone,
+      hairColor,
+      season,
+      photoAnalysis,
+    } = rawBody as StyleReportRequest;
+
+    // Map budget to range text
+    const budgetMap: Record<string, string> = {
+      'budget': 'Under ₹1,500',
+      'mid': '₹1,500 - ₹5,000',
+      'premium': '₹5,000 - ₹15,000',
+      'luxury': '₹15,000+',
+    };
+    const budgetRange = budgetMap[budget] || budget;
+
+    // Map color values to readable names
+    const colorMap: Record<string, string> = {
+      'neutral': 'Neutrals (Beige, Cream, Brown)',
+      'bold': 'Bold & Bright (Red, Orange, Yellow)',
+      'cool': 'Cool Tones (Blue, Teal, Purple)',
+      'pastel': 'Soft Pastels (Pink, Lavender, Mint)',
+      'earth': 'Earth Tones (Green, Rust, Terracotta)',
+      'monochrome': 'Black & White (Classic Monochrome)',
+    };
+    const colorNames = preferredColors.map((c: string) => colorMap[c] || c).join(', ');
+
+    const heightMap: Record<string, string> = {
+      'petite': 'Petite (Under 5\'3")',
+      'average': 'Average (5\'3" - 5\'6")',
+      'tall': 'Tall (5\'7" - 5\'10")',
+      'very-tall': 'Very Tall (Above 5\'10")',
+    };
+    const heightLabel = heightMap[heightShape] || heightShape;
+
+    const styleMap: Record<string, string> = {
+      'bold': 'Bold & Trendy',
+      'minimal': 'Minimal & Clean',
+      'classic': 'Classic & Elegant',
+      'boho': 'Bohemian & Free',
+      'edgy': 'Edgy & Street',
+      'romantic': 'Romantic & Feminine',
+    };
+    const styleLabel = styleMap[stylePersonality] || stylePersonality;
+
+    const occasionMap: Record<string, string> = {
+      'casual': 'Everyday Casual',
+      'work': 'Office & Work',
+      'party': 'Party & Events',
+      'date': 'Date Nights',
+      'ethnic': 'Traditional & Ethnic',
+      'mix': 'Mix of Everything',
+    };
+    const occasionLabel = occasionMap[occasion] || occasion;
+
+    const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY");
+    if (!GROQ_API_KEY) {
+      throw new Error("GROQ_API_KEY is not configured");
     }
 
-    console.log("Generating style report for:", { gender, skinTone, hairColor, bodyType, occasion, season });
-    console.log("Photo analysis available:", !!photoAnalysis);
+    console.log("Generating style report via Groq for:", { gender, bodyType, heightShape, occasion, stylePersonality, budget });
 
-    const systemPrompt = `You are a world-class professional fashion designer, celebrity stylist, and personal image consultant with 15+ years of experience in luxury fashion, high-street fashion, Indian traditional wear, western wear, seasonal styling, color theory, fabric science, body-type optimization, and grooming aesthetics.
+    const systemPrompt = `You are a world-class professional fashion stylist, personal image consultant, and luxury wardrobe expert with experience styling clients across casual, office, ethnic, and premium fashion segments.
 
-You have styled:
-- Celebrities
-- Corporate professionals
-- Wedding guests
-- Casual lifestyle influencers
-across all genders, body types, skin tones, ages, seasons, and cultures.
+You specialize in:
+- Body-type-based styling
+- Color psychology & complexion harmony
+- Height & proportion balancing
+- Lifestyle-driven outfit planning
+- Budget-optimized fashion recommendations
 
-Your task is to analyze the user's provided personal details and context, and then design a complete, head-to-toe outfit recommendation that looks premium, intentional, and expertly curated.
+Your task is to generate a highly professional, detailed, expert-level personalized fashion report that looks premium, trustworthy, and extremely valuable.
 
-You must think like a real human stylist, not a generic AI.
+The report should feel like it was created by a top human stylist, not an AI.
 
-ANALYSIS INSTRUCTIONS (VERY IMPORTANT)
-Before suggesting outfits, internally analyze:
-- Facial structure & proportions (from any photo analysis data)
-- Body balance (shoulders, waist, height perception)
-- Skin undertone (warm / cool / neutral)
-- Color harmony with skin & hair
-- Season-appropriate fabrics
-- Occasion appropriateness
-- Cultural and traditional suitability (especially for Indian wear)
-- Practical comfort + visual elegance
+Tone & Style Guidelines:
+- Confident, polished, and expert
+- Clear sections with headings
+- Practical, actionable advice
+- Elegant but easy to read
+- No emojis
+- No fluff, no repetition
 
-Your goal is to enhance the user's natural strengths and avoid anything that clashes with their body, skin tone, or event.
-
-TONE & QUALITY RULES
-- Sound like a luxury stylist, not a shopping bot
-- Be confident, refined, and precise
-- Avoid generic advice
-- Every suggestion must feel intentional and premium
-- Never overwhelm — clarity > quantity
-
-Your response must be valid JSON with this EXACT structure:
+IMPORTANT: Your response must be valid JSON matching this exact structure:
 {
+  "styleProfileSummary": "A concise but premium overview explaining the user's overall fashion identity, dominant style personality, and how their preferences combine into a unique personal look. This should feel like a luxury stylist's diagnosis.",
   "skinToneAnalysis": {
-    "undertone": "warm/cool/neutral - be specific like 'warm with golden undertones'",
-    "description": "3-4 sentences explaining their unique coloring, what makes it special, and how light interacts with their skin. Reference their specific hair color.",
-    "seasonType": "One of: Bright Spring, True Spring, Light Spring, Light Summer, True Summer, Soft Summer, Soft Autumn, True Autumn, Deep Autumn, Deep Winter, True Winter, Bright Winter",
-    "colorTemperature": "Explanation of whether they should lean warm or cool and why",
-    "metalPreference": "Gold, Silver, Rose Gold, or Mixed - with explanation"
+    "undertone": "warm/cool/neutral assessment",
+    "description": "Detailed analysis",
+    "seasonType": "Color season type",
+    "colorTemperature": "Whether to lean warm or cool",
+    "metalPreference": "Gold/Silver/Rose Gold with explanation"
   },
   "bodyTypeAnalysis": {
-    "type": "Their body type with a positive, empowering description",
-    "strengths": ["4 specific body features to celebrate and highlight"],
-    "stylingFocus": "3-4 sentences on silhouettes, cuts, and proportions that will make them look incredible",
-    "avoidStyles": ["2-3 specific cuts or styles that won't flatter as much and why"],
-    "fitTips": "Specific advice on how clothes should fit their unique proportions"
+    "type": "Body type with positive description",
+    "strengths": ["4 specific body features to highlight"],
+    "stylingFocus": "Silhouettes, cuts, proportions guidance",
+    "avoidStyles": ["2-3 cuts or styles to avoid"],
+    "fitTips": "Specific fit advice"
+  },
+  "colorStrategy": {
+    "whyTheseColors": "Why their preferred colors suit their personality",
+    "coreColors": ["Best core colors"],
+    "accentColors": ["Accent colors"],
+    "useSparingly": ["Colors to use sparingly"],
+    "everydayCombos": "How to combine for everyday",
+    "statementCombos": "How to combine for statements"
   },
   "bestColors": [
-    {"color": "Specific color name", "hex": "#accurate_hexcode", "reason": "Why this color makes THEM look amazing, referencing their specific features", "howToWear": "Specific suggestion for using this color"}
+    {"color": "Name", "hex": "#hexcode", "reason": "Why it suits them", "howToWear": "How to use it"}
   ],
   "colorsToAvoid": [
-    {"color": "Specific color name", "hex": "#hexcode", "reason": "Why this doesn't work for their specific coloring", "alternative": "A better alternative color"}
+    {"color": "Name", "hex": "#hexcode", "reason": "Why to avoid", "alternative": "Better alternative"}
   ],
+  "heightProportionStyling": {
+    "techniques": "Proportion-balancing techniques",
+    "lengths": "Recommended lengths for tops, bottoms, outerwear",
+    "visualTricks": "Vertical or horizontal styling tricks",
+    "footwearGuidance": "Heel/sole type guidance"
+  },
+  "lifestyleOutfitDirection": {
+    "dailyWear": "Daily wear recommendations",
+    "primaryOccasion": "Specific occasion-based outfit direction",
+    "balanceTip": "How to stay stylish without over-dressing"
+  },
+  "stylePersonalityDeepDive": {
+    "essence": "The essence of their style",
+    "fabrics": "Recommended fabrics",
+    "textures": "Recommended textures",
+    "prints": "Recommended prints",
+    "accessoriesDirection": "Accessories direction",
+    "standoutFactor": "What makes their style stand out"
+  },
+  "budgetStrategy": {
+    "philosophy": "Smart shopping philosophy",
+    "investIn": ["Where to invest"],
+    "saveOn": ["Where to save"],
+    "maxValueTip": "How to maximize value per outfit"
+  },
   "bestPatterns": [
-    {"pattern": "Pattern name", "reason": "Why it works for their body type and style", "examples": "Specific examples"}
+    {"pattern": "Name", "reason": "Why it works", "examples": "Specific examples"}
   ],
   "signatureLooks": [
     {
-      "name": "Evocative name for the look",
-      "description": "Rich, visual description including outfit direction (Western/Traditional/Fusion based on user). For males: upper wear (type, color, fabric, fit), lower wear, layering, footwear, accessories, grooming tips. For females: outfit direction, upper wear (neckline, sleeve), lower wear, traditional wear option if suitable (saree/lehenga/anarkali etc with fabric & drape style), layering, footwear (heel height), accessories (jewelry type - minimal/statement/traditional, earrings, bangles, bag), hair & makeup direction.",
-      "keyPieces": ["5-6 specific pieces with fabric, cut, color details"],
-      "occasion": "When to wear this look",
-      "stylingNotes": "How to put it together, accessories, finishing touches. Include 2-3 styling pro-tips and one confidence tip (posture, attitude, grooming).",
-      "confidenceBooster": "Why this look will make them feel amazing"
+      "name": "Evocative name",
+      "description": "Rich visual description with outfit direction",
+      "keyPieces": ["5-6 specific pieces"],
+      "occasion": "When to wear",
+      "stylingNotes": "How to put it together",
+      "confidenceBooster": "Why this look makes them feel amazing"
     }
   ],
-  "stylingTips": [
-    "8-10 highly personalized, actionable tips specific to their features"
-  ],
+  "essentialWardrobe": {
+    "tops": ["Must-have tops"],
+    "bottoms": ["Must-have bottoms"],
+    "layering": ["Layering pieces"],
+    "footwear": ["Footwear essentials"],
+    "accessories": ["Accessory essentials"]
+  },
+  "stylingTips": ["8-10 highly personalized actionable tips"],
+  "stylingDos": ["4-6 practical dos"],
+  "stylingDonts": ["4-6 practical don'ts"],
   "accessoryGuide": {
-    "jewelry": "Detailed recommendations - metals, styles, scales. For females include earrings (studs/jhumkas/hoops), neckwear, bangles/bracelets",
-    "bags": "Specific bag styles, sizes, colors",
-    "shoes": "Types, heel heights (if applicable), toe shapes, comfort vs elegance balance. For males: sneakers/loafers/oxfords/mojaris/boots. For females: sneakers/sandals/heels/wedges/juttis",
-    "scarves": "How to use scarves/dupattas/stoles and which colors/patterns work",
-    "belts": "Belt styles, watch type, sunglasses (if applicable), traditional accessories"
+    "jewelry": "Detailed jewelry recommendations",
+    "bags": "Bag styles and colors",
+    "shoes": "Footwear guidance",
+    "scarves": "Scarves/dupattas/stoles guidance",
+    "belts": "Belt and other accessories"
   },
   "shoppingGuide": {
-    "investmentPieces": ["5 pieces worth spending more on"],
-    "budgetFriendly": ["5 pieces they can buy affordably"],
-    "brandsToExplore": ["5-6 brands that cater to their body type and style"]
+    "investmentPieces": ["5 worth investing in"],
+    "budgetFriendly": ["5 budget-friendly picks"],
+    "brandsToExplore": ["5-6 brand suggestions"]
   },
   "seasonalWardrobe": {
-    "capsuleEssentials": ["10 versatile foundation pieces"],
-    "statementPieces": ["3 bold pieces expressing their style personality"],
-    "layeringTips": "How to layer for the specified season while looking polished"
-  }
+    "capsuleEssentials": ["10 versatile pieces"],
+    "statementPieces": ["3 bold pieces"],
+    "layeringTips": "Seasonal layering advice"
+  },
+  "finalStylistNote": "A short, premium stylist message that builds confidence, encourages experimentation, and reinforces their unique style identity."
 }
 
-Include 8 best colors, 4 colors to avoid, 4 patterns, and 4 signature looks (one for the primary occasion plus 3 versatile ones).`;
+Include 8 best colors, 4 colors to avoid, 4 patterns, and 4 signature looks.
+Do NOT mention AI, models, or prompts. The report must feel like a paid fashion consultation.`;
 
-    // Build user prompt with all personal details
-    let userPrompt = `🧠 STYLIST'S CLIENT BRIEF — Analyze and create a premium style consultation:
-
-USER PROFILE:
+    let userPrompt = `User Profile:
 - Gender: ${gender}
-- Skin Tone: ${skinTone}
-- Hair Color: ${hairColor}
+- Preferred Colors: ${colorNames}
 - Body Type: ${bodyType}
-- Occasion: ${occasion}
-- Season: ${season}`;
+- Height Category: ${heightLabel}
+- Primary Dressing Purpose: ${occasionLabel}
+- Style Personality: ${styleLabel}
+- Budget Per Outfit: ${budgetRange}`;
+
+    if (skinTone) userPrompt += `\n- Skin Tone: ${skinTone}`;
+    if (hairColor) userPrompt += `\n- Hair Color: ${hairColor}`;
+    if (season) userPrompt += `\n- Season: ${season}`;
 
     if (photoAnalysis) {
-      userPrompt += `
-
-AI PHOTO ANALYSIS DATA (use for deeply personalized recommendations):
-- Skin Undertone: ${photoAnalysis.skin_undertone || 'Not analyzed'}
-- Face Shape: ${photoAnalysis.face_shape || 'Not analyzed'}
-- Style Personality: ${photoAnalysis.style_personality || 'Not analyzed'}
-- Height Range: ${photoAnalysis.measurements?.estimated_height_range || 'Not analyzed'}
-- Body Proportions: ${photoAnalysis.measurements?.body_proportions || 'Not analyzed'}
-- Shoulder Type: ${photoAnalysis.measurements?.shoulder_type || 'Not analyzed'}
-- Recommended Colors: ${photoAnalysis.recommended_colors?.join(', ') || 'Not analyzed'}
-- Colors to Avoid: ${photoAnalysis.avoid_colors?.join(', ') || 'Not analyzed'}
-- Style Notes: ${photoAnalysis.style_notes?.join('; ') || 'Not analyzed'}`;
+      userPrompt += `\n\nAI Photo Analysis Data:\n${JSON.stringify(photoAnalysis, null, 2)}`;
     }
 
-    userPrompt += `
+    userPrompt += `\n\nGenerate the complete personalized fashion report as specified. Every suggestion must feel intentional and premium.`;
 
-Design a complete head-to-toe style report. Think like a real human stylist who truly sees this person. Every suggestion must feel intentional and premium.`;
-
-    // Use Lovable AI Gateway (OpenAI-compatible) to avoid direct provider quota issues.
-    const requestPayload = {
-      model: "google/gemini-3-flash-preview",
-      temperature: 0.7,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      stream: false,
-    };
-
-    const aiUrl = "https://ai.gateway.lovable.dev/v1/chat/completions";
+    // Call Groq API
+    const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
     let response: Response | null = null;
     let lastErrorText = "";
 
-    // Retry a couple of times on transient 429s.
     for (let attempt = 0; attempt < 3; attempt++) {
-      response = await fetch(aiUrl, {
+      response = await fetch(groqUrl, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          Authorization: `Bearer ${GROQ_API_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestPayload),
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          temperature: 0.7,
+          max_tokens: 8000,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          response_format: { type: "json_object" },
+        }),
       });
 
       if (response.ok) break;
@@ -369,67 +292,46 @@ Design a complete head-to-toe style report. Think like a real human stylist who 
       lastErrorText = await response.text();
       if (response.status !== 429 || attempt === 2) break;
 
-      const waitMs = parseRetryAfterMs(response, lastErrorText);
-      console.warn(`AI gateway 429; retrying in ${waitMs}ms (attempt ${attempt + 1}/3)`);
-      await new Promise((r) => setTimeout(r, waitMs));
+      console.warn(`Groq 429; retrying (attempt ${attempt + 1}/3)`);
+      await new Promise((r) => setTimeout(r, 2000));
     }
 
-    if (!response) {
-      return new Response(JSON.stringify({ error: "Failed to contact AI" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    if (!response.ok) {
-      const errorText = lastErrorText || await response.text();
-      console.error("AI gateway error:", response.status, errorText);
+    if (!response || !response.ok) {
+      const errorText = lastErrorText || (response ? await response.text() : "No response");
+      console.error("Groq API error:", response?.status, errorText);
       
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits are exhausted. Please try again later." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+      if (response?.status === 429) {
+        return new Response(JSON.stringify({ error: "AI is busy. Please wait a few seconds and try again." }), {
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       
-      return new Response(JSON.stringify({ error: "Failed to generate style report" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify({ error: "Failed to generate style report. Please try again." }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const data = await response.json();
     const content = data?.choices?.[0]?.message?.content as string | undefined;
-    if (!content || typeof content !== "string") {
-      console.error("Empty AI response received");
+    if (!content) {
+      console.error("Empty Groq response");
       return new Response(JSON.stringify({ error: "Empty AI response. Please try again." }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    
+
     console.log("Style report generated, parsing response...");
 
-    // Parse the JSON from the response
     let styleReport;
     try {
-      // Extract JSON from potential markdown code blocks
       const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) || content.match(/```\n?([\s\S]*?)\n?```/);
       const jsonStr = jsonMatch ? jsonMatch[1] : content;
       styleReport = JSON.parse(jsonStr.trim());
     } catch (parseError) {
-      console.error("Failed to parse AI response:", parseError);
+      console.error("Failed to parse Groq response:", parseError);
       console.error("Raw content:", content?.substring(0, 500));
       return new Response(JSON.stringify({ error: "Failed to parse style report. Please try again." }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -441,10 +343,8 @@ Design a complete head-to-toe style report. Think like a real human stylist who 
   } catch (error) {
     console.error("Error in generate-style-report:", error);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    const isValidationError = errorMessage.includes('required') || errorMessage.includes('must be');
-    return new Response(JSON.stringify({ error: isValidationError ? errorMessage : "An error occurred" }), {
-      status: isValidationError ? 400 : 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });

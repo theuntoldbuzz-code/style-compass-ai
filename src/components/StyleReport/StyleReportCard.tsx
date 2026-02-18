@@ -1,17 +1,9 @@
 import { StyleReport } from "@/types/styleReport";
 import { 
-  Sparkles, 
-  Palette, 
-  Ban, 
-  Grid3X3, 
-  Shirt, 
-  Lightbulb,
-  Crown,
-  Gem,
-  ShoppingBag,
-  Footprints,
-  Download,
-  Share2
+  Sparkles, Palette, Ban, Grid3X3, Shirt, Lightbulb,
+  Crown, Gem, ShoppingBag, Footprints, Download, Share2,
+  CheckCircle2, XCircle, Ruler, Heart, Briefcase, Quote,
+  Layers, DollarSign
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
@@ -24,7 +16,6 @@ interface StyleReportCardProps {
 const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportCardProps) => {
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // HTML escape function to prevent XSS
   const escapeHtml = (str: string): string => {
     const div = document.createElement('div');
     div.textContent = str;
@@ -32,7 +23,6 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
   };
 
   const handleDownload = () => {
-    // Create a printable version
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     
@@ -43,18 +33,12 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
           <title>LuxFit AI - Your Personal Style Report</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { 
-              font-family: 'Georgia', serif; 
-              background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-              color: #fff;
-              padding: 40px;
-              min-height: 100vh;
-            }
+            body { font-family: 'Georgia', serif; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); color: #fff; padding: 40px; min-height: 100vh; }
             .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #d4af37; }
             .header h1 { font-size: 36px; color: #d4af37; margin-bottom: 10px; }
             .header p { color: #888; font-size: 14px; }
             .section { margin-bottom: 30px; background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; }
-            .section h2 { color: #d4af37; font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+            .section h2 { color: #d4af37; font-size: 20px; margin-bottom: 15px; }
             .section p { color: #ccc; line-height: 1.7; }
             .color-grid { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; }
             .color-item { display: flex; align-items: center; gap: 10px; }
@@ -67,87 +51,53 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
             .tips-list li:last-child { border-bottom: none; }
             .signature-look { background: rgba(212,175,55,0.1); padding: 20px; border-radius: 8px; margin-top: 15px; border-left: 3px solid #d4af37; }
             .signature-look h3 { color: #d4af37; margin-bottom: 10px; }
-            .signature-look .pieces { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-            .signature-look .piece { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 12px; }
-            .section-icon { display: inline-block; width: 24px; height: 24px; background: #d4af37; border-radius: 6px; margin-right: 10px; vertical-align: middle; }
-            @media print {
-              body { background: #fff; color: #000; }
-              .section { background: #f5f5f5; }
-              .section h2 { color: #b8860b; }
-              .section p, .tips-list li { color: #333; }
-            }
+            .pieces { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+            .piece { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 12px; }
+            .stylist-note { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05)); padding: 30px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.3); text-align: center; margin-top: 30px; }
+            .stylist-note p { color: #d4af37; font-style: italic; font-size: 16px; line-height: 1.8; }
+            @media print { body { background: #fff; color: #000; } .section { background: #f5f5f5; } .section h2 { color: #b8860b; } .section p, .tips-list li { color: #333; } }
           </style>
         </head>
         <body>
           <div class="header">
             <h1>LuxFit AI</h1>
-            <p>Your Personal Style Report • Generated ${new Date().toLocaleDateString()}</p>
+            <p>Your Personal Style Report &bull; Generated ${new Date().toLocaleDateString()}</p>
           </div>
           
+          ${report.styleProfileSummary ? `<div class="section"><h2>Style Profile Summary</h2><p>${escapeHtml(report.styleProfileSummary)}</p></div>` : ''}
+          
           <div class="section">
-            <h2><span class="section-icon"></span>Skin Tone Analysis</h2>
+            <h2>Skin Tone Analysis</h2>
             <p><strong>Undertone:</strong> ${escapeHtml(report.skinToneAnalysis.undertone)}</p>
             <p><strong>Season Type:</strong> ${escapeHtml(report.skinToneAnalysis.seasonType)}</p>
             <p style="margin-top: 10px;">${escapeHtml(report.skinToneAnalysis.description)}</p>
           </div>
           
           <div class="section">
-            <h2><span class="section-icon"></span>Body Type Analysis</h2>
+            <h2>Body Type Analysis</h2>
             <p><strong>Body Type:</strong> ${escapeHtml(report.bodyTypeAnalysis.type)}</p>
             <p><strong>Strengths:</strong> ${report.bodyTypeAnalysis.strengths.map(s => escapeHtml(s)).join(', ')}</p>
             <p style="margin-top: 10px;">${escapeHtml(report.bodyTypeAnalysis.stylingFocus)}</p>
           </div>
           
           <div class="section">
-            <h2><span class="section-icon"></span>Your Best Colors</h2>
+            <h2>Your Best Colors</h2>
             <div class="color-grid">
-              ${report.bestColors.map(c => `
-                <div class="color-item">
-                  <div class="color-swatch" style="background-color: ${escapeHtml(c.hex)}"></div>
-                  <div class="color-info">
-                    <div class="color-name">${escapeHtml(c.color)}</div>
-                    <div class="color-reason">${escapeHtml(c.reason)}</div>
-                  </div>
-                </div>
-              `).join('')}
+              ${report.bestColors.map(c => `<div class="color-item"><div class="color-swatch" style="background-color: ${escapeHtml(c.hex)}"></div><div class="color-info"><div class="color-name">${escapeHtml(c.color)}</div><div class="color-reason">${escapeHtml(c.reason)}</div></div></div>`).join('')}
             </div>
           </div>
-          
+
           <div class="section">
-            <h2><span class="section-icon"></span>Colors to Avoid</h2>
-            <div class="color-grid">
-              ${report.colorsToAvoid.map(c => `
-                <div class="color-item">
-                  <div class="color-swatch" style="background-color: ${escapeHtml(c.hex)}"></div>
-                  <div class="color-info">
-                    <div class="color-name">${escapeHtml(c.color)}</div>
-                    <div class="color-reason">${escapeHtml(c.reason)}</div>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
+            <h2>Signature Looks</h2>
+            ${report.signatureLooks.map(look => `<div class="signature-look"><h3>${escapeHtml(look.name)}</h3><p>${escapeHtml(look.description)}</p><p style="margin-top: 8px; font-size: 12px; color: #888;">Best for: ${escapeHtml(look.occasion)}</p><div class="pieces">${look.keyPieces.map(piece => `<span class="piece">${escapeHtml(piece)}</span>`).join('')}</div></div>`).join('')}
           </div>
           
           <div class="section">
-            <h2><span class="section-icon"></span>Your 3 Signature Looks</h2>
-            ${report.signatureLooks.map(look => `
-              <div class="signature-look">
-                <h3>${escapeHtml(look.name)}</h3>
-                <p>${escapeHtml(look.description)}</p>
-                <p style="margin-top: 8px; font-size: 12px; color: #888;">Best for: ${escapeHtml(look.occasion)}</p>
-                <div class="pieces">
-                  ${look.keyPieces.map(piece => `<span class="piece">${escapeHtml(piece)}</span>`).join('')}
-                </div>
-              </div>
-            `).join('')}
+            <h2>Styling Tips</h2>
+            <ul class="tips-list">${report.stylingTips.map(tip => `<li>&bull; ${escapeHtml(tip)}</li>`).join('')}</ul>
           </div>
-          
-          <div class="section">
-            <h2><span class="section-icon"></span>Personalized Styling Tips</h2>
-            <ul class="tips-list">
-              ${report.stylingTips.map(tip => `<li>• ${escapeHtml(tip)}</li>`).join('')}
-            </ul>
-          </div>
+
+          ${report.finalStylistNote ? `<div class="stylist-note"><p>"${escapeHtml(report.finalStylistNote)}"</p></div>` : ''}
         </body>
       </html>
     `);
@@ -166,21 +116,28 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
         <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-2">
           Your Personal <span className="text-gradient-gold">Style DNA</span>
         </h2>
-        <p className="text-muted-foreground">
-          Curated exclusively for you by LuxFit AI
-        </p>
+        <p className="text-muted-foreground">Curated exclusively for you by LuxFit AI</p>
         
         <div className="flex justify-center gap-3 mt-6">
           <Button variant="luxury" onClick={handleDownload} className="gap-2">
             <Download className="w-4 h-4" />
             Download Report
           </Button>
-          <Button variant="luxuryOutline" className="gap-2">
-            <Share2 className="w-4 h-4" />
-            Share
-          </Button>
         </div>
       </div>
+
+      {/* Style Profile Summary */}
+      {report.styleProfileSummary && (
+        <div className="luxury-card p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 className="font-serif text-xl text-foreground">Style Profile Summary</h3>
+          </div>
+          <p className="text-muted-foreground leading-relaxed">{report.styleProfileSummary}</p>
+        </div>
+      )}
 
       {/* Skin Tone Analysis */}
       <div className="luxury-card p-6">
@@ -193,11 +150,22 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
             <p className="text-sm text-muted-foreground">Your color season: {report.skinToneAnalysis.seasonType}</p>
           </div>
         </div>
-        <div className="bg-secondary/30 rounded-xl p-4 mb-4">
-          <p className="text-sm text-muted-foreground mb-1">Undertone</p>
-          <p className="text-foreground font-medium capitalize">{report.skinToneAnalysis.undertone}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <div className="bg-secondary/30 rounded-xl p-4">
+            <p className="text-sm text-muted-foreground mb-1">Undertone</p>
+            <p className="text-foreground font-medium capitalize">{report.skinToneAnalysis.undertone}</p>
+          </div>
+          {report.skinToneAnalysis.metalPreference && (
+            <div className="bg-secondary/30 rounded-xl p-4">
+              <p className="text-sm text-muted-foreground mb-1">Metal Preference</p>
+              <p className="text-foreground font-medium">{report.skinToneAnalysis.metalPreference}</p>
+            </div>
+          )}
         </div>
         <p className="text-muted-foreground leading-relaxed">{report.skinToneAnalysis.description}</p>
+        {report.skinToneAnalysis.colorTemperature && (
+          <p className="text-muted-foreground leading-relaxed mt-2 text-sm italic">{report.skinToneAnalysis.colorTemperature}</p>
+        )}
       </div>
 
       {/* Body Type Analysis */}
@@ -213,13 +181,84 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
         </div>
         <div className="flex flex-wrap gap-2 mb-4">
           {report.bodyTypeAnalysis.strengths.map((strength, i) => (
-            <span key={i} className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm">
-              {strength}
-            </span>
+            <span key={i} className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm">{strength}</span>
           ))}
         </div>
         <p className="text-muted-foreground leading-relaxed">{report.bodyTypeAnalysis.stylingFocus}</p>
+        {report.bodyTypeAnalysis.fitTips && (
+          <p className="text-muted-foreground leading-relaxed mt-2 text-sm">{report.bodyTypeAnalysis.fitTips}</p>
+        )}
       </div>
+
+      {/* Height & Proportion */}
+      {report.heightProportionStyling && (
+        <div className="luxury-card p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
+              <Ruler className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 className="font-serif text-xl text-foreground">Height & Proportion Styling</h3>
+          </div>
+          <div className="space-y-3">
+            {report.heightProportionStyling.techniques && (
+              <p className="text-muted-foreground leading-relaxed">{report.heightProportionStyling.techniques}</p>
+            )}
+            {report.heightProportionStyling.lengths && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm text-muted-foreground mb-1">Recommended Lengths</p>
+                <p className="text-foreground text-sm">{report.heightProportionStyling.lengths}</p>
+              </div>
+            )}
+            {report.heightProportionStyling.footwearGuidance && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm text-muted-foreground mb-1">Footwear Guidance</p>
+                <p className="text-foreground text-sm">{report.heightProportionStyling.footwearGuidance}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Color Strategy */}
+      {report.colorStrategy && (
+        <div className="luxury-card p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
+              <Palette className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 className="font-serif text-xl text-foreground">Color Strategy</h3>
+          </div>
+          {report.colorStrategy.whyTheseColors && (
+            <p className="text-muted-foreground leading-relaxed mb-4">{report.colorStrategy.whyTheseColors}</p>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {report.colorStrategy.coreColors && report.colorStrategy.coreColors.length > 0 && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm text-muted-foreground mb-2">Core Colors</p>
+                <div className="flex flex-wrap gap-1">{report.colorStrategy.coreColors.map((c, i) => (
+                  <span key={i} className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs">{c}</span>
+                ))}</div>
+              </div>
+            )}
+            {report.colorStrategy.accentColors && report.colorStrategy.accentColors.length > 0 && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm text-muted-foreground mb-2">Accent Colors</p>
+                <div className="flex flex-wrap gap-1">{report.colorStrategy.accentColors.map((c, i) => (
+                  <span key={i} className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs">{c}</span>
+                ))}</div>
+              </div>
+            )}
+            {report.colorStrategy.useSparingly && report.colorStrategy.useSparingly.length > 0 && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm text-muted-foreground mb-2">Use Sparingly</p>
+                <div className="flex flex-wrap gap-1">{report.colorStrategy.useSparingly.map((c, i) => (
+                  <span key={i} className="px-2 py-1 rounded-full bg-destructive/10 text-destructive text-xs">{c}</span>
+                ))}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Best Colors */}
       <div className="luxury-card p-6">
@@ -232,10 +271,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {report.bestColors.map((color, i) => (
             <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-secondary/30">
-              <div 
-                className="w-12 h-12 rounded-full border-2 border-border shadow-lg flex-shrink-0"
-                style={{ backgroundColor: color.hex }}
-              />
+              <div className="w-12 h-12 rounded-full border-2 border-border shadow-lg flex-shrink-0" style={{ backgroundColor: color.hex }} />
               <div className="min-w-0">
                 <p className="font-medium text-foreground text-sm truncate">{color.color}</p>
                 <p className="text-xs text-muted-foreground line-clamp-2">{color.reason}</p>
@@ -256,10 +292,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {report.colorsToAvoid.map((color, i) => (
             <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-secondary/30">
-              <div 
-                className="w-10 h-10 rounded-full border-2 border-border opacity-60 flex-shrink-0"
-                style={{ backgroundColor: color.hex }}
-              />
+              <div className="w-10 h-10 rounded-full border-2 border-border opacity-60 flex-shrink-0" style={{ backgroundColor: color.hex }} />
               <div className="min-w-0">
                 <p className="font-medium text-foreground text-sm truncate">{color.color}</p>
                 <p className="text-xs text-muted-foreground line-clamp-2">{color.reason}</p>
@@ -287,13 +320,68 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
         </div>
       </div>
 
+      {/* Lifestyle & Occasion Direction */}
+      {report.lifestyleOutfitDirection && (
+        <div className="luxury-card p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
+              <Briefcase className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 className="font-serif text-xl text-foreground">Lifestyle & Occasion Styling</h3>
+          </div>
+          <div className="space-y-3">
+            {report.lifestyleOutfitDirection.dailyWear && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm text-muted-foreground mb-1">Daily Wear</p>
+                <p className="text-foreground text-sm">{report.lifestyleOutfitDirection.dailyWear}</p>
+              </div>
+            )}
+            {report.lifestyleOutfitDirection.primaryOccasion && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm text-muted-foreground mb-1">Primary Occasion</p>
+                <p className="text-foreground text-sm">{report.lifestyleOutfitDirection.primaryOccasion}</p>
+              </div>
+            )}
+            {report.lifestyleOutfitDirection.balanceTip && (
+              <p className="text-muted-foreground text-sm italic">{report.lifestyleOutfitDirection.balanceTip}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Style Personality Deep Dive */}
+      {report.stylePersonalityDeepDive && (
+        <div className="luxury-card p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
+              <Heart className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 className="font-serif text-xl text-foreground">Your Style Personality</h3>
+          </div>
+          {report.stylePersonalityDeepDive.essence && (
+            <p className="text-muted-foreground leading-relaxed mb-4">{report.stylePersonalityDeepDive.essence}</p>
+          )}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {report.stylePersonalityDeepDive.fabrics && (
+              <div className="bg-secondary/30 rounded-xl p-3"><p className="text-xs text-muted-foreground">Fabrics</p><p className="text-sm text-foreground">{report.stylePersonalityDeepDive.fabrics}</p></div>
+            )}
+            {report.stylePersonalityDeepDive.textures && (
+              <div className="bg-secondary/30 rounded-xl p-3"><p className="text-xs text-muted-foreground">Textures</p><p className="text-sm text-foreground">{report.stylePersonalityDeepDive.textures}</p></div>
+            )}
+            {report.stylePersonalityDeepDive.prints && (
+              <div className="bg-secondary/30 rounded-xl p-3"><p className="text-xs text-muted-foreground">Prints</p><p className="text-sm text-foreground">{report.stylePersonalityDeepDive.prints}</p></div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Signature Looks */}
       <div className="luxury-card p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
             <Sparkles className="w-5 h-5 text-primary-foreground" />
           </div>
-          <h3 className="font-serif text-xl text-foreground">Your 3 Signature Looks</h3>
+          <h3 className="font-serif text-xl text-foreground">Your Signature Looks</h3>
         </div>
         <div className="space-y-4">
           {report.signatureLooks.map((look, i) => (
@@ -303,22 +391,137 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
                   <h4 className="font-serif text-lg text-foreground">{look.name}</h4>
                   <p className="text-sm text-primary">{look.occasion}</p>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-serif">
-                  {i + 1}
-                </div>
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-serif">{i + 1}</div>
               </div>
               <p className="text-muted-foreground mb-3">{look.description}</p>
+              {look.stylingNotes && <p className="text-sm text-muted-foreground mb-3 italic">{look.stylingNotes}</p>}
+              {look.confidenceBooster && (
+                <p className="text-sm text-primary mb-3">{look.confidenceBooster}</p>
+              )}
               <div className="flex flex-wrap gap-2">
                 {look.keyPieces.map((piece, j) => (
-                  <span key={j} className="px-3 py-1 rounded-full bg-secondary text-foreground text-sm">
-                    {piece}
-                  </span>
+                  <span key={j} className="px-3 py-1 rounded-full bg-secondary text-foreground text-sm">{piece}</span>
                 ))}
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Essential Wardrobe Checklist */}
+      {report.essentialWardrobe && (
+        <div className="luxury-card p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
+              <Layers className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 className="font-serif text-xl text-foreground">Essential Wardrobe Checklist</h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {report.essentialWardrobe.tops && report.essentialWardrobe.tops.length > 0 && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm font-medium text-foreground mb-2">Tops</p>
+                {report.essentialWardrobe.tops.map((item, i) => (
+                  <p key={i} className="text-sm text-muted-foreground flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-primary mt-1 flex-shrink-0" />{item}</p>
+                ))}
+              </div>
+            )}
+            {report.essentialWardrobe.bottoms && report.essentialWardrobe.bottoms.length > 0 && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm font-medium text-foreground mb-2">Bottoms</p>
+                {report.essentialWardrobe.bottoms.map((item, i) => (
+                  <p key={i} className="text-sm text-muted-foreground flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-primary mt-1 flex-shrink-0" />{item}</p>
+                ))}
+              </div>
+            )}
+            {report.essentialWardrobe.layering && report.essentialWardrobe.layering.length > 0 && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm font-medium text-foreground mb-2">Layering</p>
+                {report.essentialWardrobe.layering.map((item, i) => (
+                  <p key={i} className="text-sm text-muted-foreground flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-primary mt-1 flex-shrink-0" />{item}</p>
+                ))}
+              </div>
+            )}
+            {report.essentialWardrobe.footwear && report.essentialWardrobe.footwear.length > 0 && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm font-medium text-foreground mb-2">Footwear</p>
+                {report.essentialWardrobe.footwear.map((item, i) => (
+                  <p key={i} className="text-sm text-muted-foreground flex items-start gap-2"><CheckCircle2 className="w-3 h-3 text-primary mt-1 flex-shrink-0" />{item}</p>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Budget Strategy */}
+      {report.budgetStrategy && (
+        <div className="luxury-card p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
+              <DollarSign className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 className="font-serif text-xl text-foreground">Budget-Smart Strategy</h3>
+          </div>
+          {report.budgetStrategy.philosophy && (
+            <p className="text-muted-foreground leading-relaxed mb-4">{report.budgetStrategy.philosophy}</p>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {report.budgetStrategy.investIn && report.budgetStrategy.investIn.length > 0 && (
+              <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
+                <p className="text-sm font-medium text-primary mb-2">Invest In</p>
+                {report.budgetStrategy.investIn.map((item, i) => (
+                  <p key={i} className="text-sm text-muted-foreground">&bull; {item}</p>
+                ))}
+              </div>
+            )}
+            {report.budgetStrategy.saveOn && report.budgetStrategy.saveOn.length > 0 && (
+              <div className="bg-secondary/30 rounded-xl p-4">
+                <p className="text-sm font-medium text-foreground mb-2">Save On</p>
+                {report.budgetStrategy.saveOn.map((item, i) => (
+                  <p key={i} className="text-sm text-muted-foreground">&bull; {item}</p>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Styling Dos & Don'ts */}
+      {(report.stylingDos || report.stylingDonts) && (
+        <div className="luxury-card p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
+              <Lightbulb className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 className="font-serif text-xl text-foreground">Styling Dos & Don'ts</h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {report.stylingDos && report.stylingDos.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-primary mb-2">Do</p>
+                {report.stylingDos.map((d, i) => (
+                  <div key={i} className="flex items-start gap-2 p-2 rounded-lg bg-primary/5">
+                    <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-muted-foreground">{d}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            {report.stylingDonts && report.stylingDonts.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-destructive mb-2">Don't</p>
+                {report.stylingDonts.map((d, i) => (
+                  <div key={i} className="flex items-start gap-2 p-2 rounded-lg bg-destructive/5">
+                    <XCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-muted-foreground">{d}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Styling Tips */}
       <div className="luxury-card p-6">
@@ -331,9 +534,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
         <div className="space-y-3">
           {report.stylingTips.map((tip, i) => (
             <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-secondary/30">
-              <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-medium flex-shrink-0 mt-0.5">
-                {i + 1}
-              </div>
+              <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-medium flex-shrink-0 mt-0.5">{i + 1}</div>
               <p className="text-muted-foreground">{tip}</p>
             </div>
           ))}
@@ -365,7 +566,66 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
             <p className="text-sm text-muted-foreground">{report.accessoryGuide.shoes}</p>
           </div>
         </div>
+        {(report.accessoryGuide.scarves || report.accessoryGuide.belts) && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            {report.accessoryGuide.scarves && (
+              <div className="p-4 rounded-xl bg-secondary/30">
+                <p className="font-medium text-foreground mb-1">Scarves & Stoles</p>
+                <p className="text-sm text-muted-foreground">{report.accessoryGuide.scarves}</p>
+              </div>
+            )}
+            {report.accessoryGuide.belts && (
+              <div className="p-4 rounded-xl bg-secondary/30">
+                <p className="font-medium text-foreground mb-1">Belts & Others</p>
+                <p className="text-sm text-muted-foreground">{report.accessoryGuide.belts}</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Shopping Guide */}
+      {report.shoppingGuide && (
+        <div className="luxury-card p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
+              <ShoppingBag className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <h3 className="font-serif text-xl text-foreground">Shopping Guide</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-secondary/30 rounded-xl p-4">
+              <p className="text-sm font-medium text-foreground mb-2">Investment Pieces</p>
+              {report.shoppingGuide.investmentPieces.map((item, i) => (
+                <p key={i} className="text-sm text-muted-foreground">&bull; {item}</p>
+              ))}
+            </div>
+            <div className="bg-secondary/30 rounded-xl p-4">
+              <p className="text-sm font-medium text-foreground mb-2">Budget-Friendly Picks</p>
+              {report.shoppingGuide.budgetFriendly.map((item, i) => (
+                <p key={i} className="text-sm text-muted-foreground">&bull; {item}</p>
+              ))}
+            </div>
+            <div className="bg-secondary/30 rounded-xl p-4">
+              <p className="text-sm font-medium text-foreground mb-2">Brands to Explore</p>
+              {report.shoppingGuide.brandsToExplore.map((item, i) => (
+                <p key={i} className="text-sm text-muted-foreground">&bull; {item}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Final Stylist Note */}
+      {report.finalStylistNote && (
+        <div className="luxury-card p-8 text-center bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+          <Quote className="w-10 h-10 text-primary mx-auto mb-4 opacity-50" />
+          <p className="font-serif text-lg text-foreground leading-relaxed italic">
+            "{report.finalStylistNote}"
+          </p>
+          <p className="text-sm text-primary mt-4 font-medium">— Your LuxFit AI Stylist</p>
+        </div>
+      )}
     </div>
   );
 };
