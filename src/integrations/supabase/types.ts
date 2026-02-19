@@ -89,6 +89,27 @@ export type Database = {
         }
         Relationships: []
       }
+      premium_users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_active: boolean
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_active?: boolean
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_active?: boolean
+        }
+        Relationships: []
+      }
       products_catalog: {
         Row: {
           affiliate_url: string
