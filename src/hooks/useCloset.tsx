@@ -4,6 +4,7 @@ import { useAuth } from './useAuth';
 import { Product, OutfitRecommendation } from '@/types/outfit';
 import { toast } from './use-toast';
 import { Json } from '@/integrations/supabase/types';
+import { Button } from '@/components/ui/button';
 
 export interface SavedItem {
   id: string;
@@ -132,8 +133,13 @@ export const useCloset = () => {
     }
 
     toast({
-      title: 'Saved!',
+      title: '❤️ Saved!',
       description: 'Item added to your closet',
+      action: (
+        <Button variant="outline" size="sm" onClick={() => removeItem(product.id)}>
+          Undo
+        </Button>
+      ),
     });
     await fetchSavedItems();
     return true;
@@ -206,8 +212,13 @@ export const useCloset = () => {
     }
 
     toast({
-      title: 'Saved!',
+      title: '❤️ Saved!',
       description: 'Outfit added to your closet',
+      action: (
+        <Button variant="outline" size="sm" onClick={() => removeOutfit(outfit.id)}>
+          Undo
+        </Button>
+      ),
     });
     await fetchSavedOutfits();
     return true;
