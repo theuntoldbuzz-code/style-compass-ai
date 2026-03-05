@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, ChevronUp, Sparkles, Tag, Bookmark } from "lucide-react";
+import { ChevronDown, ChevronUp, Sparkles, Tag, Heart } from "lucide-react";
 import { OutfitRecommendation } from "@/types/outfit";
 import ProductCard from "./ProductCard";
 import { Button } from "@/components/ui/button";
@@ -84,9 +84,10 @@ const OutfitCard = ({ outfit, index }: OutfitCardProps) => {
               variant="ghost"
               size="icon"
               onClick={handleSave}
-              className={isSaved ? 'text-primary' : 'text-muted-foreground'}
+              className={`transition-all duration-300 ${isSaved ? 'text-red-500 scale-110' : 'text-muted-foreground hover:text-red-400'}`}
+              title={isSaved ? 'Remove from My Closet' : 'Save to My Closet'}
             >
-              <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-primary' : ''}`} />
+              <Heart className={`w-6 h-6 transition-all duration-300 ${isSaved ? 'fill-red-500 stroke-red-500' : ''}`} />
             </Button>
 
             {/* Expand/Collapse */}
