@@ -77,16 +77,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         )}
         
-        {/* Save Button */}
+        {/* Save Heart Button */}
         <button
           onClick={handleSaveToggle}
-          className={`absolute top-3 right-12 w-8 h-8 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-300 ${
+          className={`absolute bottom-3 right-3 w-10 h-10 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-300 z-10 shadow-lg ${
             isSaved 
-              ? 'bg-primary text-primary-foreground' 
-              : 'bg-background/80 text-muted-foreground hover:text-primary'
+              ? 'bg-red-500 text-white scale-110' 
+              : 'bg-background/80 text-muted-foreground hover:text-red-400 hover:bg-background'
           }`}
+          title={isSaved ? 'Remove from My Closet' : 'Save to My Closet'}
         >
-          <Heart className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
+          <Heart className={`w-5 h-5 transition-all duration-300 ${isSaved ? 'fill-current' : ''}`} />
         </button>
         
         {/* Discount Badge */}
