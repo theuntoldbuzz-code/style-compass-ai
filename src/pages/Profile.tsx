@@ -181,7 +181,7 @@ const Profile = () => {
             <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Settings</h2>
           </div>
 
-          <div className="luxury-card overflow-hidden">
+          <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md overflow-hidden">
             {settingsItems.map((item, i) => {
               const Icon = item.icon;
               return (
