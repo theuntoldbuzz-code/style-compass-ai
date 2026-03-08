@@ -47,7 +47,7 @@ const ProcessingScreen = ({ onComplete, photo }: ProcessingScreenProps) => {
 
       const imageBase64 = await base64Promise;
 
-      console.log("Sending photo for AI analysis...");
+      // Photo sent for AI analysis
 
       const { data, error } = await supabase.functions.invoke('photos-analysis', {
         body: {
