@@ -238,6 +238,22 @@ const Recommendations = () => {
           )}
         </div>
 
+        {/* Generation limit banner for free users */}
+        {!isPremium && (
+          <div className="max-w-xl mx-auto mb-8 p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-5 h-5 text-primary flex-shrink-0" />
+              <p className="text-sm text-foreground">
+                <strong>{Math.max(0, 2 - generationCount)}</strong> free generation{2 - generationCount !== 1 ? 's' : ''} remaining
+              </p>
+            </div>
+            <Button variant="luxury" size="sm" onClick={() => navigate('/profile')} className="text-xs flex-shrink-0">
+              <Crown className="w-3.5 h-3.5 mr-1" />
+              Upgrade
+            </Button>
+          </div>
+        )}
+
         {/* Product Search Progress */}
         {isSearching && (
           <div className="max-w-xl mx-auto mb-10 p-6 rounded-2xl bg-card border border-border/50">
