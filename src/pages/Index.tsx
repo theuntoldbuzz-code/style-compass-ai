@@ -39,6 +39,7 @@ const Index = () => {
     loading
   } = useAuth();
   const { savedItems, savedOutfits } = useCloset();
+  const { isPremium } = usePremium();
   const totalSaved = savedItems.length + savedOutfits.length;
   const [showSplash, setShowSplash] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
