@@ -1,23 +1,26 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Sparkles, ArrowLeft, Heart, ShoppingBag, 
-  ExternalLink, Star, Trash2, Tag, Crown, Lock
+  ExternalLink, Trash2, Tag, Crown, Lock, Gift
 } from 'lucide-react';
 import BackButton from '@/components/BackButton';
 import fashionEmpty from '@/assets/fashion-9.avif';
+import heroBanner from '@/assets/hero-fashion.jpg';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useCloset, SavedItem, SavedOutfit } from '@/hooks/useCloset';
 import { usePremium } from '@/hooks/usePremium';
-import ProductCard from '@/components/ProductCard';
+
+const occasionFilters = ['All', 'Wedding', 'Office', 'Casual', 'Party'];
 
 const Closet = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { savedItems, savedOutfits, loading, removeItem, removeOutfit } = useCloset();
   const { isPremium, loading: premiumLoading } = usePremium();
+  const [activeFilter, setActiveFilter] = useState('All');
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -77,8 +80,149 @@ const Closet = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-background">
+  // Filter outfits by occasion
+  const filteredOutfits = activeFilter === 'All' 
+    ? savedOutfits 
+    : savedOutfits.filter(o => 
+        o.outfit_occasion?.some(occ => 
+          occ.toLowerCase().includes(activeFilter.toLowerCase())
+        )
+      );
+
+  const filteredItems = savedItems;
+
+  // ---- MOBILE VIEW ----
+  const MobileView = () => (
+    <div className="md:hidden min-h-screen bg-background pb-24">
+      {/* Hero Banner */}
+      <div className="relative w-full h-[120px] overflow-hidden rounded-b-2xl mx-auto max-w-[calc(100%-32px)] mt-3">
+        <img 
+          src={heroBanner} 
+          alt="Your Virtual Closet" 
+          className="w-full h-full object-cover object-top"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="absolute bottom-4 left-4">
+          <h1 className="font-serif text-xl text-foreground font-bold leading-tight">Your Virtual Closet</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">Curated by Aurion AI</p>
+        </div>
+      </div>
+
+      {/* Category Filters */}
+      <div className="flex gap-2 px-4 mt-5 overflow-x-auto no-scrollbar">
+        {occasionFilters.map(filter => (
+          <button
+            key={filter}
+            onClick={() => setActiveFilter(filter)}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
+              activeFilter === filter
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'bg-transparent text-muted-foreground border-border hover:border-primary/40'
+            }`}
+          >
+            {filter}
+          </button>
+        ))}
+      </div>
+
+      {/* Outfits Grid */}
+      {filteredOutfits.length > 0 && (
+        <div className="grid grid-cols-2 gap-3 px-4 mt-5">
+          {filteredOutfits.map(outfit => (
+            <MobileOutfitCard key={outfit.id} outfit={outfit} onRemove={() => removeOutfit(outfit.outfit_id)} />
+          ))}
+        </div>
+      )}
+
+      {/* Items Grid */}
+      {filteredItems.length > 0 && (
+        <div className="grid grid-cols-2 gap-3 px-4 mt-5">
+          {filteredItems.map(item => (
+            <MobileItemCard key={item.id} item={item} onRemove={() => removeItem(item.product_id)} />
+          ))}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {filteredOutfits.length === 0 && filteredItems.length === 0 && (
+        <div className="flex flex-col items-center justify-center mt-16 px-6 text-center">
+          <div className="w-16 h-16 mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <ShoppingBag className="w-8 h-8 text-primary" />
+          </div>
+          <h3 className="font-serif text-lg text-foreground mb-2">No saved items yet</h3>
+          <p className="text-sm text-muted-foreground mb-6">Start exploring and save outfits you love</p>
+          <Button variant="luxury" onClick={() => navigate('/get-outfit')}>
+            Discover Outfits
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+
+  // Mobile Outfit Card
+  const MobileOutfitCard = ({ outfit, onRemove }: { outfit: SavedOutfit; onRemove: () => void }) => {
+    const firstProduct = outfit.outfit_products?.[0];
+    const imageUrl = firstProduct?.imageUrl;
+    const itemCount = outfit.outfit_products?.length || 0;
+
+    return (
+      <div className="relative rounded-2xl overflow-hidden bg-card border border-border/30">
+        {/* Image or Placeholder */}
+        <div className="aspect-[4/5] relative overflow-hidden bg-secondary">
+          {imageUrl ? (
+            <img src={imageUrl} alt={outfit.outfit_name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Gift className="w-10 h-10 text-primary/40" />
+            </div>
+          )}
+          {/* Remove button */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onRemove(); }}
+            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/70 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+        {/* Info */}
+        <div className="p-3 pt-2.5">
+          <h4 className="font-serif text-sm text-primary leading-tight line-clamp-1">{outfit.outfit_name}</h4>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{itemCount} items</p>
+        </div>
+      </div>
+    );
+  };
+
+  // Mobile Item Card
+  const MobileItemCard = ({ item, onRemove }: { item: SavedItem; onRemove: () => void }) => {
+    return (
+      <div className="relative rounded-2xl overflow-hidden bg-card border border-border/30">
+        <div className="aspect-[4/5] relative overflow-hidden bg-secondary">
+          {item.product_image_url ? (
+            <img src={item.product_image_url} alt={item.product_name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Gift className="w-10 h-10 text-primary/40" />
+            </div>
+          )}
+          <button
+            onClick={(e) => { e.stopPropagation(); onRemove(); }}
+            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/70 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+        <div className="p-3 pt-2.5">
+          <h4 className="font-serif text-sm text-primary leading-tight line-clamp-1">{item.product_name}</h4>
+          <p className="text-[11px] text-muted-foreground mt-0.5">{item.product_brand || item.product_store}</p>
+        </div>
+      </div>
+    );
+  };
+
+  // ---- DESKTOP VIEW (unchanged) ----
+  const DesktopView = () => (
+    <div className="hidden md:block min-h-screen bg-background">
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
@@ -89,11 +233,7 @@ const Closet = () => {
       <nav className="relative z-10 border-b border-border/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/')}
-            >
+            <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div className="flex items-center gap-3">
@@ -127,7 +267,6 @@ const Closet = () => {
             </TabsTrigger>
           </TabsList>
 
-          {/* Saved Outfits */}
           <TabsContent value="outfits">
             {savedOutfits.length === 0 ? (
               <EmptyState
@@ -151,7 +290,6 @@ const Closet = () => {
             )}
           </TabsContent>
 
-          {/* Saved Items */}
           <TabsContent value="items">
             {savedItems.length === 0 ? (
               <EmptyState
@@ -162,7 +300,7 @@ const Closet = () => {
                 onAction={() => navigate('/get-outfit')}
               />
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {savedItems.map((item) => (
                   <SavedItemCard 
                     key={item.id} 
@@ -178,9 +316,16 @@ const Closet = () => {
       </main>
     </div>
   );
+
+  return (
+    <>
+      <MobileView />
+      <DesktopView />
+    </>
+  );
 };
 
-// Empty State Component
+// Empty State Component (Desktop)
 interface EmptyStateProps {
   icon: React.ElementType;
   title: string;
@@ -214,7 +359,7 @@ const EmptyState = ({ icon: Icon, title, description, actionLabel, onAction }: E
   </div>
 );
 
-// Saved Outfit Card
+// Saved Outfit Card (Desktop)
 interface SavedOutfitCardProps {
   outfit: SavedOutfit;
   onRemove: () => void;
@@ -249,7 +394,6 @@ const SavedOutfitCard = ({ outfit, onRemove, formatCurrency }: SavedOutfitCardPr
           </Button>
         </div>
 
-        {/* Price Summary */}
         <div className="flex items-center gap-4 mb-4">
           <span className="font-serif text-2xl text-foreground">
             {formatCurrency(outfit.outfit_discounted_price || 0)}
@@ -264,7 +408,6 @@ const SavedOutfitCard = ({ outfit, onRemove, formatCurrency }: SavedOutfitCardPr
           )}
         </div>
 
-        {/* Color Palette */}
         {outfit.outfit_color_palette && outfit.outfit_color_palette.length > 0 && (
           <div className="flex items-center gap-2 mb-4">
             <span className="text-sm text-muted-foreground">Colors:</span>
@@ -280,18 +423,10 @@ const SavedOutfitCard = ({ outfit, onRemove, formatCurrency }: SavedOutfitCardPr
           </div>
         )}
 
-        {/* Products Preview */}
         <div className="grid grid-cols-4 gap-2">
           {outfit.outfit_products.slice(0, 4).map((product, i) => (
-            <div
-              key={i}
-              className="aspect-square rounded-lg overflow-hidden bg-secondary"
-            >
-              <img
-                src={product.imageUrl}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
+            <div key={i} className="aspect-square rounded-lg overflow-hidden bg-secondary">
+              <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
             </div>
           ))}
         </div>
@@ -300,7 +435,7 @@ const SavedOutfitCard = ({ outfit, onRemove, formatCurrency }: SavedOutfitCardPr
   );
 };
 
-// Saved Item Card
+// Saved Item Card (Desktop)
 interface SavedItemCardProps {
   item: SavedItem;
   onRemove: () => void;
@@ -314,48 +449,35 @@ const SavedItemCard = ({ item, onRemove, formatCurrency }: SavedItemCardProps) =
 
   return (
     <div className="luxury-card overflow-hidden group">
-      {/* Image */}
       <div className="relative aspect-[3/4] overflow-hidden">
         <img
           src={item.product_image_url || '/placeholder.svg'}
           alt={item.product_name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        
-        {/* Remove Button */}
         <button
           onClick={onRemove}
           className="absolute top-3 right-3 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-background transition-colors"
         >
           <Trash2 className="w-4 h-4" />
         </button>
-
-        {/* Discount Badge */}
         {discount > 0 && (
           <div className="absolute top-3 left-3 bg-gradient-to-r from-primary to-gold-dark text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">
             {discount}% OFF
           </div>
         )}
       </div>
-
-      {/* Content */}
       <div className="p-4">
         <div className="flex items-center justify-between mb-1">
           <span className="text-primary text-sm font-medium">{item.product_brand}</span>
           <span className="text-xs text-muted-foreground">{item.product_store}</span>
         </div>
-        
         <h4 className="font-serif text-lg text-foreground mb-2 line-clamp-1">
           {item.product_name}
         </h4>
-
         {item.product_color && (
-          <p className="text-sm text-muted-foreground mb-3">
-            Color: {item.product_color}
-          </p>
+          <p className="text-sm text-muted-foreground mb-3">Color: {item.product_color}</p>
         )}
-
-        {/* Price */}
         <div className="flex items-baseline gap-2 mb-4">
           <span className="font-serif text-xl text-foreground font-semibold">
             {formatCurrency(item.product_discounted_price || 0)}
@@ -366,13 +488,7 @@ const SavedItemCard = ({ item, onRemove, formatCurrency }: SavedItemCardProps) =
             </span>
           )}
         </div>
-
-        {/* Shop Button */}
-        <Button
-          variant="luxury"
-          className="w-full"
-          onClick={() => window.open(item.product_store_url || '#', '_blank')}
-        >
+        <Button variant="luxury" className="w-full" onClick={() => window.open(item.product_store_url || '#', '_blank')}>
           Shop Now
           <ExternalLink className="w-4 h-4 ml-2" />
         </Button>
