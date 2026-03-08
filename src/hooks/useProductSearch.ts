@@ -69,8 +69,11 @@ CRITICAL: Return ONLY a valid JSON array. No markdown, no explanation, no code b
 The total of all prices must be within ₹${budgetMin}-₹${budgetMax}.`;
 
         try {
+          if (typeof puter === "undefined" || !puter?.ai?.chat) {
+            throw new Error("Puter.js is not loaded. Please refresh the page.");
+          }
           const response = await puter.ai.chat(prompt, {
-            model: "claude-3-5-sonnet",
+            model: "gpt-4o",
           });
 
           const content = response?.message?.content || "";
