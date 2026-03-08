@@ -16,6 +16,7 @@ import { useCloset } from "@/hooks/useCloset";
 import { usePremium } from "@/hooks/usePremium";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import goldBokehBg from "@/assets/gold-bokeh-bg.png";
+import mobileHeroBg from "@/assets/mobile-hero-bg.png";
 
 const features = [
   {
