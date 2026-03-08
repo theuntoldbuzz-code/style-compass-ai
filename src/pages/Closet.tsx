@@ -5,6 +5,8 @@ import {
   ExternalLink, Trash2, Tag, Crown, Lock, Gift
 } from 'lucide-react';
 import BackButton from '@/components/BackButton';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { motion } from 'framer-motion';
 import fashionEmpty from '@/assets/fashion-9.avif';
 import heroBannerAll from '@/assets/closet-all.jpg';
 import closetBg from '@/assets/closet-bg.png';
