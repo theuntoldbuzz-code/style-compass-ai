@@ -59,7 +59,8 @@ const Reports = () => {
   if (!lastReport) {
     return (
       <div className="min-h-screen bg-background relative flex items-center justify-center p-6">
-        <img src={reportsBg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none" />
+        <img src={reportsBg} alt="" className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none" />
+        <img src={reportsPartyBg} alt="" className="md:hidden absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none" />
         <div className="relative z-10 text-center max-w-sm">
           <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-card/60 border border-border/30 flex items-center justify-center backdrop-blur-sm">
             <FileText className="w-9 h-9 text-muted-foreground/50" />
