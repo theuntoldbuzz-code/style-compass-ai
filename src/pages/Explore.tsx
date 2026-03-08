@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import fashionExplore from "@/assets/fashion-10.avif";
 import exploreSparkle from "@/assets/explore-sparkle-bg.jpg";
+import exploreMobileBg from "@/assets/explore-mobile-bg.png";
 import { Button } from "@/components/ui/button";
 import { infiniteScrollProducts } from "@/data/trendingData";
 import { useAuth } from "@/hooks/useAuth";
