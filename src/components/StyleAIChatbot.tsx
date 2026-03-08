@@ -13,9 +13,6 @@ interface Message {
 const StyleAIChatbot = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-
-  if (location.pathname === "/profile") return null;
-
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -41,6 +38,8 @@ const StyleAIChatbot = () => {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  if (location.pathname === "/profile") return null;
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
