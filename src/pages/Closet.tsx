@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import BackButton from '@/components/BackButton';
 import fashionEmpty from '@/assets/fashion-9.avif';
-import heroBanner from '@/assets/hero-fashion.jpg';
+import heroBanner from '@/assets/closet-hero.jpg';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
