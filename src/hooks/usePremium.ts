@@ -32,13 +32,13 @@ export const usePremium = (): PremiumState => {
           .eq('email', user.email!)
           .single(),
         supabase
-          .from('outfit_generations')
+          .from('outfit_generations' as any)
           .select('id', { count: 'exact', head: true })
           .eq('user_id', user.id),
       ]);
 
       if (premiumRes.data?.is_active) setIsPremium(true);
-      setGenerationCount(genRes.count ?? 0);
+      setGenerationCount((genRes as any).count ?? 0);
       setLoading(false);
     };
 
@@ -49,7 +49,7 @@ export const usePremium = (): PremiumState => {
 
   const recordGeneration = async () => {
     if (!user) return;
-    await supabase.from('outfit_generations').insert({ user_id: user.id });
+    await (supabase.from('outfit_generations' as any) as any).insert({ user_id: user.id });
     setGenerationCount((prev) => prev + 1);
   };
 
