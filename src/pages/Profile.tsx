@@ -54,8 +54,8 @@ const Profile = () => {
   const stats = useMemo(() => [
     { label: "CLOSET", value: savedItems.length, icon: Shirt },
     { label: "TRY-ONS", value: tryOnCount, icon: Eye },
-    { label: "REPORTS", value: reportCount, icon: FileText },
-  ], [savedItems.length, tryOnCount, reportCount]);
+    { label: "REPORTS", value: styleReports.length, icon: FileText },
+  ], [savedItems.length, tryOnCount, styleReports.length]);
 
   const settingsItems = [
     { label: "Account Information", icon: User, onClick: () => {} },
