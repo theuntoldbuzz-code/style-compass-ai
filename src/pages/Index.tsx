@@ -214,9 +214,8 @@ const Index = () => {
             </button>
             <button
               onClick={() => navigate("/get-outfit")}
-              className="w-full py-4 rounded-full bg-transparent border border-primary/50 text-primary uppercase tracking-[0.15em] text-sm font-medium backdrop-blur-sm hover:bg-primary/10 hover:border-primary/70 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-full bg-primary/[0.08] border border-primary/40 text-primary uppercase tracking-[0.15em] text-sm font-medium backdrop-blur-[6px] hover:bg-primary/[0.14] hover:border-primary/60 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
             >
-              <Sparkles className="w-4 h-4" />
               Upload Photo
               <ArrowRight className="w-4 h-4" />
             </button>
