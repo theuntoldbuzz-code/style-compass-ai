@@ -129,50 +129,49 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 container mx-auto px-4 pt-12 md:pt-20 pb-16">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <section className="relative z-10 container mx-auto px-4 pt-8 md:pt-20 pb-12 md:pb-16">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
           <div className={`text-center lg:text-left transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full text-primary text-sm font-medium mb-8">
-            <Star className="w-4 h-4 fill-primary" />
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary text-xs md:text-sm font-medium mb-6 md:mb-8">
+            <Star className="w-3 h-3 md:w-4 md:h-4 fill-primary" />
             AI-Powered Fashion Styling
           </div>
 
           {/* Main Headline */}
-          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-foreground leading-tight mb-6">
+          <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground leading-tight mb-4 md:mb-6">
             Discover Your
             <br />
             <span className="text-gradient-gold">Perfect Style</span>
           </h1>
 
           {/* Subheadline */}
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto lg:mx-0 mb-10">
+          <p className="text-muted-foreground text-base md:text-xl max-w-2xl mx-auto lg:mx-0 mb-8 md:mb-10 px-2 md:px-0">
             Upload your photo, tell us the occasion, and let AI curate personalized 
             outfits that match your skin tone, body type, and budget.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-            <Button variant="luxury" size="xl" onClick={() => navigate("/style-quiz")} className="min-w-[220px]">
+          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 md:gap-4">
+            <Button variant="luxury" size="xl" onClick={() => navigate("/style-quiz")} className="w-full sm:w-auto min-w-[200px]">
               Take Style Quiz
-              
             </Button>
-            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/get-outfit")}>
+            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/get-outfit")} className="w-full sm:w-auto">
               Upload Photo
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
 
           {/* Trust Badges */}
-          <div className="mt-12 flex items-center justify-center lg:justify-start gap-8 text-muted-foreground">
+          <div className="mt-8 md:mt-12 flex items-center justify-center lg:justify-start gap-6 md:gap-8 text-muted-foreground">
             <div className="flex items-center gap-2">
               <Star className="w-4 h-4 fill-primary text-primary" />
-              <span className="text-sm">10k+ Happy Users</span>
+              <span className="text-xs md:text-sm">10k+ Happy Users</span>
             </div>
-            <div className="hidden sm:block w-px h-4 bg-border" />
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="w-px h-4 bg-border" />
+            <div className="flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-primary" />
-              <span className="text-sm">50+ Partner Stores</span>
+              <span className="text-xs md:text-sm">50+ Partner Stores</span>
             </div>
           </div>
         </div>
