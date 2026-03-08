@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { StyleReport } from "@/types/styleReport";
 import StyleReportCard from "@/components/StyleReport/StyleReportCard";
 import reportsBg from "@/assets/reports-bg.png";
+import reportsPartyBg from "@/assets/reports-party-bg.png";
 import { supabase } from "@/integrations/supabase/client";
 
 const Reports = () => {
