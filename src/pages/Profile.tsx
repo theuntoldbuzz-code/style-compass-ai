@@ -113,8 +113,8 @@ const Profile = () => {
         </motion.div>
 
         {/* ── Stats Row ── */}
-        <motion.div variants={fadeUp} className="luxury-card p-5 mb-7">
-          <div className="grid grid-cols-3 divide-x divide-border/40">
+        <motion.div variants={fadeUp} className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-5 mb-7">
+          <div className="grid grid-cols-3 divide-x divide-border/30">
             {stats.map((s) => (
               <div key={s.label} className="text-center">
                 <p className="text-2xl font-serif text-foreground font-semibold">{s.value}</p>
@@ -181,7 +181,7 @@ const Profile = () => {
             <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Settings</h2>
           </div>
 
-          <div className="luxury-card overflow-hidden">
+          <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md overflow-hidden">
             {settingsItems.map((item, i) => {
               const Icon = item.icon;
               return (
@@ -210,7 +210,7 @@ const Profile = () => {
             <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Support</h2>
           </div>
 
-          <div className="luxury-card overflow-hidden">
+          <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md overflow-hidden">
             <button className="w-full flex items-center gap-3 px-5 py-4 hover:bg-primary/5 transition-colors border-b border-border/20">
               <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <HelpCircle className="w-4 h-4 text-primary" />
