@@ -14,6 +14,7 @@ import { useProductSearch } from "@/hooks/useProductSearch";
 import { occasionCategories, getOccasionOutfits } from "@/data/occasionOutfits";
 import { Progress } from "@/components/ui/progress";
 import { usePremium } from "@/hooks/usePremium";
+import DesktopBackground from "@/components/DesktopBackground";
 
 const Recommendations = () => {
   const navigate = useNavigate();
