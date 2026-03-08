@@ -47,16 +47,18 @@ const TrendingSection = () => {
     <section className="py-16">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full text-primary text-sm font-medium mb-4">
-            <TrendingUp className="w-4 h-4" />
-            Updated Daily
+        <div className="mb-8 md:mb-10">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-serif text-lg md:text-4xl text-foreground uppercase tracking-wider">
+              <span className="inline-block w-1 h-5 md:h-7 bg-primary mr-3 align-middle rounded-full" />
+              Trending <span className="text-gradient-gold">Styles</span> Today
+            </h2>
+            <div className="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full text-primary text-[10px] md:text-xs font-medium uppercase tracking-wider flex-shrink-0">
+              Updated Daily
+            </div>
           </div>
-          <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-3">
-            Trending <span className="text-gradient-gold">Styles</span> Today
-          </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Curated picks that India is loving right now
+          <p className="text-muted-foreground text-xs md:text-base ml-4 md:ml-5">
+            Curated picks that India is loving right now.
           </p>
         </div>
 
