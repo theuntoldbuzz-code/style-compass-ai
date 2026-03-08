@@ -5,6 +5,7 @@ import {
   Grid, LayoutGrid, ShoppingBag
 } from "lucide-react";
 import fashionExplore from "@/assets/fashion-10.avif";
+import goldBokehBg from "@/assets/gold-bokeh-bg.png";
 import { Button } from "@/components/ui/button";
 import { infiniteScrollProducts } from "@/data/trendingData";
 import { useAuth } from "@/hooks/useAuth";
