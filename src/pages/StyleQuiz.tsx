@@ -5,6 +5,7 @@ import {
   User, Ruler, Calendar, Wand2, Star, Flame, Crown,
   Flower2, Zap, Heart, UserCircle, Loader2
 } from "lucide-react";
+import BackButton from "@/components/BackButton";
 import fashionQuiz1 from "@/assets/fashion-7.avif";
 import fashionQuiz2 from "@/assets/fashion-8.avif";
 import { Button } from "@/components/ui/button";
