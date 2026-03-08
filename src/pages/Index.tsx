@@ -392,7 +392,13 @@ const Index = () => {
             <p className="text-muted-foreground text-sm md:text-base mb-6 md:mb-8 max-w-lg">
               Join thousands of fashion-forward individuals who've discovered their perfect look.
             </p>
-            <Button variant="luxury" size="xl" onClick={() => navigate("/get-outfit")} className="w-full sm:w-auto uppercase tracking-wider text-sm font-semibold">
+            <button
+              onClick={() => navigate("/get-outfit")}
+              className="md:hidden w-full max-w-[320px] py-4 rounded-full bg-gradient-gold text-primary-foreground uppercase tracking-[0.15em] text-sm font-bold shadow-[0_4px_20px_rgba(212,175,55,0.4)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] active:scale-[0.98] transition-all duration-300"
+            >
+              Get Your Personalized Outfits
+            </button>
+            <Button variant="luxury" size="xl" onClick={() => navigate("/get-outfit")} className="hidden md:inline-flex w-auto uppercase tracking-wider text-sm font-semibold">
               Get Your Personalized Outfits
             </Button>
           </div>
