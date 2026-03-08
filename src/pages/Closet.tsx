@@ -136,14 +136,14 @@ const Closet = () => {
       </div>
 
       {/* Category Filters */}
-      <div className="flex gap-2 px-4 mt-4 overflow-x-auto no-scrollbar">
+      <div className="flex gap-2.5 px-4 mt-4 overflow-x-auto no-scrollbar">
         {occasionFilters.map(filter => (
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`px-5 py-2 rounded-full text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-300 border ${
+            className={`min-w-[56px] h-9 px-5 rounded-full text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-300 border inline-flex items-center justify-center ${
               activeFilter === filter
-                ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-primary shadow-[0_2px_16px_hsl(var(--primary)/0.25)]'
+                ? 'bg-gradient-to-r from-[hsl(45,75%,52%)] to-[hsl(45,80%,40%)] text-[hsl(0,0%,5%)] border-[hsl(45,75%,52%)] shadow-[0_2px_16px_hsl(45,75%,52%,0.3)]'
                 : 'bg-card/60 text-muted-foreground border-border/50 hover:border-primary/40 hover:text-foreground backdrop-blur-sm'
             }`}
           >
