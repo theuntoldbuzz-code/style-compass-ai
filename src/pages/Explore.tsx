@@ -91,7 +91,7 @@ const Explore = () => {
         <div className="relative w-full flex justify-center pt-4 pb-2">
           <div className="w-[85%] max-w-md aspect-[16/7] rounded-2xl overflow-hidden relative">
             <img 
-              src={goldBokehBg} 
+              src={exploreSparkle} 
               alt="" 
               className="w-full h-full object-cover" 
             />
