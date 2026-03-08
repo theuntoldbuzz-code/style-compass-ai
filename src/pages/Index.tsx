@@ -302,15 +302,17 @@ const Index = () => {
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
-              <div key={index} className="luxury-card overflow-hidden group hover:shadow-gold transition-all duration-500 rounded-[14px] md:rounded-[18px]">
+              <div key={index} className="luxury-card group hover:shadow-gold transition-all duration-500 rounded-[14px] md:rounded-[18px] overflow-visible">
                 {/* Feature Image */}
-                <div className="relative aspect-square md:aspect-[4/3] overflow-hidden">
-                  <img
-                    src={feature.image}
-                    alt={feature.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    loading="lazy"
-                  />
+                <div className="relative">
+                  <div className="aspect-square md:aspect-[4/3] overflow-hidden rounded-t-[14px] md:rounded-t-[18px]">
+                    <img
+                      src={feature.image}
+                      alt={feature.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                  </div>
                   {/* Icon Badge */}
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#faeebf] via-[#dcb948] to-primary flex items-center justify-center z-10 border-2 border-background shadow-[0_10px_20px_-5px_rgba(220,188,75,0.5),0_0_15px_rgba(175,143,42,0.3)]">
                     <IconComponent className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
