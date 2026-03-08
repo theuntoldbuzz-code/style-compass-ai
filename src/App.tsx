@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import HomeButton from "@/components/HomeButton";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Sparkles } from "lucide-react";
 
