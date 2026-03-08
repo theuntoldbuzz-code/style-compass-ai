@@ -1,0 +1,1 @@
+ALTER TABLE public.premium_users ADD COLUMN tier text NOT NULL DEFAULT 'gold';
