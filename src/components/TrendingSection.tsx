@@ -49,11 +49,11 @@ const TrendingSection = () => {
         {/* Section Header */}
         <div className="mb-6 md:mb-10">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-serif text-lg md:text-4xl text-foreground uppercase tracking-wider">
-              <span className="inline-block w-1 h-5 md:h-7 bg-primary mr-3 align-middle rounded-full" />
+            <h2 className="font-serif text-[15px] md:text-4xl text-foreground uppercase tracking-wider leading-tight">
+              <span className="inline-block w-1 h-5 md:h-7 bg-primary mr-2 md:mr-3 align-middle rounded-full" />
               Trending <span className="text-gradient-gold">Styles</span> Today
             </h2>
-            <div className="inline-flex items-center gap-1.5 bg-primary/[0.08] border border-primary/40 px-4 py-2 rounded-full text-primary text-[11px] md:text-xs font-semibold uppercase tracking-[0.1em] backdrop-blur-[5px] shadow-[0_0_10px_rgba(212,175,55,0.1)] flex-shrink-0">
+            <div className="inline-flex items-center gap-1.5 bg-primary/[0.08] border border-primary/40 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-primary text-[9px] md:text-xs font-semibold uppercase tracking-[0.1em] backdrop-blur-[5px] shadow-[0_0_10px_rgba(212,175,55,0.1)] flex-shrink-0 whitespace-nowrap">
               Updated Daily
             </div>
           </div>
