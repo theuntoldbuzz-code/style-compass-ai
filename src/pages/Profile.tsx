@@ -74,7 +74,10 @@ const Profile = () => {
         <img
           src={goldBokehBg}
           alt=""
-          className="w-full h-full object-cover opacity-60"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          className="w-full h-full object-cover opacity-60 animate-fade-in"
         />
       </div>
 
