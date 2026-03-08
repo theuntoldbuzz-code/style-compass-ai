@@ -145,7 +145,7 @@ const Profile = () => {
             <div className="glow-border-card p-5 text-center flex flex-col">
               <h3 className="font-serif text-[11px] uppercase tracking-[0.15em] text-foreground mb-2">Aurion Gold</h3>
               <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
-              <p className="font-serif text-[26px] text-primary leading-none">₹499</p>
+              <p className="font-serif text-[26px] text-primary leading-none inline-flex items-baseline justify-center gap-0.5"><span className="text-[18px]">₹</span>499</p>
               <p className="text-[10px] text-muted-foreground mt-1 mb-4">/month</p>
               <ul className="space-y-2.5 text-[11px] text-muted-foreground mb-5 flex-1">
                 <li>Unlimited Outfits</li>
