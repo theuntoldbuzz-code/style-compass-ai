@@ -243,10 +243,10 @@ const Profile = () => {
                       </div>
                       <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                         <Calendar className="w-3 h-3" />
-                        {format(new Date(report.created_at), "MMM d, yyyy")}
+                        {(() => { try { return format(new Date(report.created_at), "MMM d, yyyy"); } catch { return "Unknown date"; } })()}
                         <span className="mx-0.5">·</span>
                         <Clock className="w-3 h-3" />
-                        {format(new Date(report.created_at), "h:mm a")}
+                        {(() => { try { return format(new Date(report.created_at), "h:mm a"); } catch { return ""; } })()}
                       </div>
                       {/* Color swatches */}
                       <div className="flex items-center gap-1 mt-2">
