@@ -151,7 +151,7 @@ const Profile = () => {
                 </ul>
                 <button className={`w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all ${
                   isPremium
-                    ? "bg-primary/15 text-primary border border-primary/30"
+                    ? "bg-transparent text-primary border-2 border-primary"
                     : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
                 }`}>
                   {isPremium ? "ACTIVE" : "UPGRADE"}
