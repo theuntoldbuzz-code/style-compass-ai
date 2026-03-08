@@ -22,6 +22,7 @@ preloadImg.src = goldBokehBg;
 const Index = lazy(() => import("./pages/Index"));
 const StyleWizard = lazy(() => import("./pages/StyleWizard"));
 const StyleQuiz = lazy(() => import("./pages/StyleQuiz"));
+const Reports = lazy(() => import("./pages/Reports"));
 const Recommendations = lazy(() => import("./pages/Recommendations"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Closet = lazy(() => import("./pages/Closet"));
@@ -63,6 +64,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<ProtectedRoute><PageTransition><Index /></PageTransition></ProtectedRoute>} />
         <Route path="/get-outfit" element={<ProtectedRoute><PageTransition><StyleWizard /></PageTransition></ProtectedRoute>} />
         <Route path="/style-quiz" element={<ProtectedRoute><PageTransition><StyleQuiz /></PageTransition></ProtectedRoute>} />
+        <Route path="/reports" element={<ProtectedRoute><PageTransition><Reports /></PageTransition></ProtectedRoute>} />
         <Route path="/recommendations" element={<ProtectedRoute><PageTransition><Recommendations /></PageTransition></ProtectedRoute>} />
         <Route path="/closet" element={<ProtectedRoute><PageTransition><Closet /></PageTransition></ProtectedRoute>} />
         <Route path="/explore" element={<ProtectedRoute><PageTransition><Explore /></PageTransition></ProtectedRoute>} />

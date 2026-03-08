@@ -90,6 +90,7 @@ const Recommendations = () => {
     const report = await generateReport(profile, photoAnalysisFromWizard);
     if (report) {
       setGeneratedReport(report);
+      try { localStorage.setItem("luxfit-last-report", JSON.stringify(report)); } catch {}
       setIsGenerating(false);
 
       // Immediately search for real products using the report
