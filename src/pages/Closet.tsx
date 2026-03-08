@@ -72,7 +72,7 @@ const Closet = () => {
               </div>
             </div>
           </div>
-          <Button variant="luxuryOutline" onClick={() => navigate('/style-wizard')}>
+          <Button variant="luxuryOutline" onClick={() => navigate('/get-outfit')}>
             <Sparkles className="w-4 h-4 mr-2" />
             Discover More
           </Button>
