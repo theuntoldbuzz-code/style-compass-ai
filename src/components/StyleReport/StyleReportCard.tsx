@@ -5,6 +5,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { motion } from "framer-motion";
 import heroFashion from "@/assets/hero-fashion.jpg";
 
 interface StyleReportCardProps {
@@ -14,6 +16,7 @@ interface StyleReportCardProps {
 
 const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportCardProps) => {
   const reportRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   const escapeHtml = (str: string): string => {
     const div = document.createElement('div');
@@ -114,11 +117,9 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
     }
   };
 
-  // Derive a "signature style identity" title from the report
   const styleIdentityTitle = report.signatureLooks?.[0]?.name || report.bodyTypeAnalysis.type;
   const styleIdentityDesc = report.styleProfileSummary || report.skinToneAnalysis.description;
 
-  // Collect fabrics from personality deep dive or patterns
   const idealFabrics: string[] = [];
   if (report.stylePersonalityDeepDive?.fabrics) {
     idealFabrics.push(...report.stylePersonalityDeepDive.fabrics.split(',').map(f => f.trim()).filter(Boolean).slice(0, 4));
@@ -127,6 +128,204 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
     idealFabrics.push(...report.bestPatterns.slice(0, 3).map(p => p.pattern));
   }
 
+  // ── Desktop / Tablet Layout ──
+  if (!isMobile) {
+    return (
+      <div ref={reportRef} className="space-y-8">
+        {/* Hero Section - Wide banner */}
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="relative rounded-3xl overflow-hidden aspect-[21/7] border border-border/20"
+        >
+          <img src={heroFashion} alt="Style Dossier" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+          <div className="absolute inset-0 flex items-center px-12">
+            <div className="max-w-lg">
+              <div className="inline-flex items-center gap-2 bg-primary/15 backdrop-blur-sm px-4 py-1.5 rounded-full text-primary text-xs font-semibold tracking-wider uppercase mb-4 border border-primary/20">
+                <Sparkles className="w-3.5 h-3.5" />
+                AI-Powered Analysis
+              </div>
+              <h2 className="font-serif text-4xl lg:text-5xl text-foreground italic leading-tight mb-2">Style Dossier</h2>
+              <p className="text-sm text-muted-foreground">
+                Generated {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Two-column grid */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Signature Style Identity */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: 0.1 }}
+              className="rounded-2xl border border-border/30 bg-card/40 backdrop-blur-sm p-7"
+            >
+              <div className="inline-flex items-center gap-1.5 bg-primary/10 px-3 py-1 rounded-full text-primary text-[11px] font-semibold tracking-wider uppercase mb-4">
+                <Sparkles className="w-3 h-3" />
+                Signature Style Identity
+              </div>
+              <h3 className="font-serif text-3xl text-foreground leading-snug mb-3">
+                {styleIdentityTitle}
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {styleIdentityDesc}
+              </p>
+            </motion.div>
+
+            {/* Styling Guidance */}
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <SectionHeader icon={<Crown className="w-4 h-4 text-primary" />} label="Styling Guidance" />
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div className="rounded-2xl border border-primary/20 bg-card/40 backdrop-blur-sm p-5">
+                  <div className="flex items-center gap-1.5 mb-4">
+                    <CheckCircle2 className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-semibold text-primary">Best For You</span>
+                  </div>
+                  <div className="space-y-3">
+                    {(report.stylingDos || report.bodyTypeAnalysis.strengths || []).slice(0, 4).map((item, i) => (
+                      <p key={i} className="text-[13px] text-foreground/90 leading-snug">{item}</p>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-border/30 bg-card/40 backdrop-blur-sm p-5">
+                  <div className="flex items-center gap-1.5 mb-4">
+                    <X className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold text-muted-foreground">Avoid</span>
+                  </div>
+                  <div className="space-y-3">
+                    {(report.stylingDonts || report.bodyTypeAnalysis.avoidStyles || []).slice(0, 4).map((item, i) => (
+                      <p key={i} className="text-[13px] text-muted-foreground leading-snug">{item}</p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Ideal Fabrics */}
+            {idealFabrics.length > 0 && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+                <SectionHeader icon={<Heart className="w-4 h-4 text-primary" />} label="Ideal Fabrics" />
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {idealFabrics.map((fabric, i) => (
+                    <span key={i} className="px-5 py-2.5 rounded-xl bg-card/60 border border-border/30 text-sm text-foreground font-medium backdrop-blur-sm">
+                      {fabric}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Color Analysis */}
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+              <SectionHeader icon={<Sun className="w-4 h-4 text-primary" />} label="Color Analysis" />
+              <div className="rounded-2xl border border-border/30 bg-card/40 backdrop-blur-sm p-7 mt-4">
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold mb-4">Power Colors</p>
+                <div className="flex gap-4 flex-wrap mb-6">
+                  {report.bestColors.slice(0, 6).map((color, i) => (
+                    <div key={i} className="flex flex-col items-center gap-2">
+                      <div 
+                        className="w-14 h-14 rounded-full border-2 border-border/40 shadow-lg transition-transform hover:scale-110" 
+                        style={{ backgroundColor: color.hex }} 
+                      />
+                      <span className="text-[11px] text-muted-foreground">{color.color}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold mb-4">Colors to Avoid</p>
+                <div className="flex gap-4 flex-wrap">
+                  {report.colorsToAvoid.slice(0, 5).map((color, i) => (
+                    <div key={i} className="relative flex flex-col items-center gap-2">
+                      <div 
+                        className="w-10 h-10 rounded-full border-2 border-border/40 opacity-70" 
+                        style={{ backgroundColor: color.hex }} 
+                      />
+                      <div className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-destructive flex items-center justify-center">
+                        <X className="w-2.5 h-2.5 text-destructive-foreground" />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">{color.color}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Signature Looks */}
+            {report.signatureLooks?.length > 0 && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+                <SectionHeader icon={<Gem className="w-4 h-4 text-primary" />} label="Signature Looks" />
+                <div className="space-y-3 mt-4">
+                  {report.signatureLooks.slice(0, 3).map((look, i) => (
+                    <div key={i} className="rounded-2xl border border-border/30 bg-card/40 backdrop-blur-sm p-5">
+                      <h4 className="font-serif text-lg text-foreground mb-1.5">{look.name}</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3">{look.description}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[10px] text-primary/80 uppercase tracking-wider font-semibold">Key Pieces:</span>
+                        {look.keyPieces.map((piece, j) => (
+                          <span key={j} className="px-3 py-1 rounded-lg bg-primary/5 border border-primary/10 text-xs text-foreground/80">
+                            {piece}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
+
+        {/* Stylist Note - Full width */}
+        {report.finalStylistNote && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: 0.35 }}
+            className="rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 backdrop-blur-sm p-8 text-center"
+          >
+            <Gem className="w-6 h-6 text-primary mx-auto mb-3" />
+            <p className="font-serif text-lg text-foreground/90 italic leading-relaxed max-w-2xl mx-auto">
+              "{report.finalStylistNote}"
+            </p>
+          </motion.div>
+        )}
+
+        {/* Action Buttons */}
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ delay: 0.4 }}
+          className="flex items-center justify-center gap-4 pt-2 pb-10"
+        >
+          <Button 
+            variant="luxury" 
+            className="gap-2 h-12 px-10 text-sm font-semibold uppercase tracking-wider"
+            onClick={handleDownload}
+          >
+            <Download className="w-4 h-4" />
+            Download PDF Report
+          </Button>
+          <Button 
+            variant="luxuryOutline" 
+            className="gap-2 h-12 px-10 text-sm font-semibold uppercase tracking-wider"
+            onClick={handleShare}
+          >
+            <Share2 className="w-4 h-4" />
+            Share Profile
+          </Button>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // ── Mobile Layout (original) ──
   return (
     <div ref={reportRef} className="space-y-5 max-w-lg mx-auto px-1">
 
@@ -193,7 +392,6 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
       {/* ── Styling Guidance ── */}
       <SectionHeader icon={<Crown className="w-4 h-4 text-primary" />} label="Styling Guidance" />
       <div className="grid grid-cols-2 gap-3">
-        {/* Best For You */}
         <div className="rounded-2xl border border-primary/20 bg-card/40 p-4">
           <div className="flex items-center gap-1.5 mb-3">
             <CheckCircle2 className="w-4 h-4 text-primary" />
@@ -205,7 +403,6 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
             ))}
           </div>
         </div>
-        {/* Avoid */}
         <div className="rounded-2xl border border-border/30 bg-card/40 p-4">
           <div className="flex items-center gap-1.5 mb-3">
             <X className="w-4 h-4 text-muted-foreground" />
