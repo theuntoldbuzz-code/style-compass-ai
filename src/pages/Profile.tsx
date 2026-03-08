@@ -15,6 +15,7 @@ const Profile = () => {
   const { user, signOut } = useAuth();
   const { savedItems, savedOutfits } = useCloset();
   const [isPremium, setIsPremium] = useState(false);
+  const [premiumTier, setPremiumTier] = useState<'gold' | 'platinum' | null>(null);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [bgLoaded, setBgLoaded] = useState(false);
