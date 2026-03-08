@@ -11,7 +11,11 @@ interface Message {
 }
 
 const StyleAIChatbot = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+
+  if (location.pathname === "/profile") return null;
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
