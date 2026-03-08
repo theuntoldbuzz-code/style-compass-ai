@@ -67,8 +67,9 @@ const BottomNav = () => {
                 {isActive && (
                   <motion.div
                     layoutId="navGoldDot"
-                    className="absolute -top-px left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full"
+                    className="absolute left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full"
                     style={{
+                      top: "8px",
                       background: "linear-gradient(90deg, hsl(45 66% 52%), hsl(35 41% 61%))",
                       boxShadow: "0 0 8px hsl(45 66% 52% / 0.5)",
                     }}
