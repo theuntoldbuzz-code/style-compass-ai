@@ -1,4 +1,4 @@
-import { User, Palette, Sparkles } from "lucide-react";
+import { User, Palette, Sparkles, CircleUser } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -52,6 +52,42 @@ const bodyTypeOptions = [
   { value: "heavy", label: "Heavy" },
 ];
 
+interface AttributeCardProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  placeholder: string;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+}
+
+const AttributeCard = ({ icon, label, value, placeholder, options, onChange }: AttributeCardProps) => (
+  <div className="rounded-2xl border border-border/20 bg-card/50 backdrop-blur-sm p-4 md:p-6 transition-all duration-300 hover:border-primary/20">
+    <div className="flex items-center gap-3 mb-3 md:mb-4">
+      <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/10">
+        {icon}
+      </div>
+      <Label className="font-serif text-base md:text-lg text-foreground">{label}</Label>
+    </div>
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className="luxury-input w-full h-11 rounded-xl">
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent className="bg-card border-border rounded-xl">
+        {options.map((option) => (
+          <SelectItem 
+            key={option.value} 
+            value={option.value}
+            className="hover:bg-primary/10 focus:bg-primary/10 rounded-lg"
+          >
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+);
+
 const AttributesForm = ({
   gender,
   skinTone,
@@ -63,120 +99,49 @@ const AttributesForm = ({
   onBodyTypeChange,
 }: AttributesFormProps) => {
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-3">
+    <div className="space-y-4 md:space-y-6">
+      <div className="text-center mb-4 md:mb-8">
+        <h2 className="font-serif text-2xl md:text-4xl text-foreground mb-2 md:mb-3">
           Tell Us About <span className="text-gradient-gold">Yourself</span>
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground text-sm md:text-base max-w-md mx-auto">
           These details help us find colors and styles that suit you perfectly
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Gender */}
-        <div className="luxury-card p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <User className="w-5 h-5 text-primary" />
-            </div>
-            <Label className="font-serif text-lg text-foreground">Gender</Label>
-          </div>
-          <Select value={gender} onValueChange={onGenderChange}>
-            <SelectTrigger className="luxury-input w-full">
-              <SelectValue placeholder="Select your gender" />
-            </SelectTrigger>
-            <SelectContent className="bg-card border-border">
-              {genderOptions.map((option) => (
-                <SelectItem 
-                  key={option.value} 
-                  value={option.value}
-                  className="hover:bg-primary/10 focus:bg-primary/10"
-                >
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Skin Tone */}
-        <div className="luxury-card p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Palette className="w-5 h-5 text-primary" />
-            </div>
-            <Label className="font-serif text-lg text-foreground">Skin Tone</Label>
-          </div>
-          <Select value={skinTone} onValueChange={onSkinToneChange}>
-            <SelectTrigger className="luxury-input w-full">
-              <SelectValue placeholder="Select your skin tone" />
-            </SelectTrigger>
-            <SelectContent className="bg-card border-border">
-              {skinToneOptions.map((option) => (
-                <SelectItem 
-                  key={option.value} 
-                  value={option.value}
-                  className="hover:bg-primary/10 focus:bg-primary/10"
-                >
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Hair Color */}
-        <div className="luxury-card p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-primary" />
-            </div>
-            <Label className="font-serif text-lg text-foreground">Hair Color</Label>
-          </div>
-          <Select value={hairColor} onValueChange={onHairColorChange}>
-            <SelectTrigger className="luxury-input w-full">
-              <SelectValue placeholder="Select your hair color" />
-            </SelectTrigger>
-            <SelectContent className="bg-card border-border">
-              {hairColorOptions.map((option) => (
-                <SelectItem 
-                  key={option.value} 
-                  value={option.value}
-                  className="hover:bg-primary/10 focus:bg-primary/10"
-                >
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Body Type */}
-        <div className="luxury-card p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <User className="w-5 h-5 text-primary" />
-            </div>
-            <Label className="font-serif text-lg text-foreground">Body Type</Label>
-          </div>
-          <Select value={bodyType} onValueChange={onBodyTypeChange}>
-            <SelectTrigger className="luxury-input w-full">
-              <SelectValue placeholder="Select your body type" />
-            </SelectTrigger>
-            <SelectContent className="bg-card border-border">
-              {bodyTypeOptions.map((option) => (
-                <SelectItem 
-                  key={option.value} 
-                  value={option.value}
-                  className="hover:bg-primary/10 focus:bg-primary/10"
-                >
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="grid gap-3 md:gap-6 md:grid-cols-2">
+        <AttributeCard
+          icon={<User className="w-4 h-4 md:w-5 md:h-5 text-primary" />}
+          label="Gender"
+          value={gender}
+          placeholder="Select your gender"
+          options={genderOptions}
+          onChange={onGenderChange}
+        />
+        <AttributeCard
+          icon={<Palette className="w-4 h-4 md:w-5 md:h-5 text-primary" />}
+          label="Skin Tone"
+          value={skinTone}
+          placeholder="Select your skin tone"
+          options={skinToneOptions}
+          onChange={onSkinToneChange}
+        />
+        <AttributeCard
+          icon={<Sparkles className="w-4 h-4 md:w-5 md:h-5 text-primary" />}
+          label="Hair Color"
+          value={hairColor}
+          placeholder="Select your hair color"
+          options={hairColorOptions}
+          onChange={onHairColorChange}
+        />
+        <AttributeCard
+          icon={<CircleUser className="w-4 h-4 md:w-5 md:h-5 text-primary" />}
+          label="Body Type"
+          value={bodyType}
+          placeholder="Select your body type"
+          options={bodyTypeOptions}
+          onChange={onBodyTypeChange}
+        />
       </div>
     </div>
   );
