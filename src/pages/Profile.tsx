@@ -42,7 +42,6 @@ const Profile = () => {
         setPremiumTier((premiumRes.data as any).tier || 'gold');
       }
       setTryOnCount(tryOnsRes.count ?? 0);
-      setReportCount(reportsRes.count ?? 0);
       setLoading(false);
     };
     fetchData();
