@@ -56,6 +56,7 @@ const App = () => (
                 <Route path="/recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
                 <Route path="/closet" element={<ProtectedRoute><Closet /></ProtectedRoute>} />
                 <Route path="/explore" element={<ProtectedRoute><Explore /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <StyleAIChatbot />
