@@ -59,23 +59,23 @@ const Index = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 container mx-auto px-4 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold">
-            <Sparkles className="w-5 h-5 text-primary-foreground" />
+      <nav className="relative z-10 container mx-auto px-4 py-4 md:py-6 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+          <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold">
+            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
           </div>
-          <span className="font-serif text-2xl text-foreground">
+          <span className="font-serif text-xl md:text-2xl text-foreground">
             <span className="text-gradient-gold">Lux</span>Fit
           </span>
         </div>
         
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/explore')} className="text-muted-foreground hover:text-primary">
+        <div className="flex items-center gap-1 sm:gap-3">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/explore')} className="text-muted-foreground hover:text-primary w-10 h-10">
             <Compass className="w-5 h-5" />
           </Button>
           {!loading && user ? <>
               {isPremium && (
-                <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="relative text-muted-foreground hover:text-primary">
+                <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="relative text-muted-foreground hover:text-primary w-10 h-10">
                   <Heart className="w-5 h-5" />
                   {totalSaved > 0 && (
                     <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
@@ -86,7 +86,7 @@ const Index = () => {
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground w-10 h-10">
                     <User className="w-5 h-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -118,11 +118,12 @@ const Index = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </> : <Button variant="ghost" onClick={() => navigate('/auth')} className="text-muted-foreground hover:text-foreground">
+            </> : <Button variant="ghost" onClick={() => navigate('/auth')} className="text-muted-foreground hover:text-foreground text-sm px-3">
               Sign In
             </Button>}
-          <Button variant="luxuryOutline" onClick={() => navigate("/get-outfit")}>
-            Get Started
+          <Button variant="luxuryOutline" onClick={() => navigate("/get-outfit")} className="text-xs sm:text-sm px-3 sm:px-4">
+            <span className="hidden sm:inline">Get Started</span>
+            <span className="sm:hidden">Start</span>
           </Button>
         </div>
       </nav>
