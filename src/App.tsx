@@ -22,6 +22,7 @@ preloadImg.src = goldBokehBg;
 const Index = lazy(() => import("./pages/Index"));
 const StyleWizard = lazy(() => import("./pages/StyleWizard"));
 const StyleQuiz = lazy(() => import("./pages/StyleQuiz"));
+const Reports = lazy(() => import("./pages/Reports"));
 const Recommendations = lazy(() => import("./pages/Recommendations"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Closet = lazy(() => import("./pages/Closet"));
