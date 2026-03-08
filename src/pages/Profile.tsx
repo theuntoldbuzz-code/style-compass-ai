@@ -149,7 +149,7 @@ const Profile = () => {
                   <li>Virtual Try-On Access</li>
                   <li>Priority Processing</li>
                 </ul>
-                <button className={`w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all ${
+                <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all ${
                   isPremium
                     ? "bg-transparent text-primary border-2 border-primary"
                     : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
