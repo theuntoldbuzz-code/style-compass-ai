@@ -1,35 +1,51 @@
-import goldBokehBg from "@/assets/gold-bokeh-bg.png";
+import desktopBgHome from "@/assets/desktop-bg-home.jpg";
+import desktopBgProfile from "@/assets/desktop-bg-profile.jpg";
+import desktopBgExplore from "@/assets/desktop-bg-explore.jpg";
+import desktopBgCloset from "@/assets/desktop-bg-closet.jpg";
+import desktopBgReports from "@/assets/desktop-bg-reports.jpg";
+import desktopBgWizard from "@/assets/desktop-bg-wizard.jpg";
+import desktopBgRecommendations from "@/assets/desktop-bg-recommendations.jpg";
 
-/**
- * Premium ambient background for desktop/tablet views.
- * Renders a subtle gold bokeh texture with layered gradients
- * for a luxury, depth-rich feel across all pages.
- */
-const DesktopBackground = () => (
+const bgMap = {
+  home: desktopBgHome,
+  profile: desktopBgProfile,
+  explore: desktopBgExplore,
+  closet: desktopBgCloset,
+  reports: desktopBgReports,
+  wizard: desktopBgWizard,
+  recommendations: desktopBgRecommendations,
+} as const;
+
+export type DesktopBgVariant = keyof typeof bgMap;
+
+interface DesktopBackgroundProps {
+  variant?: DesktopBgVariant;
+}
+
+const DesktopBackground = ({ variant = "home" }: DesktopBackgroundProps) => (
   <div className="hidden md:block fixed inset-0 pointer-events-none z-0">
-    {/* Base dark gradient */}
-    <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background" />
-    
-    {/* Gold bokeh texture - very subtle */}
+    {/* Page-specific background image */}
     <img
-      src={goldBokehBg}
+      src={bgMap[variant]}
       alt=""
-      className="absolute inset-0 w-full h-full object-cover opacity-[0.12]"
+      className="absolute inset-0 w-full h-full object-cover opacity-[0.18]"
     />
     
-    {/* Layered ambient glows */}
-    <div className="absolute top-[-10%] left-[-5%] w-[45%] h-[50%] bg-[radial-gradient(ellipse_at_center,hsl(45_66%_52%/0.06),transparent_70%)]" />
-    <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[45%] bg-[radial-gradient(ellipse_at_center,hsl(45_66%_52%/0.04),transparent_70%)]" />
-    <div className="absolute top-[40%] left-[50%] -translate-x-1/2 w-[60%] h-[30%] bg-[radial-gradient(ellipse_at_center,hsl(45_66%_52%/0.02),transparent_70%)]" />
+    {/* Dark overlay for readability */}
+    <div className="absolute inset-0 bg-background/70" />
     
     {/* Top edge vignette */}
-    <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background/80 to-transparent" />
+    <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-background to-transparent" />
     
     {/* Bottom fade */}
-    <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
+    <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent" />
     
-    {/* Subtle noise texture overlay via CSS */}
-    <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px 128px' }} />
+    {/* Side vignettes */}
+    <div className="absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-background/60 to-transparent" />
+    <div className="absolute inset-y-0 right-0 w-48 bg-gradient-to-l from-background/60 to-transparent" />
+    
+    {/* Subtle noise texture */}
+    <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px 128px' }} />
   </div>
 );
 
