@@ -286,137 +286,168 @@ const Closet = () => {
     );
   };
 
-  // ---- DESKTOP VIEW (enhanced) ----
+  // ---- DESKTOP / TABLET VIEW (premium) ----
   const DesktopView = () => (
-    <div className="hidden md:block min-h-screen bg-background">
-      {/* Background Effects */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
+    <div className="hidden md:block min-h-screen bg-background relative">
+      {/* Ambient Background */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-20 right-1/4 w-[400px] h-[400px] bg-primary/3 rounded-full blur-[100px]" />
       </div>
 
-      {/* Navigation */}
-      <nav className="relative z-10 border-b border-border/30 bg-background/60 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
+      {/* Sticky Nav */}
+      <motion.nav
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="sticky top-0 z-30 border-b border-border/20 bg-background/80 backdrop-blur-xl"
+      >
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
+            <button onClick={() => navigate('/')} className="w-9 h-9 rounded-xl bg-card/60 border border-border/30 flex items-center justify-center hover:bg-card transition-colors">
+              <ArrowLeft className="w-4 h-4 text-foreground" />
+            </button>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold">
-                <Heart className="w-5 h-5 text-primary-foreground" />
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold">
+                <Heart className="w-4 h-4 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="font-serif text-xl text-foreground">My Closet</h1>
-                <p className="text-xs text-muted-foreground">Your saved styles & curated outfits</p>
+                <h1 className="font-serif text-lg text-foreground">Virtual Closet</h1>
+                <p className="text-[11px] text-muted-foreground">{savedOutfits.length} outfits · {savedItems.length} items</p>
               </div>
             </div>
           </div>
-          <Button variant="luxury" onClick={() => navigate('/get-outfit')} className="gap-2">
+          <Button variant="luxury" size="sm" onClick={() => navigate('/get-outfit')} className="gap-2">
             <Sparkles className="w-4 h-4" />
             Discover More
           </Button>
         </div>
-      </nav>
+      </motion.nav>
 
-      {/* Hero Banner - Desktop */}
+      {/* Hero Banner */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 pt-8">
-        <div className="relative h-[200px] rounded-2xl overflow-hidden">
-          <img 
-            src={heroImages[activeFilter] || heroBannerAll} 
-            alt={`${activeFilter} Fashion`} 
-            className="w-full h-full object-cover object-center transition-all duration-500"
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative h-[220px] lg:h-[260px] rounded-3xl overflow-hidden border border-border/20"
+        >
+          <img
+            src={heroImages[activeFilter] || heroBannerAll}
+            alt={`${activeFilter} Fashion`}
+            className="w-full h-full object-cover object-center transition-all duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
-          <div className="absolute bottom-8 left-8">
-            <h2 className="font-serif text-3xl text-foreground mb-1">Your Virtual Closet</h2>
-            <p className="text-sm text-muted-foreground">Curated by Aurion AI • {savedOutfits.length} outfits • {savedItems.length} items saved</p>
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+          <div className="absolute inset-0 flex items-end p-8 lg:p-10">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-primary/15 backdrop-blur-sm px-3 py-1 rounded-full text-primary text-[11px] font-semibold tracking-wider uppercase mb-3 border border-primary/20">
+                <Crown className="w-3 h-3" />
+                Premium Collection
+              </div>
+              <h2 className="font-serif text-3xl lg:text-4xl text-foreground mb-1">Your Virtual Closet</h2>
+              <p className="text-sm text-muted-foreground">Curated by Aurion AI</p>
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Main Content */}
+      {/* Content */}
       <main className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 py-8">
-        {/* Filter + Tabs Row */}
-        <div className="flex items-center justify-between gap-4 mb-8">
-          <Tabs defaultValue="outfits" className="w-full">
-            <div className="flex items-center justify-between gap-6 mb-8">
-              <TabsList className="grid w-full max-w-xs grid-cols-2">
-                <TabsTrigger value="outfits" className="gap-2">
-                  <ShoppingBag className="w-4 h-4" />
-                  Outfits ({savedOutfits.length})
-                </TabsTrigger>
-                <TabsTrigger value="items" className="gap-2">
-                  <Heart className="w-4 h-4" />
-                  Items ({savedItems.length})
-                </TabsTrigger>
-              </TabsList>
-              
-              {/* Occasion Filters */}
-              <div className="flex gap-2">
-                {occasionFilters.map(filter => (
-                  <button
-                    key={filter}
-                    onClick={() => setActiveFilter(filter)}
-                    className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
-                      activeFilter === filter
-                        ? 'bg-primary text-primary-foreground border-primary/40 shadow-gold'
-                        : 'bg-card/60 text-muted-foreground border-border/50 hover:border-primary/40 hover:text-foreground'
-                    }`}
-                  >
-                    {filter}
-                  </button>
-                ))}
-              </div>
-            </div>
+        <Tabs defaultValue="outfits" className="w-full">
+          {/* Controls Row */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8"
+          >
+            <TabsList className="grid w-full max-w-[280px] grid-cols-2 bg-card/60 border border-border/30 backdrop-blur-sm">
+              <TabsTrigger value="outfits" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <ShoppingBag className="w-4 h-4" />
+                Outfits ({savedOutfits.length})
+              </TabsTrigger>
+              <TabsTrigger value="items" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Heart className="w-4 h-4" />
+                Items ({savedItems.length})
+              </TabsTrigger>
+            </TabsList>
 
-            <TabsContent value="outfits">
-              {savedOutfits.length === 0 ? (
-                <EmptyState
-                  icon={ShoppingBag}
-                  title="No saved outfits yet"
-                  description="Start exploring and save outfits you love to see them here"
-                  actionLabel="Discover Outfits"
-                  onAction={() => navigate('/get-outfit')}
-                />
-              ) : (
-                <div className="grid lg:grid-cols-2 gap-6">
-                  {filteredOutfits.map((outfit) => (
-                    <SavedOutfitCard 
-                      key={outfit.id} 
-                      outfit={outfit} 
+            {/* Occasion Filters */}
+            <div className="flex gap-2 flex-wrap">
+              {occasionFilters.map(filter => (
+                <button
+                  key={filter}
+                  onClick={() => setActiveFilter(filter)}
+                  className={`px-5 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
+                    activeFilter === filter
+                      ? 'bg-primary text-primary-foreground border-primary shadow-gold'
+                      : 'bg-card/60 text-muted-foreground border-border/30 hover:border-primary/40 hover:text-foreground backdrop-blur-sm'
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Outfits Tab */}
+          <TabsContent value="outfits">
+            {filteredOutfits.length === 0 ? (
+              <EmptyState
+                icon={ShoppingBag}
+                title="No saved outfits yet"
+                description="Start exploring and save outfits you love to see them here"
+                actionLabel="Discover Outfits"
+                onAction={() => navigate('/get-outfit')}
+              />
+            ) : (
+              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredOutfits.map((outfit, i) => (
+                  <motion.div
+                    key={outfit.id}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                  >
+                    <SavedOutfitCard
+                      outfit={outfit}
                       onRemove={() => removeOutfit(outfit.outfit_id)}
                       formatCurrency={formatCurrency}
                     />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
 
-            <TabsContent value="items">
-              {savedItems.length === 0 ? (
-                <EmptyState
-                  icon={Heart}
-                  title="No saved items yet"
-                  description="Save individual products you love to build your dream wardrobe"
-                  actionLabel="Browse Items"
-                  onAction={() => navigate('/get-outfit')}
-                />
-              ) : (
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {savedItems.map((item) => (
-                    <SavedItemCard 
-                      key={item.id} 
-                      item={item} 
+          {/* Items Tab */}
+          <TabsContent value="items">
+            {savedItems.length === 0 ? (
+              <EmptyState
+                icon={Heart}
+                title="No saved items yet"
+                description="Save individual products you love to build your dream wardrobe"
+                actionLabel="Browse Items"
+                onAction={() => navigate('/get-outfit')}
+              />
+            ) : (
+              <div className="grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                {savedItems.map((item, i) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.04 }}
+                  >
+                    <SavedItemCard
+                      item={item}
                       onRemove={() => removeItem(item.product_id)}
                       formatCurrency={formatCurrency}
                     />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
@@ -439,28 +470,33 @@ interface EmptyStateProps {
 }
 
 const EmptyState = ({ icon: Icon, title, description, actionLabel, onAction }: EmptyStateProps) => (
-  <div className="luxury-card overflow-hidden max-w-2xl mx-auto">
+  <motion.div
+    initial={{ opacity: 0, scale: 0.97 }}
+    animate={{ opacity: 1, scale: 1 }}
+    className="rounded-3xl border border-border/20 overflow-hidden max-w-3xl mx-auto bg-card/30 backdrop-blur-sm"
+  >
     <div className="grid md:grid-cols-2">
-      <div className="relative aspect-square md:aspect-auto">
-        <img 
-          src={fashionEmpty} 
-          alt="Fashion inspiration" 
+      <div className="relative aspect-square md:aspect-auto min-h-[280px]">
+        <img
+          src={fashionEmpty}
+          alt="Fashion inspiration"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent md:bg-gradient-to-r" />
       </div>
-      <div className="p-8 md:p-12 flex flex-col items-center justify-center text-center">
-        <div className="w-16 h-16 mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
+      <div className="p-8 lg:p-12 flex flex-col items-center justify-center text-center">
+        <div className="w-16 h-16 mb-6 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
           <Icon className="w-8 h-8 text-primary" />
         </div>
-        <h3 className="font-serif text-xl text-foreground mb-2">{title}</h3>
-        <p className="text-muted-foreground mb-6">{description}</p>
-        <Button variant="luxury" onClick={onAction}>
+        <h3 className="font-serif text-2xl text-foreground mb-2">{title}</h3>
+        <p className="text-sm text-muted-foreground mb-8 leading-relaxed">{description}</p>
+        <Button variant="luxury" size="lg" onClick={onAction} className="gap-2">
+          <Sparkles className="w-4 h-4" />
           {actionLabel}
         </Button>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
 // Saved Outfit Card (Desktop)
@@ -472,68 +508,63 @@ interface SavedOutfitCardProps {
 
 const SavedOutfitCard = ({ outfit, onRemove, formatCurrency }: SavedOutfitCardProps) => {
   const savings = (outfit.outfit_total_price || 0) - (outfit.outfit_discounted_price || 0);
-  const savingsPercent = outfit.outfit_total_price 
-    ? Math.round((savings / outfit.outfit_total_price) * 100) 
+  const savingsPercent = outfit.outfit_total_price
+    ? Math.round((savings / outfit.outfit_total_price) * 100)
     : 0;
+  const firstProduct = outfit.outfit_products?.[0];
+  const imageUrl = firstProduct?.imageUrl;
 
   return (
-    <div className="luxury-card overflow-hidden">
-      <div className="p-6">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div>
-            <h3 className="font-serif text-xl text-foreground mb-1">
-              {outfit.outfit_name}
-            </h3>
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {outfit.outfit_description}
-            </p>
+    <div className="rounded-2xl border border-border/20 bg-card/40 backdrop-blur-sm overflow-hidden group hover:border-primary/20 transition-all duration-300 hover:shadow-[0_8px_40px_hsl(var(--primary)/0.08)]">
+      {/* Product thumbnails strip */}
+      <div className="grid grid-cols-4 gap-px bg-border/10">
+        {outfit.outfit_products.slice(0, 4).map((product, i) => (
+          <div key={i} className="aspect-square overflow-hidden bg-secondary">
+            {product.imageUrl ? (
+              <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <Gift className="w-6 h-6 text-primary/30" />
+              </div>
+            )}
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
+        ))}
+      </div>
+
+      <div className="p-5">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="min-w-0">
+            <h3 className="font-serif text-lg text-foreground mb-1 line-clamp-1">{outfit.outfit_name}</h3>
+            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{outfit.outfit_description}</p>
+          </div>
+          <button
             onClick={onRemove}
-            className="text-muted-foreground hover:text-destructive"
+            className="w-8 h-8 rounded-lg bg-card/80 border border-border/30 flex items-center justify-center text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-colors flex-shrink-0"
           >
-            <Trash2 className="w-5 h-5" />
-          </Button>
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
 
-        <div className="flex items-center gap-4 mb-4">
-          <span className="font-serif text-2xl text-foreground">
-            {formatCurrency(outfit.outfit_discounted_price || 0)}
-          </span>
+        <div className="flex items-center gap-3 mb-3">
+          <span className="font-serif text-xl text-foreground">{formatCurrency(outfit.outfit_discounted_price || 0)}</span>
           {savings > 0 && (
-            <div className="flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full">
+            <div className="inline-flex items-center gap-1 bg-primary/10 px-2.5 py-0.5 rounded-full">
               <Tag className="w-3 h-3 text-primary" />
-              <span className="text-sm text-primary font-medium">
-                Save {savingsPercent}%
-              </span>
+              <span className="text-xs text-primary font-semibold">Save {savingsPercent}%</span>
             </div>
           )}
         </div>
 
         {outfit.outfit_color_palette && outfit.outfit_color_palette.length > 0 && (
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-sm text-muted-foreground">Colors:</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-muted-foreground uppercase tracking-wider">Colors</span>
             <div className="flex gap-1">
               {outfit.outfit_color_palette.map((color, i) => (
-                <div
-                  key={i}
-                  className="w-5 h-5 rounded-full border-2 border-background"
-                  style={{ backgroundColor: color }}
-                />
+                <div key={i} className="w-4 h-4 rounded-full border border-border/40" style={{ backgroundColor: color }} />
               ))}
             </div>
           </div>
         )}
-
-        <div className="grid grid-cols-4 gap-2">
-          {outfit.outfit_products.slice(0, 4).map((product, i) => (
-            <div key={i} className="aspect-square rounded-lg overflow-hidden bg-secondary">
-              <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
@@ -552,49 +583,37 @@ const SavedItemCard = ({ item, onRemove, formatCurrency }: SavedItemCardProps) =
     : 0;
 
   return (
-    <div className="luxury-card overflow-hidden group">
-      <div className="relative aspect-[3/4] overflow-hidden">
+    <div className="rounded-2xl border border-border/20 bg-card/40 backdrop-blur-sm overflow-hidden group hover:border-primary/20 transition-all duration-300 hover:shadow-[0_8px_40px_hsl(var(--primary)/0.08)]">
+      <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
         <img
           src={item.product_image_url || '/placeholder.svg'}
           alt={item.product_name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <button
           onClick={onRemove}
-          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-background transition-colors"
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-background/70 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
         >
           <Trash2 className="w-4 h-4" />
         </button>
         {discount > 0 && (
-          <div className="absolute top-3 left-3 bg-gradient-to-r from-primary to-gold-dark text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">
+          <div className="absolute top-3 left-3 bg-primary text-primary-foreground px-2.5 py-0.5 rounded-full text-xs font-semibold">
             {discount}% OFF
           </div>
         )}
       </div>
       <div className="p-4">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-primary text-sm font-medium">{item.product_brand}</span>
-          <span className="text-xs text-muted-foreground">{item.product_store}</span>
-        </div>
-        <h4 className="font-serif text-lg text-foreground mb-2 line-clamp-1">
-          {item.product_name}
-        </h4>
-        {item.product_color && (
-          <p className="text-sm text-muted-foreground mb-3">Color: {item.product_color}</p>
-        )}
-        <div className="flex items-baseline gap-2 mb-4">
-          <span className="font-serif text-xl text-foreground font-semibold">
-            {formatCurrency(item.product_discounted_price || 0)}
-          </span>
+        <p className="text-[11px] text-primary font-semibold uppercase tracking-wider mb-1">{item.product_brand}</p>
+        <h4 className="font-serif text-sm text-foreground mb-2 line-clamp-1">{item.product_name}</h4>
+        <div className="flex items-baseline gap-2 mb-3">
+          <span className="font-serif text-lg text-foreground">{formatCurrency(item.product_discounted_price || 0)}</span>
           {discount > 0 && (
-            <span className="text-sm text-muted-foreground line-through">
-              {formatCurrency(item.product_price || 0)}
-            </span>
+            <span className="text-xs text-muted-foreground line-through">{formatCurrency(item.product_price || 0)}</span>
           )}
         </div>
-        <Button variant="luxury" className="w-full" onClick={() => window.open(item.product_store_url || '#', '_blank')}>
+        <Button variant="luxury" size="sm" className="w-full gap-1.5 text-xs" onClick={() => window.open(item.product_store_url || '#', '_blank')}>
           Shop Now
-          <ExternalLink className="w-4 h-4 ml-2" />
+          <ExternalLink className="w-3 h-3" />
         </Button>
       </div>
     </div>
