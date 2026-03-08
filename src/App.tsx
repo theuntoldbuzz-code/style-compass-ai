@@ -60,6 +60,7 @@ const App = () => (
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              <HomeButton />
               <StyleAIChatbot />
             </Suspense>
           </BrowserRouter>
