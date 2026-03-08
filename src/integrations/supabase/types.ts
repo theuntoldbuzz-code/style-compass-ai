@@ -44,6 +44,24 @@ export type Database = {
         }
         Relationships: []
       }
+      outfit_generations: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       photo_analyses: {
         Row: {
           analyzed_at: string | null
