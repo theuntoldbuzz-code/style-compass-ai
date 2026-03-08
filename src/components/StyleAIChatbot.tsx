@@ -97,7 +97,7 @@ const StyleAIChatbot = () => {
       {/* Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-gold shadow-gold flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+        className={`fixed bottom-6 right-4 sm:bottom-6 sm:right-6 z-50 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-gold shadow-gold flex items-center justify-center transition-all duration-300 hover:scale-110 ${
           isOpen ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       >
@@ -107,13 +107,13 @@ const StyleAIChatbot = () => {
 
       {/* Chat Window */}
       <div
-        className={`fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] transition-all duration-300 ${
+        className={`fixed inset-4 sm:inset-auto sm:bottom-6 sm:right-6 z-50 sm:w-[380px] sm:max-w-[calc(100vw-3rem)] transition-all duration-300 ${
           isOpen 
             ? "opacity-100 translate-y-0 pointer-events-auto" 
             : "opacity-0 translate-y-4 pointer-events-none"
         }`}
       >
-        <div className="luxury-card overflow-hidden flex flex-col h-[600px] max-h-[calc(100vh-6rem)] shadow-2xl">
+        <div className="luxury-card overflow-hidden flex flex-col h-full sm:h-[600px] sm:max-h-[calc(100vh-6rem)] shadow-2xl">
           {/* Header */}
           <div className="bg-gradient-gold p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">

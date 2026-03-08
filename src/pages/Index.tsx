@@ -59,23 +59,23 @@ const Index = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 container mx-auto px-4 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold">
-            <Sparkles className="w-5 h-5 text-primary-foreground" />
+      <nav className="relative z-10 container mx-auto px-4 py-4 md:py-6 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+          <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold">
+            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
           </div>
-          <span className="font-serif text-2xl text-foreground">
+          <span className="font-serif text-xl md:text-2xl text-foreground">
             <span className="text-gradient-gold">Lux</span>Fit
           </span>
         </div>
         
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/explore')} className="text-muted-foreground hover:text-primary">
+        <div className="flex items-center gap-1 sm:gap-3">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/explore')} className="text-muted-foreground hover:text-primary w-10 h-10">
             <Compass className="w-5 h-5" />
           </Button>
           {!loading && user ? <>
               {isPremium && (
-                <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="relative text-muted-foreground hover:text-primary">
+                <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="relative text-muted-foreground hover:text-primary w-10 h-10">
                   <Heart className="w-5 h-5" />
                   {totalSaved > 0 && (
                     <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
@@ -86,7 +86,7 @@ const Index = () => {
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground w-10 h-10">
                     <User className="w-5 h-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -118,60 +118,60 @@ const Index = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </> : <Button variant="ghost" onClick={() => navigate('/auth')} className="text-muted-foreground hover:text-foreground">
+            </> : <Button variant="ghost" onClick={() => navigate('/auth')} className="text-muted-foreground hover:text-foreground text-sm px-3">
               Sign In
             </Button>}
-          <Button variant="luxuryOutline" onClick={() => navigate("/get-outfit")}>
-            Get Started
+          <Button variant="luxuryOutline" onClick={() => navigate("/get-outfit")} className="text-xs sm:text-sm px-3 sm:px-4">
+            <span className="hidden sm:inline">Get Started</span>
+            <span className="sm:hidden">Start</span>
           </Button>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 container mx-auto px-4 pt-12 md:pt-20 pb-16">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <section className="relative z-10 container mx-auto px-4 pt-8 md:pt-20 pb-12 md:pb-16">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
           <div className={`text-center lg:text-left transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full text-primary text-sm font-medium mb-8">
-            <Star className="w-4 h-4 fill-primary" />
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary text-xs md:text-sm font-medium mb-6 md:mb-8">
+            <Star className="w-3 h-3 md:w-4 md:h-4 fill-primary" />
             AI-Powered Fashion Styling
           </div>
 
           {/* Main Headline */}
-          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-foreground leading-tight mb-6">
+          <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground leading-tight mb-4 md:mb-6">
             Discover Your
             <br />
             <span className="text-gradient-gold">Perfect Style</span>
           </h1>
 
           {/* Subheadline */}
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto lg:mx-0 mb-10">
+          <p className="text-muted-foreground text-base md:text-xl max-w-2xl mx-auto lg:mx-0 mb-8 md:mb-10 px-2 md:px-0">
             Upload your photo, tell us the occasion, and let AI curate personalized 
             outfits that match your skin tone, body type, and budget.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-            <Button variant="luxury" size="xl" onClick={() => navigate("/style-quiz")} className="min-w-[220px]">
+          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 md:gap-4">
+            <Button variant="luxury" size="xl" onClick={() => navigate("/style-quiz")} className="w-full sm:w-auto min-w-[200px]">
               Take Style Quiz
-              
             </Button>
-            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/get-outfit")}>
+            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/get-outfit")} className="w-full sm:w-auto">
               Upload Photo
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
 
           {/* Trust Badges */}
-          <div className="mt-12 flex items-center justify-center lg:justify-start gap-8 text-muted-foreground">
+          <div className="mt-8 md:mt-12 flex items-center justify-center lg:justify-start gap-6 md:gap-8 text-muted-foreground">
             <div className="flex items-center gap-2">
               <Star className="w-4 h-4 fill-primary text-primary" />
-              <span className="text-sm">10k+ Happy Users</span>
+              <span className="text-xs md:text-sm">10k+ Happy Users</span>
             </div>
-            <div className="hidden sm:block w-px h-4 bg-border" />
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="w-px h-4 bg-border" />
+            <div className="flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-primary" />
-              <span className="text-sm">50+ Partner Stores</span>
+              <span className="text-xs md:text-sm">50+ Partner Stores</span>
             </div>
           </div>
         </div>
@@ -194,43 +194,43 @@ const Index = () => {
       </section>
 
       {/* Fashion Gallery Section */}
-      <section className="relative z-10 container mx-auto px-4 py-16">
-        <div className={`text-center mb-12 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">
+      <section className="relative z-10 container mx-auto px-4 py-10 md:py-16">
+        <div className={`text-center mb-8 md:mb-12 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <h2 className="font-serif text-2xl md:text-4xl text-foreground mb-3 md:mb-4">
             Curated <span className="text-gradient-gold">Fashion</span> Inspiration
           </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
+          <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
             Explore premium styles handpicked by our AI to inspire your next look
           </p>
         </div>
         
-        <div className={`grid grid-cols-2 md:grid-cols-4 gap-4 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card">
-            <img src={fashionImage2} alt="Luxury fashion" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+        <div className={`grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="relative aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden group luxury-card">
+            <img src={fashionImage2} alt="Luxury fashion" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p className="text-sm text-primary font-medium">Casual Elegance</p>
+            <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-xs md:text-sm text-primary font-medium">Casual Elegance</p>
             </div>
           </div>
-          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card md:translate-y-8">
-            <img src={fashionImage3} alt="Premium style" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <div className="relative aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden group luxury-card md:translate-y-8">
+            <img src={fashionImage3} alt="Premium style" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p className="text-sm text-primary font-medium">Evening Glamour</p>
+            <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-xs md:text-sm text-primary font-medium">Evening Glamour</p>
             </div>
           </div>
-          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card">
-            <img src={fashionImage4} alt="Designer wear" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <div className="relative aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden group luxury-card">
+            <img src={fashionImage4} alt="Designer wear" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p className="text-sm text-primary font-medium">Street Style</p>
+            <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-xs md:text-sm text-primary font-medium">Street Style</p>
             </div>
           </div>
-          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card md:translate-y-8">
-            <img src={fashionImage5} alt="Haute couture" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <div className="relative aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden group luxury-card md:translate-y-8">
+            <img src={fashionImage5} alt="Haute couture" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p className="text-sm text-primary font-medium">Haute Couture</p>
+            <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-xs md:text-sm text-primary font-medium">Haute Couture</p>
             </div>
           </div>
         </div>
@@ -243,27 +243,27 @@ const Index = () => {
       <ColorPaletteForYou skinTone="medium" season="winter" />
 
       {/* Features Section */}
-      <section className="relative z-10 container mx-auto px-4 py-16">
-        <div className={`text-center mb-12 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">
+      <section className="relative z-10 container mx-auto px-4 py-10 md:py-16">
+        <div className={`text-center mb-8 md:mb-12 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <h2 className="font-serif text-2xl md:text-4xl text-foreground mb-3 md:mb-4">
             How <span className="text-gradient-gold">LuxFit AI</span> Works
           </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
+          <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
             Our intelligent styling engine combines AI with fashion expertise
           </p>
         </div>
 
-        <div className={`grid md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {features.map((feature, index) => {
           const IconComponent = feature.icon;
-          return <div key={index} className="luxury-card p-6 text-center group hover:shadow-gold transition-all duration-500 hover:-translate-y-2">
-                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center group-hover:from-primary group-hover:to-gold-dark transition-all duration-500">
-                  <IconComponent className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
+          return <div key={index} className="luxury-card p-4 md:p-6 text-center group hover:shadow-gold transition-all duration-500 hover:-translate-y-2">
+                <div className="w-12 h-12 md:w-14 md:h-14 mx-auto mb-3 md:mb-4 rounded-xl md:rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center group-hover:from-primary group-hover:to-gold-dark transition-all duration-500">
+                  <IconComponent className="w-6 h-6 md:w-7 md:h-7 text-primary group-hover:text-primary-foreground transition-colors" />
                 </div>
-                <h3 className="font-serif text-lg text-foreground mb-2">
+                <h3 className="font-serif text-sm md:text-lg text-foreground mb-1 md:mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
                   {feature.description}
                 </p>
               </div>;
@@ -272,20 +272,20 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="relative z-10 container mx-auto px-4 py-16">
-        <div className={`luxury-card p-8 md:p-12 text-center max-w-3xl mx-auto relative overflow-hidden transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <section className="relative z-10 container mx-auto px-4 py-10 md:py-16">
+        <div className={`luxury-card p-6 md:p-12 text-center max-w-3xl mx-auto relative overflow-hidden transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {/* Decorative elements */}
           <div className="absolute top-0 left-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
           <div className="absolute bottom-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-2xl" />
           
           <div className="relative">
-            <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">
+            <h2 className="font-serif text-2xl md:text-4xl text-foreground mb-3 md:mb-4">
               Ready to Transform Your Style?
             </h2>
-            <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
+            <p className="text-muted-foreground text-sm md:text-base mb-6 md:mb-8 max-w-lg mx-auto">
               Join thousands of fashion-forward individuals who've discovered their perfect look with LuxFit AI
             </p>
-            <Button variant="luxury" size="xl" onClick={() => navigate("/get-outfit")}>
+            <Button variant="luxury" size="xl" onClick={() => navigate("/get-outfit")} className="w-full sm:w-auto">
               <Sparkles className="w-5 h-5 mr-2" />
               Get Your Personalized Outfits
             </Button>
@@ -294,13 +294,13 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-border/50 mt-16 py-8">
+      <footer className="relative z-10 border-t border-border/50 mt-8 md:mt-16 py-6 md:py-8 pb-24 sm:pb-8">
         <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
+          <div className="flex items-center justify-center gap-2 mb-3 md:mb-4">
             <Sparkles className="w-5 h-5 text-primary" />
             <span className="font-serif text-xl">LuxFit AI</span>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs md:text-sm text-muted-foreground">
             © 2024 LuxFit AI. Your Personal Style Curator.
           </p>
         </div>

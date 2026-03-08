@@ -156,7 +156,7 @@ const StyleWizard = () => {
       </div>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6 md:py-10 max-w-4xl">
+      <main className="container mx-auto px-4 py-6 md:py-10 pb-24 sm:pb-10 max-w-4xl">
         <div className="animate-fade-in">
           {currentStep === 1 && (
             <PhotoUpload 
