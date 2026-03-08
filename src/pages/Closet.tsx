@@ -127,7 +127,7 @@ const Closet = () => {
           onClick={() => setMobileTab('outfits')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-300 ${
             mobileTab === 'outfits'
-              ? 'bg-gradient-to-r from-primary/90 to-primary/70 text-primary-foreground shadow-[0_2px_12px_hsl(var(--primary)/0.3)]'
+              ? 'bg-gradient-to-r from-[hsl(45,75%,52%)] to-[hsl(45,80%,40%)] text-[hsl(0,0%,0%)] shadow-[0_4px_30px_hsl(45,75%,52%,0.15)]'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -138,7 +138,7 @@ const Closet = () => {
           onClick={() => setMobileTab('items')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-300 ${
             mobileTab === 'items'
-              ? 'bg-gradient-to-r from-primary/90 to-primary/70 text-primary-foreground shadow-[0_2px_12px_hsl(var(--primary)/0.3)]'
+              ? 'bg-gradient-to-r from-[hsl(45,75%,52%)] to-[hsl(45,80%,40%)] text-[hsl(0,0%,0%)] shadow-[0_4px_30px_hsl(45,75%,52%,0.15)]'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -155,7 +155,7 @@ const Closet = () => {
             onClick={() => setActiveFilter(filter)}
             className={`min-w-[56px] h-9 px-5 rounded-full text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-300 border inline-flex items-center justify-center ${
               activeFilter === filter
-                ? 'bg-gradient-to-r from-[hsl(45,75%,52%)] to-[hsl(45,80%,40%)] text-[hsl(0,0%,5%)] border-[hsl(45,75%,52%)] shadow-[0_2px_16px_hsl(45,75%,52%,0.3)]'
+                ? 'bg-gradient-to-r from-[hsl(45,75%,52%)] to-[hsl(45,80%,40%)] text-[hsl(0,0%,0%)] border-[hsl(45,75%,52%)] shadow-[0_4px_30px_hsl(45,75%,52%,0.15)]'
                 : 'bg-card/60 text-muted-foreground border-border/50 hover:border-primary/40 hover:text-foreground backdrop-blur-sm'
             }`}
           >
