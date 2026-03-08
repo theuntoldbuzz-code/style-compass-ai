@@ -246,6 +246,8 @@ const StyleQuiz = () => {
 
       if (data?.report) {
         setGeneratedReport(data.report);
+        // Persist to localStorage so Reports page can show it
+        try { localStorage.setItem("luxfit-last-report", JSON.stringify(data.report)); } catch {}
       } else {
         throw new Error("No report data received");
       }
