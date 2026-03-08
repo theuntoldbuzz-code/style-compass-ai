@@ -66,7 +66,7 @@ const ProcessingScreen = ({ onComplete, photo }: ProcessingScreenProps) => {
         throw new Error(error.message);
       }
 
-      console.log("Photo analysis result:", data);
+      // Photo analysis complete
 
       if (!data.isHuman) {
         setAnalysisError(data.error || "Please upload a clear photo of yourself");
