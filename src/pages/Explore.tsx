@@ -87,8 +87,8 @@ const Explore = () => {
 
       {/* ── Hero Section (Reference-inspired) ── */}
       <div className="relative overflow-hidden">
-        {/* Full-width sparkle background */}
-        <div className="absolute inset-x-0 top-0 h-[260px] sm:h-[220px]">
+        {/* Full-width sparkle background - mobile only */}
+        <div className="md:hidden absolute inset-x-0 top-0 h-[260px] sm:h-[220px]">
           <img 
             src={exploreSparkle} 
             alt="" 
