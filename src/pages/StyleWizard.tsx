@@ -226,34 +226,35 @@ const StyleWizard = () => {
         )}
 
         {/* Navigation Buttons - fixed on mobile */}
-        <div className="fixed md:relative bottom-0 left-0 right-0 md:bottom-auto bg-background/95 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none border-t md:border-t-0 border-border/30 p-4 md:p-0 md:mt-10 md:pt-6 md:border-t md:border-border/50 z-40 flex items-center justify-between gap-3">
-          <Button
-            variant="luxuryOutline"
-            size="lg"
-            onClick={handleBack}
-            disabled={currentStep === 1}
-            className={`flex-1 md:flex-none h-12 md:h-auto rounded-2xl ${currentStep === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
+        <div className="fixed md:relative bottom-0 left-0 right-0 md:bottom-auto bg-background/95 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none border-t md:border-t-0 border-border/30 p-4 md:p-0 md:mt-10 md:pt-6 md:border-t md:border-border/50 z-40 flex items-center gap-3">
+          {currentStep > 1 && (
+            <Button
+              variant="luxuryOutline"
+              size="lg"
+              onClick={handleBack}
+              className="h-12 md:h-auto rounded-2xl px-5 shrink-0"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1.5" />
+              Back
+            </Button>
+          )}
 
           <Button
             variant="luxury"
             size="lg"
             onClick={handleNext}
             disabled={!isStepValid()}
-            className={`flex-1 md:flex-none h-12 md:h-auto rounded-2xl ${!isStepValid() ? 'opacity-30 cursor-not-allowed' : ''}`}
+            className={`flex-1 h-12 md:h-auto rounded-2xl text-sm md:text-base whitespace-nowrap ${!isStepValid() ? 'opacity-30 cursor-not-allowed' : ''}`}
           >
             {currentStep === 4 ? (
               <>
-                <Sparkles className="w-4 h-4 mr-2" />
+                <Sparkles className="w-4 h-4 mr-1.5 shrink-0" />
                 Get Recommendations
               </>
             ) : (
               <>
                 Continue
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="w-4 h-4 ml-1.5" />
               </>
             )}
           </Button>
