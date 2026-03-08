@@ -6,9 +6,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import {
   Sparkles, Crown, User, Bell, Shield, LogOut, ChevronRight,
-  HelpCircle, Shirt, Eye, FileText
+  HelpCircle, Shirt, Eye, FileText, Calendar, Clock, Trash2
 } from "lucide-react";
 import goldBokehBg from "@/assets/gold-bokeh-bg.png";
+import { useStyleReportHistory, StyleReportRecord } from "@/hooks/useStyleReportHistory";
+import { format } from "date-fns";
+import { toast } from "@/hooks/use-toast";
 
 const Profile = () => {
   const navigate = useNavigate();
