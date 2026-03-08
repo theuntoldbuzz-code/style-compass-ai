@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import HomeButton from "@/components/HomeButton";
+import BottomNav from "@/components/BottomNav";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Sparkles } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
@@ -81,8 +82,11 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
-              <AnimatedRoutes />
+              <div className="pb-16 md:pb-0">
+                <AnimatedRoutes />
+              </div>
               <HomeButton />
+              <BottomNav />
               <StyleAIChatbot />
             </Suspense>
           </BrowserRouter>
