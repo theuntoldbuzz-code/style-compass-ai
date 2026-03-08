@@ -202,7 +202,7 @@ const Profile = () => {
                   }`}
                 >
                   <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-primary" />
+                    <Icon className="w-4 h-4" style={{ color: 'hsl(45, 66%, 52%)' }} />
                   </div>
                   <span className="text-sm text-foreground flex-1 text-left">{item.label}</span>
                   <ChevronRight className="w-4 h-4 text-muted-foreground" />
