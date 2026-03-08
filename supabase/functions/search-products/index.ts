@@ -1,10 +1,27 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:8080',
+  'http://localhost:3000',
+];
+
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.lovable\.app$/.test(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.lovableproject\.com$/.test(origin)) return true;
+  return false;
+}
+
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  const allowedOrigin = isAllowedOrigin(origin) ? origin! : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
 
 interface SignatureLook {
   name: string;
