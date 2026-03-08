@@ -110,13 +110,13 @@ const Closet = () => {
       </div>
 
       {/* Outfits / Items Tabs */}
-      <div className="flex gap-0 mx-4 mt-5 rounded-lg overflow-hidden border border-border/50 bg-card">
+      <div className="flex gap-1 mx-4 mt-5 rounded-xl overflow-hidden border border-primary/20 bg-card/80 backdrop-blur-sm p-1">
         <button
           onClick={() => setMobileTab('outfits')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-300 ${
             mobileTab === 'outfits'
-              ? 'bg-secondary text-foreground'
-              : 'text-muted-foreground'
+              ? 'bg-gradient-to-r from-primary/90 to-primary/70 text-primary-foreground shadow-[0_2px_12px_hsl(var(--primary)/0.3)]'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
           <ShoppingBag className="w-3.5 h-3.5" />
@@ -124,10 +124,10 @@ const Closet = () => {
         </button>
         <button
           onClick={() => setMobileTab('items')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-300 ${
             mobileTab === 'items'
-              ? 'bg-secondary text-foreground'
-              : 'text-muted-foreground'
+              ? 'bg-gradient-to-r from-primary/90 to-primary/70 text-primary-foreground shadow-[0_2px_12px_hsl(var(--primary)/0.3)]'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
           <Heart className="w-3.5 h-3.5" />
@@ -141,10 +141,10 @@ const Closet = () => {
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
+            className={`px-5 py-2 rounded-full text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-300 border ${
               activeFilter === filter
-                ? 'bg-primary text-primary-foreground border-primary'
-                : 'bg-transparent text-muted-foreground border-border hover:border-primary/40'
+                ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground border-primary shadow-[0_2px_16px_hsl(var(--primary)/0.25)]'
+                : 'bg-card/60 text-muted-foreground border-border/50 hover:border-primary/40 hover:text-foreground backdrop-blur-sm'
             }`}
           >
             {filter}
