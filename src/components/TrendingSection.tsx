@@ -152,10 +152,19 @@ const TrendingSection = () => {
 
         {/* View All Button */}
         <div className="text-center mt-10">
+          {/* Mobile: matches Upload Photo style */}
+          <button
+            onClick={() => navigate('/explore')}
+            className="md:hidden w-full max-w-[320px] py-4 rounded-full bg-gradient-gold text-primary-foreground uppercase tracking-[0.15em] text-sm font-bold shadow-[0_4px_20px_rgba(212,175,55,0.4)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] active:scale-[0.98] transition-all duration-300"
+          >
+            Explore All Trending
+          </button>
+          {/* Desktop */}
           <Button
             variant="luxuryOutline"
             size="lg"
             onClick={() => navigate('/explore')}
+            className="hidden md:inline-flex"
           >
             Explore All Trending
             <ChevronRight className="w-4 h-4 ml-1" />
