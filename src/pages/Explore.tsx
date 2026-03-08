@@ -138,26 +138,40 @@ const Explore = () => {
       <header className="sticky top-0 z-50 border-b border-border/20 md:block hidden"
         style={{ background: "linear-gradient(180deg, hsl(0 0% 4% / 0.95), hsl(0 0% 4% / 0.85))", backdropFilter: "blur(20px) saturate(1.8)" }}
       >
-        <div className="px-4 py-3 flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
+        <div className="px-6 lg:px-10 py-3 flex items-center justify-between max-w-7xl mx-auto">
+          <div className="flex items-center gap-4">
             <button onClick={() => navigate('/')} className="w-9 h-9 rounded-xl bg-card/60 border border-border/20 flex items-center justify-center transition-colors hover:bg-card">
               <ArrowLeft className="w-4 h-4 text-foreground" />
             </button>
-            <h1 className="font-serif text-lg text-foreground leading-tight">Explore</h1>
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold">
+                <Sparkles className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="font-serif text-lg text-foreground leading-tight">Explore Collections</h1>
+                <p className="text-[11px] text-muted-foreground">Handpicked styles for you</p>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-1 bg-card/40 border border-border/20 rounded-xl p-1">
-            <button onClick={() => setLayout('grid')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${layout === 'grid' ? 'bg-primary/15 text-primary' : 'text-muted-foreground/50'}`}>
-              <Grid className="w-4 h-4" />
-            </button>
-            <button onClick={() => setLayout('masonry')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${layout === 'masonry' ? 'bg-primary/15 text-primary' : 'text-muted-foreground/50'}`}>
-              <LayoutGrid className="w-4 h-4" />
-            </button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 bg-card/40 border border-border/20 rounded-xl p-1">
+              <button onClick={() => setLayout('grid')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${layout === 'grid' ? 'bg-primary/15 text-primary' : 'text-muted-foreground/50'}`}>
+                <Grid className="w-4 h-4" />
+              </button>
+              <button onClick={() => setLayout('masonry')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${layout === 'masonry' ? 'bg-primary/15 text-primary' : 'text-muted-foreground/50'}`}>
+                <LayoutGrid className="w-4 h-4" />
+              </button>
+            </div>
+            <Button variant="luxury" size="sm" onClick={() => navigate('/get-outfit')} className="gap-2 text-xs">
+              <Sparkles className="w-3.5 h-3.5" />
+              Get Outfit
+            </Button>
           </div>
         </div>
       </header>
 
       {/* ── Products Grid ── */}
-      <main className="px-3 py-4 max-w-7xl mx-auto">
+      <main className="px-3 md:px-6 lg:px-10 py-4 max-w-7xl mx-auto">
         <div className={`grid gap-3 ${
           layout === 'grid' 
             ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4' 

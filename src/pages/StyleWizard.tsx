@@ -111,8 +111,9 @@ const StyleWizard = () => {
       />
       {/* Desktop subtle gradient overlay */}
       <div className="hidden md:block fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-primary/5 blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-primary/3 blur-[100px]" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary/3 blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/[0.02] blur-[150px]" />
       </div>
 
       {/* Header */}
@@ -180,6 +181,8 @@ const StyleWizard = () => {
 
       {/* Main Content */}
       <main className="relative z-10 container mx-auto px-4 py-2 md:py-8 pb-40 sm:pb-10 max-w-4xl">
+        {/* Desktop card wrapper for content */}
+        <div className="md:luxury-card md:p-8 lg:p-10 md:max-w-3xl md:mx-auto">
         <div className="animate-fade-in">
           {currentStep === 1 && (
             <PhotoUpload 
@@ -258,6 +261,7 @@ const StyleWizard = () => {
               </>
             )}
           </Button>
+        </div>
         </div>
       </main>
     </div>
