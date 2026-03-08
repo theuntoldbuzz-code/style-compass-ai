@@ -287,7 +287,7 @@ const Recommendations = () => {
                       <RefreshCw className="w-5 h-5 mr-2" />
                       Try Again
                     </Button>
-                    <Button variant="luxuryOutline" onClick={() => navigate("/style-wizard")}>
+                    <Button variant="luxuryOutline" onClick={() => navigate("/get-outfit")}>
                       Adjust Preferences
                     </Button>
                   </div>
