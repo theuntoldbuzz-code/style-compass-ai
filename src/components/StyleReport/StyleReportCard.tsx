@@ -29,7 +29,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
       <!DOCTYPE html>
       <html>
         <head>
-          <title>LuxFit AI - Your Personal Style Report</title>
+          <title>Aurion AI - Your Personal Style Report</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { font-family: 'Georgia', serif; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); color: #fff; padding: 40px; min-height: 100vh; }
