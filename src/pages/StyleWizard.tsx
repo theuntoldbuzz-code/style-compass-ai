@@ -226,7 +226,7 @@ const StyleWizard = () => {
         )}
 
         {/* Navigation Buttons - fixed on mobile */}
-        <div className="fixed md:relative bottom-0 left-0 right-0 md:bottom-auto bg-background/95 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none border-t md:border-t-0 border-border/30 p-4 md:p-0 md:mt-10 md:pt-6 md:border-t md:border-border/50 z-40 flex items-center gap-3">
+        <div className="fixed md:relative bottom-[62px] md:bottom-auto left-0 right-0 bg-background/95 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none border-t md:border-t-0 border-border/30 p-4 md:p-0 md:mt-10 md:pt-6 md:border-t md:border-border/50 z-40 flex items-center gap-3">
           {currentStep > 1 && (
             <Button
               variant="luxuryOutline"
