@@ -90,7 +90,7 @@ const Index = () => {
       <div className="md:hidden fixed inset-0 pointer-events-none">
         <img src={mobileHeroBg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
       </div>
-      <DesktopBackground />
+      <DesktopBackground variant="home" />
 
       {/* Navigation - Desktop only (hidden on mobile, BottomNav handles it) */}
       <nav className="relative z-10 container mx-auto px-4 py-4 md:py-6 hidden md:flex items-center justify-between gap-2">
