@@ -101,7 +101,7 @@ const Closet = () => {
                 title="No saved outfits yet"
                 description="Start exploring and save outfits you love to see them here"
                 actionLabel="Discover Outfits"
-                onAction={() => navigate('/style-wizard')}
+                onAction={() => navigate('/get-outfit')}
               />
             ) : (
               <div className="space-y-6">
