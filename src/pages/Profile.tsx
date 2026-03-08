@@ -26,8 +26,10 @@ const Profile = () => {
     const fetchData = async () => {
       if (!user) return;
       const [profileRes, premiumRes, tryOnsRes, reportsRes] = await Promise.all([
-        supabase.from("profiles").select("full_name, avatar_url").eq("id", user.id).single(),
-        supabase.from("premium_users").select("is_active, tier").eq("email", user.email!).single(),
+        supabase.from("profiles").select("full_name, avatar_url").eq("id", user.id).maybeSingle(),
+        user.email
+          ? supabase.from("premium_users").select("is_active, tier").eq("email", user.email).maybeSingle()
+          : Promise.resolve({ data: null, error: null, count: null }),
         supabase.from("outfit_generations").select("id", { count: "exact", head: true }).eq("user_id", user.id),
         supabase.from("photo_analyses").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
