@@ -302,9 +302,9 @@ const Index = () => {
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
-              <div key={index} className="luxury-card overflow-hidden group hover:shadow-gold transition-all duration-500">
-                {/* Feature Image - Square on mobile, 4:3 on desktop */}
-                <div className="relative aspect-square md:aspect-[4/3] overflow-hidden border-b border-primary/10">
+              <div key={index} className="luxury-card overflow-hidden group hover:shadow-gold transition-all duration-500 rounded-[14px] md:rounded-[18px]">
+                {/* Feature Image */}
+                <div className="relative aspect-[4/5] md:aspect-[4/3] overflow-hidden">
                   <img
                     src={feature.image}
                     alt={feature.title}
@@ -312,17 +312,17 @@ const Index = () => {
                     loading="lazy"
                   />
                   {/* Icon Badge */}
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#faeebf] via-[#dcb948] to-primary flex items-center justify-center z-10 border-none shadow-[0_10px_20px_-5px_rgba(220,188,75,0.5),0_0_15px_rgba(175,143,42,0.3)]">
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#faeebf] via-[#dcb948] to-primary flex items-center justify-center z-10 border-2 border-background shadow-[0_10px_20px_-5px_rgba(220,188,75,0.5),0_0_15px_rgba(175,143,42,0.3)]">
                     <IconComponent className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="pt-6 pb-5 px-4 md:pt-8 md:pb-5 md:px-4 text-center">
-                  <h3 className="font-serif text-[14px] md:text-base text-foreground mb-2 font-semibold">
+                <div className="pt-7 pb-4 px-3 md:pt-8 md:pb-5 md:px-4 text-center">
+                  <h3 className="font-serif text-[13px] md:text-base text-foreground mb-1.5 font-semibold leading-tight">
                     {feature.title}
                   </h3>
-                  <p className="text-[11px] md:text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-[10px] md:text-sm text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
