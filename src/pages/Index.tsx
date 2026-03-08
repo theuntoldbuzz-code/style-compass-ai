@@ -304,7 +304,7 @@ const Index = () => {
             return (
               <div key={index} className="luxury-card overflow-hidden group hover:shadow-gold transition-all duration-500 rounded-[14px] md:rounded-[18px]">
                 {/* Feature Image */}
-                <div className="relative aspect-[2/3] md:aspect-[4/3] overflow-hidden">
+                <div className="relative aspect-[2/2.5] md:aspect-[4/3] overflow-hidden">
                   <img
                     src={feature.image}
                     alt={feature.title}
