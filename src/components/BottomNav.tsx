@@ -1,27 +1,39 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { Home, Search, ShoppingBag, FileText, User } from "lucide-react";
-import { motion } from "framer-motion";
+import { Home, Compass, ShoppingBag, FileText, UserRound } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
   { label: "Home", icon: Home, path: "/" },
-  { label: "Explore", icon: Search, path: "/explore" },
+  { label: "Explore", icon: Compass, path: "/explore" },
   { label: "Closet", icon: ShoppingBag, path: "/closet" },
   { label: "Reports", icon: FileText, path: "/style-quiz" },
-  { label: "Profile", icon: User, path: "/profile" },
+  { label: "Profile", icon: UserRound, path: "/profile" },
 ];
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Hide on auth page and certain flows
   const hiddenPaths = ["/auth", "/get-outfit", "/recommendations"];
   if (hiddenPaths.some((p) => location.pathname.startsWith(p))) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-      <div className="bg-card/95 backdrop-blur-xl border-t border-border/30 px-2 pb-[env(safe-area-inset-bottom)]">
-        <div className="flex items-center justify-around h-16 max-w-md mx-auto">
+      {/* Top edge glow */}
+      <div className="absolute -top-4 left-0 right-0 h-4 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+
+      <div
+        className="relative border-t border-primary/10 px-1"
+        style={{
+          background: "linear-gradient(180deg, hsl(0 0% 6% / 0.97) 0%, hsl(0 0% 4% / 0.99) 100%)",
+          backdropFilter: "blur(20px) saturate(1.8)",
+          paddingBottom: "env(safe-area-inset-bottom)",
+        }}
+      >
+        {/* Subtle gold shimmer line at top */}
+        <div className="absolute top-0 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
+        <div className="flex items-center justify-around h-[62px] max-w-md mx-auto">
           {navItems.map((item) => {
             const isActive =
               item.path === "/"
@@ -30,34 +42,59 @@ const BottomNav = () => {
             const Icon = item.icon;
 
             return (
-              <button
+              <motion.button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors"
+                whileTap={{ scale: 0.9 }}
+                className="relative flex flex-col items-center justify-center gap-1 flex-1 h-full"
               >
+                {/* Active background glow */}
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      className="absolute inset-x-2 top-1 bottom-1 rounded-2xl"
+                      style={{
+                        background: "radial-gradient(ellipse at center top, hsl(45 66% 52% / 0.08) 0%, transparent 70%)",
+                      }}
+                    />
+                  )}
+                </AnimatePresence>
+
+                {/* Active top indicator */}
                 {isActive && (
                   <motion.div
-                    layoutId="bottomNavIndicator"
-                    className="absolute -top-px left-1/2 -translate-x-1/2 w-8 h-[2px] rounded-full bg-primary"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    layoutId="navGoldDot"
+                    className="absolute -top-px left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full"
+                    style={{
+                      background: "linear-gradient(90deg, hsl(45 66% 52%), hsl(35 41% 61%))",
+                      boxShadow: "0 0 8px hsl(45 66% 52% / 0.5)",
+                    }}
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
                   />
                 )}
-                <Icon
-                  className={`w-5 h-5 transition-colors ${
-                    isActive ? "text-primary" : "text-muted-foreground"
-                  }`}
-                  strokeWidth={isActive ? 2.2 : 1.8}
-                />
+
+                <div className="relative z-10">
+                  <Icon
+                    className={`w-[21px] h-[21px] transition-all duration-300 ${
+                      isActive ? "text-primary drop-shadow-[0_0_6px_hsl(45_66%_52%/0.4)]" : "text-muted-foreground/60"
+                    }`}
+                    strokeWidth={isActive ? 2 : 1.5}
+                  />
+                </div>
+
                 <span
-                  className={`text-[10px] tracking-wide transition-colors ${
+                  className={`relative z-10 text-[9px] uppercase tracking-[0.12em] transition-all duration-300 ${
                     isActive
-                      ? "text-primary font-semibold"
-                      : "text-muted-foreground"
+                      ? "text-primary font-bold"
+                      : "text-muted-foreground/50 font-medium"
                   }`}
                 >
                   {item.label}
                 </span>
-              </button>
+              </motion.button>
             );
           })}
         </div>
