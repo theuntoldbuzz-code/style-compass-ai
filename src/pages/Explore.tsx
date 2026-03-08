@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCloset } from "@/hooks/useCloset";
 import { Product } from "@/types/outfit";
 import { motion } from "framer-motion";
+import DesktopBackground from "@/components/DesktopBackground";
 
 const Explore = () => {
   const navigate = useNavigate();
