@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useCloset } from "@/hooks/useCloset";
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import {
@@ -17,6 +17,7 @@ const Profile = () => {
   const [isPremium, setIsPremium] = useState(false);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bgLoaded, setBgLoaded] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,15 +70,16 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Gold bokeh background image */}
-      <div className="fixed inset-0 pointer-events-none">
+      {/* Gold bokeh fallback gradient + image */}
+      <div className="fixed inset-0 pointer-events-none bg-gradient-to-b from-[hsl(45,40%,15%,0.3)] via-background to-background">
         <img
           src={goldBokehBg}
           alt=""
           loading="eager"
           decoding="async"
           fetchPriority="high"
-          className="w-full h-full object-cover opacity-60 animate-fade-in"
+          onLoad={() => setBgLoaded(true)}
+          className={`w-full h-full object-cover transition-opacity duration-500 ${bgLoaded ? 'opacity-60' : 'opacity-0'}`}
         />
       </div>
 
