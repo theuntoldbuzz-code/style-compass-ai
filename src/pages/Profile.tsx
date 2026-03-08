@@ -274,8 +274,8 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none bg-gradient-to-b from-[hsl(45,40%,15%,0.3)] via-background to-background">
+      {/* Background - Mobile uses bokeh image, Desktop uses premium component */}
+      <div className="md:hidden fixed inset-0 pointer-events-none bg-gradient-to-b from-[hsl(45,40%,15%,0.3)] via-background to-background">
         <img
           src={goldBokehBg}
           alt=""
@@ -286,6 +286,7 @@ const Profile = () => {
           className={`w-full h-full object-cover transition-opacity duration-500 ${bgLoaded ? 'opacity-60' : 'opacity-0'}`}
         />
       </div>
+      <DesktopBackground />
 
       {/* ── DESKTOP LAYOUT ── */}
       <div className="hidden md:block relative z-10">
