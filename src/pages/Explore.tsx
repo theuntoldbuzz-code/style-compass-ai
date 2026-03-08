@@ -5,7 +5,7 @@ import {
   Grid, LayoutGrid, ShoppingBag
 } from "lucide-react";
 import fashionExplore from "@/assets/fashion-10.avif";
-import goldBokehBg from "@/assets/gold-bokeh-bg.png";
+import exploreSparkle from "@/assets/explore-sparkle-bg.jpg";
 import { Button } from "@/components/ui/button";
 import { infiniteScrollProducts } from "@/data/trendingData";
 import { useAuth } from "@/hooks/useAuth";
@@ -91,7 +91,7 @@ const Explore = () => {
         <div className="relative w-full flex justify-center pt-4 pb-2">
           <div className="w-[85%] max-w-md aspect-[16/7] rounded-2xl overflow-hidden relative">
             <img 
-              src={goldBokehBg} 
+              src={exploreSparkle} 
               alt="" 
               className="w-full h-full object-cover" 
             />
