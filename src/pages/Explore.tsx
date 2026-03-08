@@ -171,7 +171,7 @@ const Explore = () => {
       </header>
 
       {/* ── Products Grid ── */}
-      <main className="px-3 py-4 max-w-7xl mx-auto">
+      <main className="px-3 md:px-6 lg:px-10 py-4 max-w-7xl mx-auto">
         <div className={`grid gap-3 ${
           layout === 'grid' 
             ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4' 
