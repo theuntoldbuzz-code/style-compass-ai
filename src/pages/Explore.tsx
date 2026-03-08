@@ -87,22 +87,19 @@ const Explore = () => {
 
       {/* ── Hero Section (Reference-inspired) ── */}
       <div className="relative overflow-hidden">
-        {/* Gold bokeh background */}
-        <div className="relative w-full flex justify-center pt-4 pb-2">
-          <div className="w-[85%] max-w-md aspect-[16/7] rounded-2xl overflow-hidden relative">
-            <img 
-              src={exploreSparkle} 
-              alt="" 
-              className="w-full h-full object-cover" 
-            />
-            {/* Soft fade edges */}
-            <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background" />
-            <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
-          </div>
+        {/* Full-width sparkle background */}
+        <div className="absolute inset-x-0 top-0 h-[260px] sm:h-[220px]">
+          <img 
+            src={exploreSparkle} 
+            alt="" 
+            className="w-full h-full object-cover object-top" 
+          />
+          {/* Seamless fade into page background */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-background" />
         </div>
 
-        {/* Centered icon */}
-        <div className="flex justify-center -mt-6 mb-3 relative z-10">
+        <div className="flex justify-center pt-40 sm:pt-32 mb-3 relative z-10">
           <Sparkles className="w-6 h-6 text-primary" />
         </div>
 
