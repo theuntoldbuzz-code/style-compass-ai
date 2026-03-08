@@ -108,9 +108,9 @@ const Closet = () => {
   // ---- MOBILE VIEW ----
   const MobileView = () => (
     <div className="md:hidden min-h-screen pb-24 relative" style={{ backgroundImage: `url(${closetBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      <div className="relative z-10">
       {/* Hero Banner */}
-      <div className="relative z-10 w-full h-[120px] overflow-hidden rounded-b-2xl mx-auto max-w-[calc(100%-32px)] mt-3">
+      <div className="w-full h-[120px] overflow-hidden rounded-b-2xl mx-auto max-w-[calc(100%-32px)] mt-3 relative">
         <img 
           src={heroImages[activeFilter] || heroBannerAll} 
           alt={`${activeFilter} Fashion`} 
@@ -124,7 +124,7 @@ const Closet = () => {
       </div>
 
       {/* Outfits / Items Tabs */}
-      <div className="relative z-10 flex gap-1 mx-4 mt-5 rounded-xl overflow-hidden border border-primary/20 bg-card/80 backdrop-blur-sm p-1">
+      <div className="flex gap-1 mx-4 mt-5 rounded-xl overflow-hidden border border-primary/20 bg-card/80 backdrop-blur-sm p-1">
         <button
           onClick={() => setMobileTab('outfits')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-300 ${
@@ -150,7 +150,7 @@ const Closet = () => {
       </div>
 
       {/* Category Filters */}
-      <div className="relative z-10 flex gap-2.5 px-4 mt-4 overflow-x-auto no-scrollbar">
+      <div className="flex gap-2.5 px-4 mt-4 overflow-x-auto no-scrollbar">
         {occasionFilters.map(filter => (
           <button
             key={filter}
@@ -176,7 +176,7 @@ const Closet = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center mt-16 px-6 text-center">
-            <div className="w-18 h-18 mb-5 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center border border-primary/20 shadow-[0_4px_20px_hsl(var(--primary)/0.1)]">
+            <div className="w-16 h-16 mb-5 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center border border-primary/20 shadow-[0_4px_20px_hsl(var(--primary)/0.1)]">
               <ShoppingBag className="w-8 h-8 text-primary" />
             </div>
             <h3 className="font-serif text-lg text-foreground mb-2">No saved outfits yet</h3>
@@ -202,7 +202,7 @@ const Closet = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center mt-16 px-6 text-center">
-            <div className="w-18 h-18 mb-5 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center border border-primary/20 shadow-[0_4px_20px_hsl(var(--primary)/0.1)]">
+            <div className="w-16 h-16 mb-5 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center border border-primary/20 shadow-[0_4px_20px_hsl(var(--primary)/0.1)]">
               <Heart className="w-8 h-8 text-primary" />
             </div>
             <h3 className="font-serif text-lg text-foreground mb-2">No saved items yet</h3>
@@ -217,6 +217,7 @@ const Closet = () => {
           </div>
         )
       )}
+      </div>
     </div>
   );
 
