@@ -208,16 +208,16 @@ const Index = () => {
           <div className={`flex flex-col gap-4 w-full max-w-[320px] mb-10 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <button
               onClick={() => navigate("/style-quiz")}
-              className="w-full py-4 rounded-full bg-gradient-gold text-primary-foreground uppercase tracking-[0.15em] text-sm font-bold shadow-[0_4px_20px_rgba(212,175,55,0.4)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] active:scale-[0.98] transition-all duration-300"
+              className="w-full py-4 rounded-full bg-primary/[0.08] border border-primary/40 text-primary uppercase tracking-[0.15em] text-sm font-medium backdrop-blur-[6px] shadow-[0_0_15px_rgba(212,175,55,0.15)] hover:shadow-[0_0_25px_rgba(212,175,55,0.25)] hover:bg-primary/[0.14] hover:border-primary/60 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
             >
               Take Style Quiz
+              <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigate("/get-outfit")}
-              className="w-full py-4 rounded-full bg-primary/[0.08] border border-primary/40 text-primary uppercase tracking-[0.15em] text-sm font-medium backdrop-blur-[6px] shadow-[0_0_15px_rgba(212,175,55,0.15)] hover:shadow-[0_0_25px_rgba(212,175,55,0.25)] hover:bg-primary/[0.14] hover:border-primary/60 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-full bg-gradient-gold text-primary-foreground uppercase tracking-[0.15em] text-sm font-bold shadow-[0_4px_20px_rgba(212,175,55,0.4)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] active:scale-[0.98] transition-all duration-300"
             >
               Upload Photo
-              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
