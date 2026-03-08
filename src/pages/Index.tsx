@@ -144,7 +144,7 @@ const Index = () => {
               Take Style Quiz
               
             </Button>
-            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/style-wizard")}>
+            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/get-outfit")}>
               Upload Photo
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
