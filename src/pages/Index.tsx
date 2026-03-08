@@ -74,10 +74,21 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden pb-[90px] md:pb-0">
+      {/* Mobile: Parallax gold bokeh at top */}
+      <div className="md:hidden absolute top-0 left-0 w-full h-[500px] overflow-hidden pointer-events-none z-0">
+        <img
+          src={goldBokehTop}
+          alt=""
+          className="w-full h-full object-cover object-top"
+          style={{ transform: `translateY(${scrollY * 0.4}px)` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+      </div>
+
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
         {/* Mobile: uploaded gold particle background */}
-        <img src={mobileHeroBg} alt="" className="md:hidden absolute inset-0 w-full h-full object-cover" />
+        <img src={mobileHeroBg} alt="" className="md:hidden absolute inset-0 w-full h-full object-cover opacity-30" />
         {/* Desktop: subtle gradient blobs */}
         <div className="hidden md:block absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
         <div className="hidden md:block absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
