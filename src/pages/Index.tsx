@@ -167,8 +167,8 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="relative z-10">
-        {/* Gold Bokeh Background */}
-        <div className="absolute top-0 left-0 right-0 h-[500px] md:h-[500px] overflow-hidden pointer-events-none">
+        {/* Gold Bokeh Background - mobile only */}
+        <div className="md:hidden absolute top-0 left-0 right-0 h-[500px] overflow-hidden pointer-events-none">
           <img src={goldBokehBg} alt="" className="w-full h-full object-cover opacity-60" />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
         </div>
