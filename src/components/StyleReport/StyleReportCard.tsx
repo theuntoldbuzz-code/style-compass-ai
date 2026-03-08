@@ -233,26 +233,6 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
         </>
       )}
 
-      {/* ── Accessory Guide (compact) ── */}
-      <SectionHeader icon={<Gem className="w-4 h-4 text-primary" />} label="Accessories" />
-      <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-xl bg-card/40 border border-border/30 p-3 text-center">
-          <Gem className="w-5 h-5 text-primary mx-auto mb-1.5" />
-          <p className="text-[11px] font-medium text-foreground mb-0.5">Jewelry</p>
-          <p className="text-[10px] text-muted-foreground line-clamp-2">{report.accessoryGuide.jewelry}</p>
-        </div>
-        <div className="rounded-xl bg-card/40 border border-border/30 p-3 text-center">
-          <Crown className="w-5 h-5 text-primary mx-auto mb-1.5" />
-          <p className="text-[11px] font-medium text-foreground mb-0.5">Bags</p>
-          <p className="text-[10px] text-muted-foreground line-clamp-2">{report.accessoryGuide.bags}</p>
-        </div>
-        <div className="rounded-xl bg-card/40 border border-border/30 p-3 text-center">
-          <Palette className="w-5 h-5 text-primary mx-auto mb-1.5" />
-          <p className="text-[11px] font-medium text-foreground mb-0.5">Shoes</p>
-          <p className="text-[10px] text-muted-foreground line-clamp-2">{report.accessoryGuide.shoes}</p>
-        </div>
-      </div>
-
       {/* ── Action Buttons ── */}
       <div className="space-y-3 pt-2 pb-8">
         <Button 
