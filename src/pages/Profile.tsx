@@ -15,6 +15,7 @@ const Profile = () => {
   const { user, signOut } = useAuth();
   const { savedItems, savedOutfits } = useCloset();
   const [isPremium, setIsPremium] = useState(false);
+  const [premiumTier, setPremiumTier] = useState<'gold' | 'platinum' | null>(null);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [bgLoaded, setBgLoaded] = useState(false);
@@ -24,10 +25,13 @@ const Profile = () => {
       if (!user) return;
       const [profileRes, premiumRes] = await Promise.all([
         supabase.from("profiles").select("full_name, avatar_url").eq("id", user.id).single(),
-        supabase.from("premium_users").select("is_active").eq("email", user.email!).single(),
+        supabase.from("premium_users").select("is_active, tier").eq("email", user.email!).single(),
       ]);
       if (profileRes.data) setProfile(profileRes.data);
-      if (premiumRes.data?.is_active) setIsPremium(true);
+      if (premiumRes.data?.is_active) {
+        setIsPremium(true);
+        setPremiumTier((premiumRes.data as any).tier || 'gold');
+      }
       setLoading(false);
     };
     fetchData();
@@ -113,7 +117,7 @@ const Profile = () => {
               : "bg-muted text-muted-foreground border border-border"
           }`}>
             {isPremium ? <Crown className="w-3.5 h-3.5" /> : <Shield className="w-3.5 h-3.5" />}
-            {isPremium ? "GOLD MEMBER" : "FREE PLAN"}
+            {isPremium ? (premiumTier === 'platinum' ? "PLATINUM MEMBER" : "GOLD MEMBER") : "FREE PLAN"}
           </div>
         </motion.div>
 
@@ -149,11 +153,11 @@ const Profile = () => {
                 <li>Priority Processing</li>
               </ul>
               <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all mt-auto ${
-                isPremium
+                isPremium && premiumTier === 'gold'
                   ? "bg-transparent text-primary border-2 border-primary"
                   : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
               }`}>
-                {isPremium ? "ACTIVE" : "UPGRADE"}
+                {isPremium && premiumTier === 'gold' ? "ACTIVE" : "UPGRADE"}
               </button>
             </div>
 
@@ -169,11 +173,11 @@ const Profile = () => {
                 <li>Concierge Service</li>
               </ul>
               <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all mt-auto ${
-                false
+                isPremium && premiumTier === 'platinum'
                   ? "bg-transparent text-primary border-2 border-primary"
                   : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
               }`}>
-                UPGRADE
+                {isPremium && premiumTier === 'platinum' ? "ACTIVE" : "UPGRADE"}
               </button>
             </div>
           </div>
