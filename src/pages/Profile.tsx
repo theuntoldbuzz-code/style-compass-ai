@@ -8,6 +8,7 @@ import {
   Sparkles, Crown, User, Bell, Shield, LogOut, ChevronRight,
   HelpCircle, Shirt, Eye, FileText
 } from "lucide-react";
+import goldBokehBg from "@/assets/gold-bokeh-bg.png";
 
 const Profile = () => {
   const navigate = useNavigate();
