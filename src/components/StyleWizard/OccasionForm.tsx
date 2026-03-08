@@ -33,45 +33,46 @@ const OccasionForm = ({
   onSeasonChange,
 }: OccasionFormProps) => {
   return (
-    <div className="space-y-8">
-      <div className="text-center mb-8">
-        <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-3">
+    <div className="space-y-6 md:space-y-8">
+      <div className="text-center mb-4 md:mb-8">
+        <h2 className="font-serif text-2xl md:text-4xl text-foreground mb-2 md:mb-3">
           Where Will You <span className="text-gradient-gold">Shine</span>?
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground text-sm md:text-base max-w-md mx-auto">
           Tell us the occasion and season for perfectly tailored recommendations
         </p>
       </div>
 
       {/* Occasion Selection */}
       <div>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Calendar className="w-5 h-5 text-primary" />
+        <div className="flex items-center gap-2.5 mb-4 md:mb-6">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/10">
+            <Calendar className="w-4 h-4 md:w-5 md:h-5 text-primary" />
           </div>
-          <Label className="font-serif text-xl text-foreground">Select Occasion</Label>
+          <Label className="font-serif text-lg md:text-xl text-foreground">Select Occasion</Label>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
           {occasions.map((item) => {
             const IconComponent = item.icon;
+            const isSelected = occasion === item.value;
             return (
               <button
                 key={item.value}
                 onClick={() => onOccasionChange(item.value)}
-                className={`p-4 rounded-2xl border-2 transition-all duration-300 text-left ${
-                  occasion === item.value
-                    ? 'border-primary bg-primary/10 shadow-gold scale-[1.02]'
-                    : 'border-border/50 bg-card/50 hover:border-primary/50 hover:bg-primary/5'
+                className={`p-3 md:p-4 rounded-2xl border transition-all duration-300 text-left ${
+                  isSelected
+                    ? 'border-primary/50 bg-primary/8 shadow-gold'
+                    : 'border-border/20 bg-card/40 hover:border-primary/20 hover:bg-card/60'
                 }`}
               >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
-                  occasion === item.value ? 'bg-primary text-primary-foreground' : 'bg-secondary'
+                <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-2.5 md:mb-3 transition-all ${
+                  isSelected ? 'bg-gradient-to-br from-primary to-gold-dark text-primary-foreground shadow-gold' : 'bg-secondary/60'
                 }`}>
-                  <IconComponent className="w-6 h-6" />
+                  <IconComponent className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
-                <h4 className="font-medium text-foreground">{item.label}</h4>
-                <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                <h4 className="font-medium text-foreground text-sm md:text-base leading-tight">{item.label}</h4>
+                <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">{item.description}</p>
               </button>
             );
           })}
@@ -80,39 +81,39 @@ const OccasionForm = ({
 
       {/* Season Selection */}
       <div>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Sun className="w-5 h-5 text-primary" />
+        <div className="flex items-center gap-2.5 mb-4 md:mb-6">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/10">
+            <Sun className="w-4 h-4 md:w-5 md:h-5 text-primary" />
           </div>
-          <Label className="font-serif text-xl text-foreground">Select Season</Label>
+          <Label className="font-serif text-lg md:text-xl text-foreground">Select Season</Label>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
           {seasons.map((item) => {
             const IconComponent = item.icon;
+            const isSelected = season === item.value;
             return (
               <button
                 key={item.value}
                 onClick={() => onSeasonChange(item.value)}
-                className={`p-5 rounded-2xl border-2 transition-all duration-300 ${
-                  season === item.value
-                    ? 'border-primary bg-primary/10 shadow-gold scale-[1.02]'
-                    : 'border-border/50 bg-card/50 hover:border-primary/50 hover:bg-primary/5'
+                className={`p-4 md:p-5 rounded-2xl border transition-all duration-300 ${
+                  isSelected
+                    ? 'border-primary/50 bg-primary/8 shadow-gold'
+                    : 'border-border/20 bg-card/40 hover:border-primary/20 hover:bg-card/60'
                 }`}
               >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 mx-auto ${
-                  season === item.value ? 'bg-primary text-primary-foreground' : 'bg-secondary'
+                <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center mb-3 md:mb-4 mx-auto transition-all ${
+                  isSelected ? 'bg-gradient-to-br from-primary to-gold-dark text-primary-foreground shadow-gold' : 'bg-secondary/60'
                 }`}>
-                  <IconComponent className="w-7 h-7" />
+                  <IconComponent className="w-6 h-6 md:w-7 md:h-7" />
                 </div>
-                <h4 className="font-serif text-lg font-medium text-foreground text-center">{item.label}</h4>
+                <h4 className="font-serif text-base md:text-lg font-medium text-foreground text-center">{item.label}</h4>
                 
-                {/* Color palette preview */}
-                <div className="flex justify-center gap-1 mt-3">
+                <div className="flex justify-center gap-1.5 mt-2.5 md:mt-3">
                   {item.colors.map((color, index) => (
                     <div 
                       key={index}
-                      className="w-4 h-4 rounded-full"
+                      className="w-3.5 h-3.5 md:w-4 md:h-4 rounded-full border border-white/10"
                       style={{ backgroundColor: color }}
                     />
                   ))}
