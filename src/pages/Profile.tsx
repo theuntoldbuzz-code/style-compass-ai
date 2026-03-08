@@ -1,14 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useCloset } from "@/hooks/useCloset";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { motion } from "framer-motion";
 import {
-  Sparkles, ArrowLeft, Crown, User, Mail, Calendar, Heart,
-  ShoppingBag, Shield, Settings, LogOut, ChevronRight, Star
+  Sparkles, Crown, User, Bell, Shield, LogOut, ChevronRight,
+  HelpCircle, Shirt, Eye, FileText
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -21,49 +20,46 @@ const Profile = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
-
       const [profileRes, premiumRes] = await Promise.all([
         supabase.from("profiles").select("full_name, avatar_url").eq("id", user.id).single(),
         supabase.from("premium_users").select("is_active").eq("email", user.email!).single(),
       ]);
-
       if (profileRes.data) setProfile(profileRes.data);
       if (premiumRes.data?.is_active) setIsPremium(true);
       setLoading(false);
     };
-
     fetchData();
   }, [user]);
 
-  const memberSince = user?.created_at
-    ? new Date(user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })
-    : "—";
-
   const displayName = profile?.full_name || user?.user_metadata?.full_name || "Style Enthusiast";
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
-  const initials = displayName
-    .split(" ")
-    .map((n: string) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  const initials = displayName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
 
-  const stats = [
-    { label: "Saved Items", value: savedItems.length, icon: Heart },
-    { label: "Saved Outfits", value: savedOutfits.length, icon: ShoppingBag },
+  const stats = useMemo(() => [
+    { label: "CLOSET", value: savedItems.length, icon: Shirt },
+    { label: "TRY-ONS", value: savedOutfits.length, icon: Eye },
+    { label: "REPORTS", value: 0, icon: FileText },
+  ], [savedItems.length, savedOutfits.length]);
+
+  const settingsItems = [
+    { label: "Account Information", icon: User, onClick: () => {} },
+    { label: "Notifications", icon: Bell, onClick: () => {} },
+    { label: "Privacy & Security", icon: Shield, onClick: () => {} },
   ];
 
-  const menuItems = [
-    ...(isPremium ? [{ label: "My Closet", icon: Heart, onClick: () => navigate("/closet"), premium: false }] : []),
-    { label: "Explore Styles", icon: Sparkles, onClick: () => navigate("/explore"), premium: false },
-    { label: "Get Outfit", icon: Star, onClick: () => navigate("/get-outfit"), premium: false },
-    { label: "Style Quiz", icon: Settings, onClick: () => navigate("/style-quiz"), premium: false },
-  ];
+  const stagger = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.07 } },
+  };
+  const fadeUp = {
+    hidden: { opacity: 0, y: 18 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const } },
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold animate-pulse">
+        <div className="w-10 h-10 rounded-xl bg-gradient-gold-dark flex items-center justify-center shadow-gold animate-pulse">
           <Sparkles className="w-5 h-5 text-primary-foreground" />
         </div>
       </div>
@@ -71,173 +67,179 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Background Effects */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-primary/8 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Particle / bokeh background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* Large gold bokeh circles */}
+        {[...Array(18)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full animate-float"
+            style={{
+              width: `${8 + Math.random() * 20}px`,
+              height: `${8 + Math.random() * 20}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              background: `radial-gradient(circle, hsl(45 66% 52% / ${0.15 + Math.random() * 0.25}), transparent)`,
+              animationDelay: `${Math.random() * 4}s`,
+              animationDuration: `${3 + Math.random() * 3}s`,
+              filter: `blur(${1 + Math.random() * 2}px)`,
+            }}
+          />
+        ))}
+        {/* Ambient glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute bottom-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-primary/8 blur-3xl" />
       </div>
 
-      {/* Header */}
-      <nav className="relative z-10 container mx-auto px-4 py-6 flex items-center justify-between">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <span className="font-serif text-lg text-foreground">Profile</span>
-        <div className="w-10" />
-      </nav>
-
-      <div className="relative z-10 container mx-auto px-4 pb-24 max-w-lg">
-        {/* Avatar + Name Card */}
-        <div className="luxury-card p-8 text-center mb-6 relative overflow-hidden">
-          {/* Decorative glow behind avatar */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
-
-          <div className="relative inline-block mb-5">
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt={displayName}
-                className="w-24 h-24 rounded-full object-cover border-2 border-primary/30 shadow-gold"
-              />
-            ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border-2 border-primary/30 flex items-center justify-center shadow-gold">
-                <span className="text-2xl font-serif text-gradient-gold">{initials}</span>
-              </div>
-            )}
-            {/* Premium / Free badge on avatar */}
-            <div className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center border-2 border-background ${
-              isPremium
-                ? "bg-gradient-to-br from-primary to-gold-dark shadow-gold"
-                : "bg-muted border-border"
-            }`}>
-              {isPremium ? (
-                <Crown className="w-4 h-4 text-primary-foreground" />
+      <motion.div
+        className="relative z-10 px-5 pt-10 pb-32 max-w-md mx-auto"
+        variants={stagger}
+        initial="hidden"
+        animate="show"
+      >
+        {/* ── Avatar + Name ── */}
+        <motion.div variants={fadeUp} className="flex flex-col items-center mb-6">
+          <div className="relative mb-4">
+            <div className="w-[100px] h-[100px] rounded-full p-[3px] bg-gradient-gold-dark shadow-gold-glow">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={displayName} className="w-full h-full rounded-full object-cover" />
               ) : (
-                <User className="w-3.5 h-3.5 text-muted-foreground" />
+                <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
+                  <span className="text-3xl font-serif text-gradient-gold">{initials}</span>
+                </div>
               )}
             </div>
           </div>
 
-          <h2 className="font-serif text-2xl text-foreground mb-1">{displayName}</h2>
+          <h1 className="font-serif text-2xl text-foreground">{displayName}</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">{user?.email}</p>
 
-          {/* Tier Badge */}
-          <div className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide mt-3 ${
+          {/* Member badge */}
+          <div className={`mt-3 inline-flex items-center gap-1.5 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase ${
             isPremium
-              ? "bg-primary/15 text-primary border border-primary/30"
+              ? "bg-primary/15 text-primary border border-primary/40"
               : "bg-muted text-muted-foreground border border-border"
           }`}>
-            {isPremium ? (
-              <>
-                <Crown className="w-3.5 h-3.5" />
-                PREMIUM MEMBER
-              </>
-            ) : (
-              <>
-                <Shield className="w-3.5 h-3.5" />
-                FREE PLAN
-              </>
-            )}
+            {isPremium ? <Crown className="w-3.5 h-3.5" /> : <Shield className="w-3.5 h-3.5" />}
+            {isPremium ? "GOLD MEMBER" : "FREE PLAN"}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div key={stat.label} className="luxury-card p-5 text-center">
-                <div className="w-10 h-10 mx-auto mb-3 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-primary" />
-                </div>
-                <p className="text-2xl font-serif text-foreground">{stat.value}</p>
-                <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+        {/* ── Stats Row ── */}
+        <motion.div variants={fadeUp} className="luxury-card p-5 mb-7">
+          <div className="grid grid-cols-3 divide-x divide-border/40">
+            {stats.map((s) => (
+              <div key={s.label} className="text-center">
+                <p className="text-2xl font-serif text-foreground font-semibold">{s.value}</p>
+                <p className="text-[10px] text-muted-foreground tracking-widest mt-1 uppercase">{s.label}</p>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Account Info */}
-        <div className="luxury-card p-6 mb-6">
-          <h3 className="font-serif text-sm text-muted-foreground uppercase tracking-wider mb-4">Account</h3>
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Mail className="w-4 h-4 text-primary" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs text-muted-foreground">Email</p>
-                <p className="text-sm text-foreground truncate">{user?.email}</p>
-              </div>
-            </div>
-            <Separator className="bg-border/50" />
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Calendar className="w-4 h-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Member since</p>
-                <p className="text-sm text-foreground">{memberSince}</p>
-              </div>
-            </div>
+            ))}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Quick Links */}
-        <div className="luxury-card overflow-hidden mb-6">
-          <h3 className="font-serif text-sm text-muted-foreground uppercase tracking-wider px-6 pt-5 pb-3">Quick Links</h3>
-          {menuItems.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.label}
-                onClick={item.onClick}
-                className={`w-full flex items-center gap-3 px-6 py-4 hover:bg-primary/5 transition-colors ${
-                  i < menuItems.length - 1 ? "border-b border-border/30" : ""
-                }`}
-              >
-                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-4 h-4 text-primary" />
-                </div>
-                <span className="text-sm text-foreground flex-1 text-left">{item.label}</span>
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+        {/* ── Your Plan ── */}
+        <motion.div variants={fadeUp} className="mb-7">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-4 rounded-full bg-primary" />
+            <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Your Plan</h2>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {/* Gold Plan */}
+            <div className="luxury-card p-5 text-center relative overflow-hidden border-primary/20">
+              <h3 className="font-serif text-xs uppercase tracking-widest text-foreground mb-2">Aurion Gold</h3>
+              <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
+              <p className="font-serif text-2xl text-primary">₹499</p>
+              <p className="text-[10px] text-muted-foreground mb-4">/month</p>
+              <ul className="space-y-2 text-[11px] text-muted-foreground mb-5">
+                <li>Unlimited Outfits</li>
+                <li>Virtual Try-On Access</li>
+                <li>Priority Processing</li>
+              </ul>
+              <button className={`w-full py-2 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all ${
+                isPremium
+                  ? "bg-primary/15 text-primary border border-primary/30"
+                  : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
+              }`}>
+                {isPremium ? "ACTIVE" : "UPGRADE"}
               </button>
-            );
-          })}
-        </div>
+            </div>
 
-        {/* Upgrade CTA (for free users) */}
-        {!isPremium && (
-          <div className="luxury-card p-6 mb-6 relative overflow-hidden">
-            <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
-            <div className="relative flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold flex-shrink-0">
-                <Crown className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-serif text-lg text-foreground mb-1">Upgrade to Premium</h3>
-                <p className="text-xs text-muted-foreground mb-3">
-                  Unlock unlimited outfits, advanced style reports, and exclusive collections.
-                </p>
-                <Button variant="luxury" size="sm" className="text-xs">
-                  <Crown className="w-3.5 h-3.5 mr-1.5" />
-                  Go Premium
-                </Button>
-              </div>
+            {/* Platinum Plan */}
+            <div className="luxury-card p-5 text-center relative overflow-hidden border-primary/20">
+              <h3 className="font-serif text-xs uppercase tracking-widest text-foreground mb-2">Aurion Platinum</h3>
+              <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
+              <p className="font-serif text-2xl text-primary">₹999</p>
+              <p className="text-[10px] text-muted-foreground mb-4">/month</p>
+              <ul className="space-y-2 text-[11px] text-muted-foreground mb-5">
+                <li>Personal Stylist</li>
+                <li>Early Access</li>
+                <li>Concierge Service</li>
+              </ul>
+              <button className="w-full py-2 rounded-lg text-[11px] font-bold tracking-wider uppercase bg-primary/15 text-primary border border-primary/30 transition-all">
+                UPGRADE
+              </button>
             </div>
           </div>
-        )}
+        </motion.div>
 
-        {/* Sign Out */}
-        <Button
-          variant="ghost"
-          className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
-          onClick={signOut}
-        >
-          <LogOut className="w-4 h-4 mr-2" />
-          Sign Out
-        </Button>
-      </div>
+        {/* ── Settings ── */}
+        <motion.div variants={fadeUp} className="mb-7">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-4 rounded-full bg-primary" />
+            <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Settings</h2>
+          </div>
+
+          <div className="luxury-card overflow-hidden">
+            {settingsItems.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.label}
+                  onClick={item.onClick}
+                  className={`w-full flex items-center gap-3 px-5 py-4 hover:bg-primary/5 transition-colors ${
+                    i < settingsItems.length - 1 ? "border-b border-border/20" : ""
+                  }`}
+                >
+                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-primary" />
+                  </div>
+                  <span className="text-sm text-foreground flex-1 text-left">{item.label}</span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* ── Support ── */}
+        <motion.div variants={fadeUp}>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-4 rounded-full bg-primary" />
+            <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Support</h2>
+          </div>
+
+          <div className="luxury-card overflow-hidden">
+            <button className="w-full flex items-center gap-3 px-5 py-4 hover:bg-primary/5 transition-colors border-b border-border/20">
+              <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <HelpCircle className="w-4 h-4 text-primary" />
+              </div>
+              <span className="text-sm text-foreground flex-1 text-left">Help Center</span>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <button
+              onClick={signOut}
+              className="w-full flex items-center gap-3 px-5 py-4 hover:bg-destructive/5 transition-colors"
+            >
+              <div className="w-9 h-9 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                <LogOut className="w-4 h-4 text-destructive" />
+              </div>
+              <span className="text-sm text-destructive flex-1 text-left">Sign Out</span>
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
