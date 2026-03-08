@@ -143,6 +143,35 @@ const Recommendations = () => {
     return labels[season] || season;
   };
 
+  // Show generation limit reached screen for free users
+  if (!premiumLoading && !canGenerate && !generatedReport && !isGenerating) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
+            <Lock className="w-10 h-10 text-primary" />
+          </div>
+          <h2 className="font-serif text-3xl text-foreground mb-3">Generation Limit Reached</h2>
+          <p className="text-muted-foreground mb-2">
+            You've used all <strong>2 free</strong> outfit generations.
+          </p>
+          <p className="text-muted-foreground mb-8 text-sm">
+            Upgrade to Premium for <strong>unlimited</strong> outfit generations, virtual closet access, and more.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Button variant="luxury" size="lg" onClick={() => navigate('/profile')}>
+              <Crown className="w-5 h-5 mr-2" />
+              Upgrade to Premium
+            </Button>
+            <Button variant="ghost" onClick={() => navigate('/')}>
+              Back to Home
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (isGenerating) {
     return <ReportGeneratingScreen onComplete={handleReportComplete} duration={10} />;
   }
