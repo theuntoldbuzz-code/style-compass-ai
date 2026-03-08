@@ -13,7 +13,7 @@
 
 @layer base {
   :root {
-    /* LuxFit AI Premium Luxury Black + Gold Theme */
+    /* Aurion AI Premium Luxury Black + Gold Theme */
     
     /* Backgrounds - Luxury Black */
     --background: 0 0% 4%; /* #0A0A0A Luxury Black */
@@ -53,7 +53,7 @@
 
     --radius: 0.75rem;
 
-    /* Custom LuxFit Luxury Variables */
+    /* Custom Aurion Luxury Variables */
     --gold: 45 66% 52%; /* Premium Gold #D4AF37 */
     --gold-light: 45 58% 87%; /* Soft Gold #F2E8C9 */
     --gold-dark: 35 41% 61%; /* Champagne Gold #C5A572 */

@@ -210,7 +210,7 @@ const Recommendations = () => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-serif text-lg">LuxFit AI</span>
+            <span className="font-serif text-lg">Aurion AI</span>
           </div>
           <Button variant="ghost" size="icon">
             <Filter className="w-5 h-5" />
@@ -391,7 +391,7 @@ const Recommendations = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Sparkles className="w-5 h-5 text-primary" />
-            <span className="font-serif text-xl">LuxFit AI</span>
+            <span className="font-serif text-xl">Aurion AI</span>
           </div>
           <p className="text-sm text-muted-foreground">Your Personal AI Style Curator</p>
         </div>

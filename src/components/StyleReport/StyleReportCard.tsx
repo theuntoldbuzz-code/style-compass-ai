@@ -29,7 +29,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
       <!DOCTYPE html>
       <html>
         <head>
-          <title>LuxFit AI - Your Personal Style Report</title>
+          <title>Aurion AI - Your Personal Style Report</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { font-family: 'Georgia', serif; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); color: #fff; padding: 40px; min-height: 100vh; }
@@ -59,7 +59,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
         </head>
         <body>
           <div class="header">
-            <h1>LuxFit AI</h1>
+            <h1>Aurion AI</h1>
             <p>Your Personal Style Report &bull; Generated ${new Date().toLocaleDateString()}</p>
           </div>
           
@@ -107,8 +107,8 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
   const handleShare = async () => {
     if (navigator.share) {
       await navigator.share({
-        title: 'My Style Dossier - LuxFit AI',
-        text: 'Check out my personalized style report from LuxFit AI!',
+        title: 'My Style Dossier - Aurion AI',
+        text: 'Check out my personalized style report from Aurion AI!',
         url: window.location.href,
       });
     }

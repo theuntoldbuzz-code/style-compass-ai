@@ -213,7 +213,7 @@ const Auth = () => {
                 <Sparkles className="w-6 h-6 text-primary-foreground" />
               </div>
               <span className="font-serif text-3xl text-foreground">
-                <span className="text-gradient-gold">Lux</span>Fit
+                <span className="text-gradient-gold">Aurion</span> AI
               </span>
             </div>
             <h1 className="font-serif text-2xl text-foreground mb-2">
@@ -226,7 +226,7 @@ const Auth = () => {
               {step === 'email'
                 ? (isLogin
                     ? 'Sign in to access your virtual closet'
-                    : 'Join LuxFit AI and discover your perfect style')
+                    : 'Join Aurion AI and discover your perfect style')
                 : `We've sent a magic link to ${email}. Click it to continue.`
               }
             </p>
