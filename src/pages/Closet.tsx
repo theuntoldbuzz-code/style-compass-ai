@@ -193,10 +193,13 @@ const Closet = () => {
             </div>
             <h3 className="font-serif text-lg text-foreground mb-2">No saved items yet</h3>
             <p className="text-sm text-muted-foreground mb-6">Save products you love to build your wardrobe</p>
-            <Button variant="luxury" size="lg" className="rounded-full px-8 shadow-[0_4px_24px_hsl(var(--primary)/0.25)] hover:shadow-[0_8px_32px_hsl(var(--primary)/0.35)]" onClick={() => navigate('/get-outfit')}>
-              <Sparkles className="w-4 h-4 mr-1" />
+            <button 
+              onClick={() => navigate('/get-outfit')}
+              className="h-12 px-10 rounded-full text-sm font-semibold tracking-wide bg-gradient-to-r from-[hsl(45,75%,52%)] to-[hsl(45,80%,40%)] text-[hsl(0,0%,5%)] shadow-[0_4px_24px_hsl(45,75%,52%,0.3)] hover:shadow-[0_8px_32px_hsl(45,75%,52%,0.4)] hover:scale-105 active:scale-100 transition-all duration-300 inline-flex items-center justify-center gap-2"
+            >
+              <Sparkles className="w-4 h-4" />
               Browse Items
-            </Button>
+            </button>
           </div>
         )
       )}
