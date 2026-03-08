@@ -4,6 +4,7 @@ import { Sparkles, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StyleReport } from "@/types/styleReport";
 import StyleReportCard from "@/components/StyleReport/StyleReportCard";
+import reportsBg from "@/assets/reports-bg.png";
 
 const Reports = () => {
   const navigate = useNavigate();
@@ -24,8 +25,9 @@ const Reports = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold animate-pulse">
+      <div className="min-h-screen bg-background relative flex items-center justify-center">
+        <img src={reportsBg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" />
+        <div className="relative z-10 w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold animate-pulse">
           <Sparkles className="w-5 h-5 text-primary-foreground" />
         </div>
       </div>
@@ -34,9 +36,10 @@ const Reports = () => {
 
   if (!lastReport) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <div className="text-center max-w-sm">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-card/60 border border-border/30 flex items-center justify-center">
+      <div className="min-h-screen bg-background relative flex items-center justify-center p-6">
+        <img src={reportsBg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none" />
+        <div className="relative z-10 text-center max-w-sm">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-card/60 border border-border/30 flex items-center justify-center backdrop-blur-sm">
             <FileText className="w-9 h-9 text-muted-foreground/50" />
           </div>
           <h2 className="font-serif text-2xl text-foreground mb-3">No Report Yet</h2>
@@ -53,8 +56,9 @@ const Reports = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-6 max-w-4xl">
+    <div className="min-h-screen bg-background relative">
+      <img src={reportsBg} alt="" className="fixed inset-0 w-full h-full object-cover opacity-30 pointer-events-none z-0" />
+      <main className="relative z-10 container mx-auto px-4 py-6 max-w-4xl">
         <StyleReportCard report={lastReport} />
       </main>
     </div>
