@@ -150,7 +150,7 @@ const Closet = () => {
       </div>
 
       {/* Category Filters */}
-      <div className="flex gap-2.5 px-4 mt-4 overflow-x-auto no-scrollbar">
+      <div className="relative z-10 flex gap-2.5 px-4 mt-4 overflow-x-auto no-scrollbar">
         {occasionFilters.map(filter => (
           <button
             key={filter}
