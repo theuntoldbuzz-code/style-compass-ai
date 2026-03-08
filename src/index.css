@@ -340,6 +340,72 @@
     background: hsl(var(--gold));
     color: hsl(var(--luxury-black));
   }
+
+  /* Glowing border card with orbiting flare */
+  .glow-border-card {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(145deg, hsl(var(--charcoal-light)) 0%, hsl(var(--deep-graphite)) 100%);
+  }
+
+  .glow-border-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--glow-angle, 0deg),
+      transparent 0%,
+      transparent 25%,
+      hsl(45 66% 52% / 0.9) 30%,
+      hsl(45 80% 70% / 1) 35%,
+      hsl(45 66% 52% / 0.9) 40%,
+      transparent 45%,
+      transparent 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: glow-rotate 4s linear infinite;
+    z-index: 1;
+  }
+
+  .glow-border-card::after {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--glow-angle, 0deg),
+      transparent 0%,
+      transparent 28%,
+      hsl(45 66% 52% / 0.15) 33%,
+      transparent 38%,
+      transparent 100%
+    );
+    animation: glow-rotate 4s linear infinite;
+    filter: blur(15px);
+    z-index: 0;
+  }
+
+  .glow-border-card > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  @property --glow-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @keyframes glow-rotate {
+    0% { --glow-angle: 0deg; }
+    100% { --glow-angle: 360deg; }
+  }
 }
 
 @layer utilities {
