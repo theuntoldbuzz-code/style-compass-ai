@@ -14,7 +14,7 @@ const HomeButton = () => {
       variant="ghost"
       size="icon"
       onClick={() => navigate("/")}
-      className="fixed top-4 left-4 z-50 w-10 h-10 rounded-full bg-primary/15 hover:bg-primary/25 text-primary shadow-md backdrop-blur-md border border-primary/30 hover:scale-110 transition-all"
+      className="fixed top-4 left-4 z-50 w-10 h-10 rounded-full bg-gradient-gold-dark text-primary-foreground shadow-gold hover:scale-110 transition-all"
       aria-label="Go to Home"
     >
       <Home className="w-5 h-5" />
