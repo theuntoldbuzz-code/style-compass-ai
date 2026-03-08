@@ -110,7 +110,7 @@ const Closet = () => {
     <div className="md:hidden min-h-screen pb-24 relative" style={{ backgroundImage: `url(${closetBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
       {/* Hero Banner */}
-      <div className="relative w-full h-[120px] overflow-hidden rounded-b-2xl mx-auto max-w-[calc(100%-32px)] mt-3">
+      <div className="relative z-10 w-full h-[120px] overflow-hidden rounded-b-2xl mx-auto max-w-[calc(100%-32px)] mt-3">
         <img 
           src={heroImages[activeFilter] || heroBannerAll} 
           alt={`${activeFilter} Fashion`} 
