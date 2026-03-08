@@ -6,15 +6,15 @@ const HomeButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Don't show on home page or auth page
-  if (location.pathname === "/" || location.pathname === "/auth") return null;
+  // Only show on profile page
+  if (location.pathname !== "/profile") return null;
 
   return (
     <Button
       variant="ghost"
       size="icon"
       onClick={() => navigate("/")}
-      className="fixed bottom-20 left-4 sm:bottom-6 sm:left-6 z-50 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-primary/90 hover:bg-primary text-primary-foreground shadow-lg backdrop-blur-md border border-primary/20 hover:scale-110 transition-all"
+      className="fixed top-4 left-4 z-50 w-10 h-10 rounded-full bg-card/60 hover:bg-card/80 text-foreground shadow-md backdrop-blur-md border border-border/30 hover:scale-110 transition-all"
       aria-label="Go to Home"
     >
       <Home className="w-5 h-5" />
