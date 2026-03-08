@@ -1,17 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useCloset } from "@/hooks/useCloset";
-import { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import {
   Sparkles, Crown, User, Bell, Shield, LogOut, ChevronRight,
-  HelpCircle, Shirt, Eye, FileText, Calendar, Clock, Trash2
+  HelpCircle, Shirt, Eye, FileText, Calendar, Clock, Trash2,
+  ArrowLeft, Compass, Heart, Home
 } from "lucide-react";
 import goldBokehBg from "@/assets/gold-bokeh-bg.png";
-import { useStyleReportHistory, StyleReportRecord } from "@/hooks/useStyleReportHistory";
+import { useStyleReportHistory } from "@/hooks/useStyleReportHistory";
 import { format } from "date-fns";
 import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -28,13 +30,12 @@ const Profile = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
-      const [profileRes, premiumRes, tryOnsRes, reportsRes] = await Promise.all([
+      const [profileRes, premiumRes, tryOnsRes] = await Promise.all([
         supabase.from("profiles").select("full_name, avatar_url").eq("id", user.id).maybeSingle(),
         user.email
           ? supabase.from("premium_users").select("is_active, tier").eq("email", user.email).maybeSingle()
           : Promise.resolve({ data: null, error: null, count: null }),
         supabase.from("outfit_generations").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("photo_analyses").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
       if (profileRes.data) setProfile(profileRes.data);
       if (premiumRes.data?.is_active) {
@@ -63,10 +64,7 @@ const Profile = () => {
     { label: "Privacy & Security", icon: Shield, onClick: () => {} },
   ];
 
-  const stagger = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.07 } },
-  };
+  const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
   const fadeUp = {
     hidden: { opacity: 0, y: 18 },
     show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const } },
@@ -82,9 +80,200 @@ const Profile = () => {
     );
   }
 
+  // Shared Components
+  const AvatarSection = ({ size = "md" }: { size?: "md" | "lg" }) => (
+    <div className="flex flex-col items-center">
+      <div className="relative mb-4">
+        <div className={`${size === "lg" ? "w-[120px] h-[120px]" : "w-[100px] h-[100px]"} rounded-full p-[3px] bg-gradient-gold-dark shadow-gold-glow`}>
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={displayName} className="w-full h-full rounded-full object-cover" />
+          ) : (
+            <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
+              <span className={`${size === "lg" ? "text-4xl" : "text-3xl"} font-serif text-gradient-gold`}>{initials}</span>
+            </div>
+          )}
+        </div>
+      </div>
+      <h1 className={`font-serif ${size === "lg" ? "text-3xl" : "text-2xl"} text-foreground`}>{displayName}</h1>
+      <p className="text-xs text-muted-foreground mt-0.5">{user?.email}</p>
+      <div className={`mt-3 inline-flex items-center gap-1.5 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase ${
+        isPremium ? "bg-primary/15 text-primary border border-primary/40" : "bg-muted text-muted-foreground border border-border"
+      }`}>
+        {isPremium ? <Crown className="w-3.5 h-3.5" /> : <Shield className="w-3.5 h-3.5" />}
+        {isPremium ? (premiumTier === 'platinum' ? "PLATINUM MEMBER" : "GOLD MEMBER") : "FREE PLAN"}
+      </div>
+    </div>
+  );
+
+  const StatsRow = () => (
+    <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-5">
+      <div className="grid grid-cols-3 divide-x divide-border/30">
+        {stats.map((s) => (
+          <div key={s.label} className="text-center">
+            <p className="text-2xl font-serif text-foreground font-semibold">{s.value}</p>
+            <p className="text-[10px] text-muted-foreground tracking-widest mt-1 uppercase">{s.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const PlanCards = () => (
+    <div className="grid grid-cols-2 gap-3">
+      <div className="glow-border-card p-5 text-center flex flex-col">
+        <h3 className="font-serif text-[11px] uppercase tracking-[0.15em] text-foreground mb-2">Aurion Gold</h3>
+        <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
+        <p className="font-serif text-[26px] text-primary leading-none inline-flex items-baseline justify-center gap-0.5"><span className="text-[18px]">₹</span>499</p>
+        <p className="text-[10px] text-muted-foreground mt-1 mb-4">/month</p>
+        <ul className="space-y-2.5 text-[11px] text-muted-foreground mb-5 flex-1">
+          <li>Unlimited Outfits</li>
+          <li>Virtual Try-On Access</li>
+          <li>Priority Processing</li>
+        </ul>
+        {premiumTier !== 'platinum' && (
+          <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all mt-auto ${
+            isPremium && premiumTier === 'gold' ? "bg-transparent text-primary border-2 border-primary" : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
+          }`}>
+            {isPremium && premiumTier === 'gold' ? "ACTIVE" : "UPGRADE"}
+          </button>
+        )}
+      </div>
+      <div className="glow-border-card p-5 text-center flex flex-col" style={{ animationDelay: '2s' }}>
+        <h3 className="font-serif text-[11px] uppercase tracking-[0.15em] text-foreground mb-2">Aurion Platinum</h3>
+        <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
+        <p className="font-serif text-[26px] text-primary leading-none inline-flex items-baseline justify-center gap-0.5"><span className="text-[18px]">₹</span>999</p>
+        <p className="text-[10px] text-muted-foreground mt-1 mb-4">/month</p>
+        <ul className="space-y-2.5 text-[11px] text-muted-foreground mb-5 flex-1">
+          <li>Personal Stylist</li>
+          <li>Early Access</li>
+          <li>Concierge Service</li>
+        </ul>
+        <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all mt-auto ${
+          isPremium && premiumTier === 'platinum' ? "bg-transparent text-primary border-2 border-primary" : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
+        }`}>
+          {isPremium && premiumTier === 'platinum' ? "ACTIVE" : "UPGRADE"}
+        </button>
+      </div>
+    </div>
+  );
+
+  const ReportsSection = () => (
+    <>
+      {reportsLoading ? (
+        <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-6 text-center">
+          <Sparkles className="w-5 h-5 text-primary animate-pulse mx-auto mb-2" />
+          <p className="text-xs text-muted-foreground">Loading reports...</p>
+        </div>
+      ) : styleReports.length === 0 ? (
+        <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-6 text-center">
+          <FileText className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
+          <p className="text-xs text-muted-foreground mb-3">No reports generated yet</p>
+          <button onClick={() => navigate("/style-quiz")} className="text-[11px] font-bold uppercase tracking-wider text-primary">
+            Take Style Quiz →
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-2.5">
+          {styleReports.map((report, index) => (
+            <button
+              key={report.id}
+              onClick={() => navigate("/reports", { state: { report: report.report_data } })}
+              className="w-full text-left rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-4 transition-all active:scale-[0.98] hover:border-primary/30"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-4.5 h-4.5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-sm font-semibold text-foreground">Style Dossier #{styleReports.length - index}</span>
+                    {index === 0 && (
+                      <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/20">Latest</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                    <Calendar className="w-3 h-3" />
+                    {(() => { try { return format(new Date(report.created_at), "MMM d, yyyy"); } catch { return "Unknown date"; } })()}
+                    <span className="mx-0.5">·</span>
+                    <Clock className="w-3 h-3" />
+                    {(() => { try { return format(new Date(report.created_at), "h:mm a"); } catch { return ""; } })()}
+                  </div>
+                  <div className="flex items-center gap-1 mt-2">
+                    {report.report_data?.bestColors?.slice(0, 4).map((c: any, i: number) => (
+                      <span key={i} className="w-4 h-4 rounded-full border border-border/40" style={{ backgroundColor: c.hex }} />
+                    ))}
+                    {report.report_data?.bodyTypeAnalysis?.type && (
+                      <span className="ml-1.5 text-[10px] px-2 py-0.5 rounded-full bg-muted/50 text-muted-foreground">
+                        {report.report_data.bodyTypeAnalysis.type}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); deleteReport(report.id); toast({ title: "Report deleted" }); }}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 transition-colors flex-shrink-0"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
+
+  const SettingsSection = () => (
+    <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md overflow-hidden">
+      {settingsItems.map((item, i) => {
+        const Icon = item.icon;
+        return (
+          <button
+            key={item.label}
+            onClick={item.onClick}
+            className={`w-full flex items-center gap-3 px-5 py-4 hover:bg-primary/5 transition-colors ${
+              i < settingsItems.length - 1 ? "border-b border-border/20" : ""
+            }`}
+          >
+            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <Icon className="w-4 h-4" style={{ color: 'hsl(45, 66%, 52%)' }} />
+            </div>
+            <span className="text-sm text-foreground flex-1 text-left">{item.label}</span>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  const SupportSection = () => (
+    <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md overflow-hidden">
+      <button className="w-full flex items-center gap-3 px-5 py-4 hover:bg-primary/5 transition-colors border-b border-border/20">
+        <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <HelpCircle className="w-4 h-4" style={{ color: 'hsl(45, 66%, 52%)' }} />
+        </div>
+        <span className="text-sm text-foreground flex-1 text-left">Help Center</span>
+        <ChevronRight className="w-4 h-4 text-muted-foreground" />
+      </button>
+      <button onClick={signOut} className="w-full flex items-center gap-3 px-5 py-4 hover:bg-destructive/5 transition-colors">
+        <div className="w-9 h-9 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0">
+          <LogOut className="w-4 h-4 text-destructive" />
+        </div>
+        <span className="text-sm text-destructive flex-1 text-left">Sign Out</span>
+      </button>
+    </div>
+  );
+
+  const SectionLabel = ({ label }: { label: string }) => (
+    <div className="flex items-center gap-2 mb-4">
+      <div className="w-1 h-4 rounded-full bg-primary" />
+      <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">{label}</h2>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Gold bokeh fallback gradient + image */}
+      {/* Background */}
       <div className="fixed inset-0 pointer-events-none bg-gradient-to-b from-[hsl(45,40%,15%,0.3)] via-background to-background">
         <img
           src={goldBokehBg}
@@ -97,244 +286,115 @@ const Profile = () => {
         />
       </div>
 
+      {/* ── DESKTOP LAYOUT ── */}
+      <div className="hidden md:block relative z-10">
+        {/* Desktop Nav */}
+        <nav className="border-b border-border/30 bg-background/60 backdrop-blur-xl">
+          <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="text-muted-foreground hover:text-foreground">
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold">
+                  <Sparkles className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <span className="font-serif text-xl text-foreground"><span className="text-gradient-gold">Aurion</span> AI</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="text-muted-foreground gap-2"><Home className="w-4 h-4" />Home</Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/explore')} className="text-muted-foreground gap-2"><Compass className="w-4 h-4" />Explore</Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/closet')} className="text-muted-foreground gap-2"><Heart className="w-4 h-4" />Closet</Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/reports')} className="text-muted-foreground gap-2"><FileText className="w-4 h-4" />Reports</Button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Desktop Content - Two Column */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10">
+          <div className="grid lg:grid-cols-[340px_1fr] gap-10">
+            {/* Left Sidebar - Profile Card */}
+            <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-7">
+              <motion.div variants={fadeUp} className="rounded-[22px] border border-border/30 bg-card/40 backdrop-blur-md p-8 text-center">
+                <AvatarSection size="lg" />
+                <div className="mt-6">
+                  <StatsRow />
+                </div>
+              </motion.div>
+
+              <motion.div variants={fadeUp}>
+                <SectionLabel label="Quick Actions" />
+                <div className="grid grid-cols-2 gap-2.5">
+                  <Button variant="luxuryOutline" size="sm" onClick={() => navigate('/get-outfit')} className="gap-2 text-xs h-11">
+                    <Sparkles className="w-3.5 h-3.5" />Get Outfit
+                  </Button>
+                  <Button variant="luxuryOutline" size="sm" onClick={() => navigate('/style-quiz')} className="gap-2 text-xs h-11">
+                    <Sparkles className="w-3.5 h-3.5" />Style Quiz
+                  </Button>
+                </div>
+              </motion.div>
+
+              <motion.div variants={fadeUp}>
+                <SectionLabel label="Settings" />
+                <SettingsSection />
+              </motion.div>
+
+              <motion.div variants={fadeUp}>
+                <SectionLabel label="Support" />
+                <SupportSection />
+              </motion.div>
+            </motion.div>
+
+            {/* Right Content Area */}
+            <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-8">
+              <motion.div variants={fadeUp}>
+                <SectionLabel label="Your Plan" />
+                <PlanCards />
+              </motion.div>
+
+              <motion.div variants={fadeUp}>
+                <SectionLabel label="Previous Reports" />
+                <ReportsSection />
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── MOBILE LAYOUT ── */}
       <motion.div
-        className="relative z-10 px-5 pt-10 pb-10 max-w-md mx-auto"
+        className="md:hidden relative z-10 px-5 pt-10 pb-28 max-w-md mx-auto"
         variants={stagger}
         initial="hidden"
         animate="show"
       >
-        {/* ── Avatar + Name ── */}
         <motion.div variants={fadeUp} className="flex flex-col items-center mb-6">
-          <div className="relative mb-4">
-            <div className="w-[100px] h-[100px] rounded-full p-[3px] bg-gradient-gold-dark shadow-gold-glow">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt={displayName} className="w-full h-full rounded-full object-cover" />
-              ) : (
-                <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
-                  <span className="text-3xl font-serif text-gradient-gold">{initials}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <h1 className="font-serif text-2xl text-foreground">{displayName}</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">{user?.email}</p>
-
-          {/* Member badge */}
-          <div className={`mt-3 inline-flex items-center gap-1.5 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase ${
-            isPremium
-              ? "bg-primary/15 text-primary border border-primary/40"
-              : "bg-muted text-muted-foreground border border-border"
-          }`}>
-            {isPremium ? <Crown className="w-3.5 h-3.5" /> : <Shield className="w-3.5 h-3.5" />}
-            {isPremium ? (premiumTier === 'platinum' ? "PLATINUM MEMBER" : "GOLD MEMBER") : "FREE PLAN"}
-          </div>
+          <AvatarSection />
         </motion.div>
-
-        {/* ── Stats Row ── */}
-        <motion.div variants={fadeUp} className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-5 mb-7">
-          <div className="grid grid-cols-3 divide-x divide-border/30">
-            {stats.map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="text-2xl font-serif text-foreground font-semibold">{s.value}</p>
-                <p className="text-[10px] text-muted-foreground tracking-widest mt-1 uppercase">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ── Your Plan ── */}
-        <motion.div variants={fadeUp} className="mb-7">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-4 rounded-full bg-primary" />
-            <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Your Plan</h2>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {/* Gold Plan */}
-            <div className="glow-border-card p-5 text-center flex flex-col">
-              <h3 className="font-serif text-[11px] uppercase tracking-[0.15em] text-foreground mb-2">Aurion Gold</h3>
-              <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
-              <p className="font-serif text-[26px] text-primary leading-none inline-flex items-baseline justify-center gap-0.5"><span className="text-[18px]">₹</span>499</p>
-              <p className="text-[10px] text-muted-foreground mt-1 mb-4">/month</p>
-              <ul className="space-y-2.5 text-[11px] text-muted-foreground mb-5 flex-1">
-                <li>Unlimited Outfits</li>
-                <li>Virtual Try-On Access</li>
-                <li>Priority Processing</li>
-              </ul>
-              {premiumTier !== 'platinum' && (
-                <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all mt-auto ${
-                  isPremium && premiumTier === 'gold'
-                    ? "bg-transparent text-primary border-2 border-primary"
-                    : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
-                }`}>
-                  {isPremium && premiumTier === 'gold' ? "ACTIVE" : "UPGRADE"}
-                </button>
-              )}
-            </div>
-
-            {/* Platinum Plan */}
-            <div className="glow-border-card p-5 text-center flex flex-col" style={{ animationDelay: '2s' }}>
-              <h3 className="font-serif text-[11px] uppercase tracking-[0.15em] text-foreground mb-2">Aurion Platinum</h3>
-              <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
-              <p className="font-serif text-[26px] text-primary leading-none inline-flex items-baseline justify-center gap-0.5"><span className="text-[18px]">₹</span>999</p>
-              <p className="text-[10px] text-muted-foreground mt-1 mb-4">/month</p>
-              <ul className="space-y-2.5 text-[11px] text-muted-foreground mb-5 flex-1">
-                <li>Personal Stylist</li>
-                <li>Early Access</li>
-                <li>Concierge Service</li>
-              </ul>
-              <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all mt-auto ${
-                isPremium && premiumTier === 'platinum'
-                  ? "bg-transparent text-primary border-2 border-primary"
-                  : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
-              }`}>
-                {isPremium && premiumTier === 'platinum' ? "ACTIVE" : "UPGRADE"}
-              </button>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* ── Previous Reports ── */}
-        <motion.div variants={fadeUp} className="mb-7">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-4 rounded-full bg-primary" />
-            <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Previous Reports</h2>
-          </div>
-
-          {reportsLoading ? (
-            <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-6 text-center">
-              <Sparkles className="w-5 h-5 text-primary animate-pulse mx-auto mb-2" />
-              <p className="text-xs text-muted-foreground">Loading reports...</p>
-            </div>
-          ) : styleReports.length === 0 ? (
-            <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-6 text-center">
-              <FileText className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
-              <p className="text-xs text-muted-foreground mb-3">No reports generated yet</p>
-              <button
-                onClick={() => navigate("/style-quiz")}
-                className="text-[11px] font-bold uppercase tracking-wider text-primary"
-              >
-                Take Style Quiz →
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-2.5">
-              {styleReports.map((report, index) => (
-                <button
-                  key={report.id}
-                  onClick={() => navigate("/reports", { state: { report: report.report_data } })}
-                  className="w-full text-left rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-4 transition-all active:scale-[0.98] hover:border-primary/30"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
-                      <FileText className="w-4.5 h-4.5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-sm font-semibold text-foreground">
-                          Style Dossier #{styleReports.length - index}
-                        </span>
-                        {index === 0 && (
-                          <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/20">
-                            Latest
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                        <Calendar className="w-3 h-3" />
-                        {(() => { try { return format(new Date(report.created_at), "MMM d, yyyy"); } catch { return "Unknown date"; } })()}
-                        <span className="mx-0.5">·</span>
-                        <Clock className="w-3 h-3" />
-                        {(() => { try { return format(new Date(report.created_at), "h:mm a"); } catch { return ""; } })()}
-                      </div>
-                      {/* Color swatches */}
-                      <div className="flex items-center gap-1 mt-2">
-                        {report.report_data?.bestColors?.slice(0, 4).map((c, i) => (
-                          <span
-                            key={i}
-                            className="w-4 h-4 rounded-full border border-border/40"
-                            style={{ backgroundColor: c.hex }}
-                          />
-                        ))}
-                        {report.report_data?.bodyTypeAnalysis?.type && (
-                          <span className="ml-1.5 text-[10px] px-2 py-0.5 rounded-full bg-muted/50 text-muted-foreground">
-                            {report.report_data.bodyTypeAnalysis.type}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteReport(report.id);
-                        toast({ title: "Report deleted" });
-                      }}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 transition-colors flex-shrink-0"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </motion.div>
-
 
         <motion.div variants={fadeUp} className="mb-7">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-4 rounded-full bg-primary" />
-            <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Settings</h2>
-          </div>
-
-          <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md overflow-hidden">
-            {settingsItems.map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.label}
-                  onClick={item.onClick}
-                  className={`w-full flex items-center gap-3 px-5 py-4 hover:bg-primary/5 transition-colors ${
-                    i < settingsItems.length - 1 ? "border-b border-border/20" : ""
-                  }`}
-                >
-                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4" style={{ color: 'hsl(45, 66%, 52%)' }} />
-                  </div>
-                  <span className="text-sm text-foreground flex-1 text-left">{item.label}</span>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                </button>
-              );
-            })}
-          </div>
+          <StatsRow />
         </motion.div>
 
-        {/* ── Support ── */}
+        <motion.div variants={fadeUp} className="mb-7">
+          <SectionLabel label="Your Plan" />
+          <PlanCards />
+        </motion.div>
+
+        <motion.div variants={fadeUp} className="mb-7">
+          <SectionLabel label="Previous Reports" />
+          <ReportsSection />
+        </motion.div>
+
+        <motion.div variants={fadeUp} className="mb-7">
+          <SectionLabel label="Settings" />
+          <SettingsSection />
+        </motion.div>
+
         <motion.div variants={fadeUp}>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-4 rounded-full bg-primary" />
-            <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Support</h2>
-          </div>
-
-          <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md overflow-hidden">
-            <button className="w-full flex items-center gap-3 px-5 py-4 hover:bg-primary/5 transition-colors border-b border-border/20">
-              <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <HelpCircle className="w-4 h-4" style={{ color: 'hsl(45, 66%, 52%)' }} />
-              </div>
-              <span className="text-sm text-foreground flex-1 text-left">Help Center</span>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            </button>
-            <button
-              onClick={signOut}
-              className="w-full flex items-center gap-3 px-5 py-4 hover:bg-destructive/5 transition-colors"
-            >
-              <div className="w-9 h-9 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0">
-                <LogOut className="w-4 h-4 text-destructive" />
-              </div>
-              <span className="text-sm text-destructive flex-1 text-left">Sign Out</span>
-            </button>
-          </div>
+          <SectionLabel label="Support" />
+          <SupportSection />
         </motion.div>
       </motion.div>
     </div>
