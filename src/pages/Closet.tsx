@@ -124,7 +124,7 @@ const Closet = () => {
       </div>
 
       {/* Outfits / Items Tabs */}
-      <div className="flex gap-1 mx-4 mt-5 rounded-xl overflow-hidden border border-primary/20 bg-card/80 backdrop-blur-sm p-1">
+      <div className="relative z-10 flex gap-1 mx-4 mt-5 rounded-xl overflow-hidden border border-primary/20 bg-card/80 backdrop-blur-sm p-1">
         <button
           onClick={() => setMobileTab('outfits')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-300 ${
