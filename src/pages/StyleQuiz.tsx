@@ -311,9 +311,13 @@ const StyleQuiz = () => {
     );
   }
 
-  if (isComplete) {
+   if (isComplete) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background relative">
+        <div className="absolute top-4 left-4 z-20">
+          <BackButton onClick={() => setIsComplete(false)} label="Back to Quiz" />
+        </div>
+        <div className="min-h-screen flex items-center justify-center p-4">
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-primary/5 rounded-full blur-3xl animate-pulse" />
