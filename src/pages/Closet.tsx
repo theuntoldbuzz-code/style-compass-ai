@@ -7,6 +7,7 @@ import {
 import BackButton from '@/components/BackButton';
 import fashionEmpty from '@/assets/fashion-9.avif';
 import heroBannerAll from '@/assets/closet-all.jpg';
+import closetBg from '@/assets/closet-bg.png';
 import heroBannerWedding from '@/assets/closet-wedding.jpg';
 import heroBannerOffice from '@/assets/closet-office.jpg';
 import heroBannerCasual from '@/assets/closet-casual.jpg';
