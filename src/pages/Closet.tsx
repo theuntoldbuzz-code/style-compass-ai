@@ -8,6 +8,7 @@ import BackButton from '@/components/BackButton';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion } from 'framer-motion';
 import fashionEmpty from '@/assets/fashion-9.avif';
+import DesktopBackground from '@/components/DesktopBackground';
 import heroBannerAll from '@/assets/closet-all.jpg';
 import closetBg from '@/assets/closet-bg.png';
 import heroBannerWedding from '@/assets/closet-wedding.jpg';
@@ -289,11 +290,7 @@ const Closet = () => {
   // ---- DESKTOP / TABLET VIEW (premium) ----
   const DesktopView = () => (
     <div className="hidden md:block min-h-screen bg-background relative">
-      {/* Ambient Background */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-20 right-1/4 w-[400px] h-[400px] bg-primary/3 rounded-full blur-[100px]" />
-      </div>
+      <DesktopBackground />
 
       {/* Sticky Nav */}
       <motion.nav

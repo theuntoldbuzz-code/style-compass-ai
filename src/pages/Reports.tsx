@@ -9,6 +9,7 @@ import reportsPartyBg from "@/assets/reports-party-bg.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
+import DesktopBackground from "@/components/DesktopBackground";
 
 const Reports = () => {
   const navigate = useNavigate();
@@ -89,11 +90,7 @@ const Reports = () => {
   if (!isMobile) {
     return (
       <div className="min-h-screen bg-background relative">
-        <img src={reportsBg} alt="" className="fixed inset-0 w-full h-full object-cover opacity-25 pointer-events-none z-0" />
-        
-        {/* Ambient glow effects */}
-        <div className="fixed top-20 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none z-0" />
-        <div className="fixed bottom-20 right-1/4 w-80 h-80 bg-primary/3 rounded-full blur-[100px] pointer-events-none z-0" />
+        <DesktopBackground />
 
         {/* Top navigation bar */}
         <motion.header

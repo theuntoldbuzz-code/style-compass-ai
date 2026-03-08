@@ -14,6 +14,7 @@ import { useProductSearch } from "@/hooks/useProductSearch";
 import { occasionCategories, getOccasionOutfits } from "@/data/occasionOutfits";
 import { Progress } from "@/components/ui/progress";
 import { usePremium } from "@/hooks/usePremium";
+import DesktopBackground from "@/components/DesktopBackground";
 
 const Recommendations = () => {
   const navigate = useNavigate();
@@ -196,7 +197,8 @@ const Recommendations = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <DesktopBackground />
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <button

@@ -13,6 +13,7 @@ import wizardBgPhoto from "@/assets/wizard-bg-photo.png";
 import wizardBgAttributes from "@/assets/wizard-bg-attributes.png";
 import wizardBgOccasion from "@/assets/wizard-bg-occasion.png";
 import wizardBgBudget from "@/assets/wizard-bg-budget.png";
+import DesktopBackground from "@/components/DesktopBackground";
 
 const stepBackgrounds: Record<number, string> = {
   1: wizardBgPhoto,
@@ -109,12 +110,7 @@ const StyleWizard = () => {
         key={currentStep}
         className="md:hidden fixed inset-0 w-full h-full object-cover opacity-25 pointer-events-none z-0 transition-opacity duration-500" 
       />
-      {/* Desktop subtle gradient overlay */}
-      <div className="hidden md:block fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary/3 blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/[0.02] blur-[150px]" />
-      </div>
+      <DesktopBackground />
 
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border/30">
