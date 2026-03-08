@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Sparkles, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StyleReport } from "@/types/styleReport";
@@ -9,10 +9,13 @@ import { supabase } from "@/integrations/supabase/client";
 
 const Reports = () => {
   const navigate = useNavigate();
-  const [lastReport, setLastReport] = useState<StyleReport | null>(null);
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const passedReport = (location.state as any)?.report as StyleReport | undefined;
+  const [lastReport, setLastReport] = useState<StyleReport | null>(passedReport ?? null);
+  const [loading, setLoading] = useState(!passedReport);
 
   useEffect(() => {
+    if (passedReport) return;
     const fetchLatest = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
@@ -31,7 +34,6 @@ const Reports = () => {
           }
         }
       } catch {}
-      // Fallback to localStorage
       try {
         const saved = localStorage.getItem("luxfit-last-report");
         if (saved) setLastReport(JSON.parse(saved));
@@ -39,7 +41,7 @@ const Reports = () => {
       setLoading(false);
     };
     fetchLatest();
-  }, []);
+  }, [passedReport]);
 
   if (loading) {
     return (

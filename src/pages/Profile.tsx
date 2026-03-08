@@ -223,7 +223,7 @@ const Profile = () => {
               {styleReports.map((report, index) => (
                 <button
                   key={report.id}
-                  onClick={() => navigate("/reports")}
+                  onClick={() => navigate("/reports", { state: { report: report.report_data } })}
                   className="w-full text-left rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-4 transition-all active:scale-[0.98] hover:border-primary/30"
                 >
                   <div className="flex items-start gap-3">
