@@ -46,7 +46,7 @@ const BottomNav = () => {
                 key={item.path}
                 onClick={() => navigate(item.path)}
                 whileTap={{ scale: 0.9 }}
-                className="relative flex flex-col items-center justify-center gap-1 flex-1 h-full"
+                className="relative flex flex-col items-center justify-center gap-[3px] flex-1 h-full"
               >
                 {/* Active background glow */}
                 <AnimatePresence>
@@ -63,19 +63,13 @@ const BottomNav = () => {
                   )}
                 </AnimatePresence>
 
-                {/* Active top indicator */}
-                {isActive && (
-                  <motion.div
-                    layoutId="navGoldDot"
-                    className="absolute left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full"
-                    style={{
-                      top: "8px",
-                      background: "linear-gradient(90deg, hsl(45 66% 52%), hsl(35 41% 61%))",
-                      boxShadow: "0 0 8px hsl(45 66% 52% / 0.5)",
-                    }}
-                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                  />
-                )}
+                {/* Gold indicator line — inline, directly above icon */}
+                <div className="h-[2px] w-6 rounded-full" style={{
+                  background: isActive
+                    ? "linear-gradient(90deg, hsl(45 66% 52%), hsl(35 41% 61%))"
+                    : "transparent",
+                  boxShadow: isActive ? "0 0 8px hsl(45 66% 52% / 0.5)" : "none",
+                }} />
 
                 <div className="relative z-10">
                   <Icon
