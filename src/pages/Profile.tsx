@@ -158,25 +158,23 @@ const Profile = () => {
             </div>
 
             {/* Platinum Plan */}
-            <div className="glow-border-card p-5 text-center" style={{ animationDelay: '2s' }}>
-              <div>
-                <h3 className="font-serif text-[11px] uppercase tracking-[0.15em] text-foreground mb-2">Aurion Platinum</h3>
-                <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
-                <p className="font-serif text-[26px] text-primary leading-none">₹999</p>
-                <p className="text-[10px] text-muted-foreground mt-1 mb-4">/month</p>
-                <ul className="space-y-2.5 text-[11px] text-muted-foreground mb-5">
-                  <li>Personal Stylist</li>
-                  <li>Early Access</li>
-                  <li>Concierge Service</li>
-                </ul>
-                <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all ${
-                  false
-                    ? "bg-transparent text-primary border-2 border-primary"
-                    : "bg-gradient-gold-dark text-primary-foreground shadow-gold rounded-full"
-                }`}>
-                  UPGRADE
-                </button>
-              </div>
+            <div className="glow-border-card p-5 text-center flex flex-col" style={{ animationDelay: '2s' }}>
+              <h3 className="font-serif text-[11px] uppercase tracking-[0.15em] text-foreground mb-2">Aurion Platinum</h3>
+              <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
+              <p className="font-serif text-[26px] text-primary leading-none">₹999</p>
+              <p className="text-[10px] text-muted-foreground mt-1 mb-4">/month</p>
+              <ul className="space-y-2.5 text-[11px] text-muted-foreground mb-5 flex-1">
+                <li>Personal Stylist</li>
+                <li>Early Access</li>
+                <li>Concierge Service</li>
+              </ul>
+              <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all mt-auto ${
+                false
+                  ? "bg-transparent text-primary border-2 border-primary"
+                  : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
+              }`}>
+                UPGRADE
+              </button>
             </div>
           </div>
         </motion.div>
