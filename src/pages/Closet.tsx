@@ -21,6 +21,7 @@ const Closet = () => {
   const { savedItems, savedOutfits, loading, removeItem, removeOutfit } = useCloset();
   const { isPremium, loading: premiumLoading } = usePremium();
   const [activeFilter, setActiveFilter] = useState('All');
+  const [mobileTab, setMobileTab] = useState<'outfits' | 'items'>('outfits');
 
   useEffect(() => {
     if (!authLoading && !user) {
