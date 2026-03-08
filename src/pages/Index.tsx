@@ -101,7 +101,7 @@ const Index = () => {
             <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
           </div>
           <span className="font-serif text-xl md:text-2xl text-foreground">
-            <span className="text-gradient-gold">Lux</span>Fit
+            <span className="text-gradient-gold">Aurion</span> AI
           </span>
         </div>
 
