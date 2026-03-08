@@ -99,8 +99,7 @@ const Explore = () => {
           <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-background" />
         </div>
 
-        {/* Centered icon */}
-        <div className="flex justify-center -mt-6 mb-3 relative z-10">
+        <div className="flex justify-center pt-40 sm:pt-32 mb-3 relative z-10">
           <Sparkles className="w-6 h-6 text-primary" />
         </div>
 
