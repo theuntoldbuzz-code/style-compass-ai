@@ -162,12 +162,15 @@ const Closet = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center mt-16 px-6 text-center">
-            <div className="w-16 h-16 mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <div className="w-18 h-18 mb-5 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center border border-primary/20 shadow-[0_4px_20px_hsl(var(--primary)/0.1)]">
               <ShoppingBag className="w-8 h-8 text-primary" />
             </div>
             <h3 className="font-serif text-lg text-foreground mb-2">No saved outfits yet</h3>
             <p className="text-sm text-muted-foreground mb-6">Start exploring and save outfits you love</p>
-            <Button variant="luxury" onClick={() => navigate('/get-outfit')}>Discover Outfits</Button>
+            <Button variant="luxury" size="lg" className="rounded-full px-8 shadow-[0_4px_24px_hsl(var(--primary)/0.25)] hover:shadow-[0_8px_32px_hsl(var(--primary)/0.35)]" onClick={() => navigate('/get-outfit')}>
+              <Sparkles className="w-4 h-4 mr-1" />
+              Discover Outfits
+            </Button>
           </div>
         )
       )}
