@@ -166,7 +166,11 @@ const Profile = () => {
                   <li>Early Access</li>
                   <li>Concierge Service</li>
                 </ul>
-                <button className="w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase bg-gradient-gold-dark text-primary-foreground shadow-gold transition-all">
+                <button className={`w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all ${
+                  false
+                    ? "bg-primary/15 text-primary border border-primary/30"
+                    : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
+                }`}>
                   UPGRADE
                 </button>
               </div>
