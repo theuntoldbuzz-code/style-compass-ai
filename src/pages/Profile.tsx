@@ -10,6 +10,7 @@ import {
   ArrowLeft, Compass, Heart, Home
 } from "lucide-react";
 import goldBokehBg from "@/assets/gold-bokeh-bg.png";
+import DesktopBackground from "@/components/DesktopBackground";
 import { useStyleReportHistory } from "@/hooks/useStyleReportHistory";
 import { format } from "date-fns";
 import { toast } from "@/hooks/use-toast";
