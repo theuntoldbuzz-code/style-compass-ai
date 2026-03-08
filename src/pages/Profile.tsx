@@ -17,13 +17,13 @@ const Profile = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { savedItems, savedOutfits } = useCloset();
+  const { reports: styleReports, loading: reportsLoading, deleteReport } = useStyleReportHistory();
   const [isPremium, setIsPremium] = useState(false);
   const [premiumTier, setPremiumTier] = useState<'gold' | 'platinum' | null>(null);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [bgLoaded, setBgLoaded] = useState(false);
   const [tryOnCount, setTryOnCount] = useState(0);
-  const [reportCount, setReportCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
