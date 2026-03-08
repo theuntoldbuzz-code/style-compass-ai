@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ArrowLeft, Sparkles, RefreshCw, Filter, Heart, FileText, ShoppingBag, Loader2, Crown, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import BackButton from "@/components/BackButton";
 import OutfitCard from "@/components/OutfitCard";
 import { UserProfile, OutfitRecommendation } from "@/types/outfit";
 import { StyleReport, PhotoAnalysisResult } from "@/types/styleReport";
