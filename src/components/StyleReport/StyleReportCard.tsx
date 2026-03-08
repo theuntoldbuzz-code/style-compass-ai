@@ -59,7 +59,7 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
         </head>
         <body>
           <div class="header">
-            <h1>LuxFit AI</h1>
+            <h1>Aurion AI</h1>
             <p>Your Personal Style Report &bull; Generated ${new Date().toLocaleDateString()}</p>
           </div>
           
