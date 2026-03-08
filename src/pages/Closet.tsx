@@ -109,8 +109,34 @@ const Closet = () => {
         </div>
       </div>
 
+      {/* Outfits / Items Tabs */}
+      <div className="flex gap-0 mx-4 mt-5 rounded-lg overflow-hidden border border-border/50 bg-card">
+        <button
+          onClick={() => setMobileTab('outfits')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium transition-all ${
+            mobileTab === 'outfits'
+              ? 'bg-secondary text-foreground'
+              : 'text-muted-foreground'
+          }`}
+        >
+          <ShoppingBag className="w-3.5 h-3.5" />
+          Outfits ({savedOutfits.length})
+        </button>
+        <button
+          onClick={() => setMobileTab('items')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-medium transition-all ${
+            mobileTab === 'items'
+              ? 'bg-secondary text-foreground'
+              : 'text-muted-foreground'
+          }`}
+        >
+          <Heart className="w-3.5 h-3.5" />
+          Items ({savedItems.length})
+        </button>
+      </div>
+
       {/* Category Filters */}
-      <div className="flex gap-2 px-4 mt-5 overflow-x-auto no-scrollbar">
+      <div className="flex gap-2 px-4 mt-4 overflow-x-auto no-scrollbar">
         {occasionFilters.map(filter => (
           <button
             key={filter}
@@ -127,35 +153,43 @@ const Closet = () => {
       </div>
 
       {/* Outfits Grid */}
-      {filteredOutfits.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 px-4 mt-5">
-          {filteredOutfits.map(outfit => (
-            <MobileOutfitCard key={outfit.id} outfit={outfit} onRemove={() => removeOutfit(outfit.outfit_id)} />
-          ))}
-        </div>
+      {mobileTab === 'outfits' && (
+        filteredOutfits.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3 px-4 mt-5">
+            {filteredOutfits.map(outfit => (
+              <MobileOutfitCard key={outfit.id} outfit={outfit} onRemove={() => removeOutfit(outfit.outfit_id)} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center mt-16 px-6 text-center">
+            <div className="w-16 h-16 mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <ShoppingBag className="w-8 h-8 text-primary" />
+            </div>
+            <h3 className="font-serif text-lg text-foreground mb-2">No saved outfits yet</h3>
+            <p className="text-sm text-muted-foreground mb-6">Start exploring and save outfits you love</p>
+            <Button variant="luxury" onClick={() => navigate('/get-outfit')}>Discover Outfits</Button>
+          </div>
+        )
       )}
 
       {/* Items Grid */}
-      {filteredItems.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 px-4 mt-5">
-          {filteredItems.map(item => (
-            <MobileItemCard key={item.id} item={item} onRemove={() => removeItem(item.product_id)} />
-          ))}
-        </div>
-      )}
-
-      {/* Empty State */}
-      {filteredOutfits.length === 0 && filteredItems.length === 0 && (
-        <div className="flex flex-col items-center justify-center mt-16 px-6 text-center">
-          <div className="w-16 h-16 mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <ShoppingBag className="w-8 h-8 text-primary" />
+      {mobileTab === 'items' && (
+        filteredItems.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3 px-4 mt-5">
+            {filteredItems.map(item => (
+              <MobileItemCard key={item.id} item={item} onRemove={() => removeItem(item.product_id)} />
+            ))}
           </div>
-          <h3 className="font-serif text-lg text-foreground mb-2">No saved items yet</h3>
-          <p className="text-sm text-muted-foreground mb-6">Start exploring and save outfits you love</p>
-          <Button variant="luxury" onClick={() => navigate('/get-outfit')}>
-            Discover Outfits
-          </Button>
-        </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center mt-16 px-6 text-center">
+            <div className="w-16 h-16 mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <Heart className="w-8 h-8 text-primary" />
+            </div>
+            <h3 className="font-serif text-lg text-foreground mb-2">No saved items yet</h3>
+            <p className="text-sm text-muted-foreground mb-6">Save products you love to build your wardrobe</p>
+            <Button variant="luxury" onClick={() => navigate('/get-outfit')}>Browse Items</Button>
+          </div>
+        )
       )}
     </div>
   );
