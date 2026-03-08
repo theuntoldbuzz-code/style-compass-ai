@@ -2,25 +2,53 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Sparkles, ArrowLeft, Heart, ShoppingBag, 
-  ExternalLink, Star, Trash2, Tag 
+  ExternalLink, Star, Trash2, Tag, Crown, Lock
 } from 'lucide-react';
 import fashionEmpty from '@/assets/fashion-9.avif';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useCloset, SavedItem, SavedOutfit } from '@/hooks/useCloset';
+import { usePremium } from '@/hooks/usePremium';
 import ProductCard from '@/components/ProductCard';
 
 const Closet = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { savedItems, savedOutfits, loading, removeItem, removeOutfit } = useCloset();
+  const { isPremium, loading: premiumLoading } = usePremium();
 
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/auth');
     }
   }, [user, authLoading, navigate]);
+
+  // Block free users from accessing closet
+  if (!authLoading && !premiumLoading && user && !isPremium) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
+            <Lock className="w-10 h-10 text-primary" />
+          </div>
+          <h2 className="font-serif text-3xl text-foreground mb-3">Premium Feature</h2>
+          <p className="text-muted-foreground mb-8">
+            Virtual Closet is exclusively available for Premium members. Upgrade to save and organize your favorite outfits and items.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Button variant="luxury" size="lg" onClick={() => navigate('/profile')}>
+              <Crown className="w-5 h-5 mr-2" />
+              Upgrade to Premium
+            </Button>
+            <Button variant="ghost" onClick={() => navigate('/')}>
+              Back to Home
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-IN', {

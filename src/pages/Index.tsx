@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, ArrowRight, Star, ShoppingBag, Palette, Zap, Heart, User, LogOut, Compass } from "lucide-react";
+import { Sparkles, ArrowRight, Star, ShoppingBag, Palette, Zap, Heart, User, LogOut, Compass, Crown } from "lucide-react";
 import heroImage from "@/assets/fashion-1.avif";
 import fashionImage2 from "@/assets/fashion-2.avif";
 import fashionImage3 from "@/assets/fashion-3.avif";
@@ -12,6 +12,7 @@ import TrendingSection from "@/components/TrendingSection";
 import ColorPaletteForYou from "@/components/ColorPaletteForYou";
 import { useAuth } from "@/hooks/useAuth";
 import { useCloset } from "@/hooks/useCloset";
+import { usePremium } from "@/hooks/usePremium";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 const features = [{
   icon: Sparkles,
@@ -38,6 +39,7 @@ const Index = () => {
     loading
   } = useAuth();
   const { savedItems, savedOutfits } = useCloset();
+  const { isPremium } = usePremium();
   const totalSaved = savedItems.length + savedOutfits.length;
   const [showSplash, setShowSplash] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
@@ -72,14 +74,16 @@ const Index = () => {
             <Compass className="w-5 h-5" />
           </Button>
           {!loading && user ? <>
-              <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="relative text-muted-foreground hover:text-primary">
-                <Heart className="w-5 h-5" />
-                {totalSaved > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
-                    {totalSaved > 99 ? '99+' : totalSaved}
-                  </span>
-                )}
-              </Button>
+              {isPremium && (
+                <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="relative text-muted-foreground hover:text-primary">
+                  <Heart className="w-5 h-5" />
+                  {totalSaved > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
+                      {totalSaved > 99 ? '99+' : totalSaved}
+                    </span>
+                  )}
+                </Button>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
@@ -95,10 +99,18 @@ const Index = () => {
                     <Compass className="w-4 h-4 mr-2" />
                     Explore Styles
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/closet')}>
-                    <Heart className="w-4 h-4 mr-2" />
-                    My Closet
-                  </DropdownMenuItem>
+                  {isPremium ? (
+                    <DropdownMenuItem onClick={() => navigate('/closet')}>
+                      <Heart className="w-4 h-4 mr-2" />
+                      My Closet
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem onClick={() => navigate('/closet')} className="text-muted-foreground">
+                      <Crown className="w-4 h-4 mr-2 text-primary" />
+                      My Closet
+                      <span className="ml-auto text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">PRO</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut} className="text-destructive">
                     <LogOut className="w-4 h-4 mr-2" />
