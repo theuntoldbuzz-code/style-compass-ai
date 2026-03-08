@@ -47,7 +47,7 @@ const ProcessingScreen = ({ onComplete, photo }: ProcessingScreenProps) => {
 
       const imageBase64 = await base64Promise;
 
-      console.log("Sending photo for AI analysis...");
+      // Photo sent for AI analysis
 
       const { data, error } = await supabase.functions.invoke('photos-analysis', {
         body: {
@@ -66,7 +66,7 @@ const ProcessingScreen = ({ onComplete, photo }: ProcessingScreenProps) => {
         throw new Error(error.message);
       }
 
-      console.log("Photo analysis result:", data);
+      // Photo analysis complete
 
       if (!data.isHuman) {
         setAnalysisError(data.error || "Please upload a clear photo of yourself");

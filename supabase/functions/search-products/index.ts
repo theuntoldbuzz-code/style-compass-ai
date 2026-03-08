@@ -1,10 +1,27 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:8080',
+  'http://localhost:3000',
+];
+
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.lovable\.app$/.test(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.lovableproject\.com$/.test(origin)) return true;
+  return false;
+}
+
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  const allowedOrigin = isAllowedOrigin(origin) ? origin! : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
 
 interface SignatureLook {
   name: string;
@@ -25,6 +42,9 @@ interface SearchRequest {
 }
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -53,12 +73,24 @@ serve(async (req) => {
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    console.log(`Authenticated user: ${user.id}`);
 
     const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
     if (!PERPLEXITY_API_KEY) {
       throw new Error("PERPLEXITY_API_KEY is not configured");
     }
+
+    // Sanitize user inputs to prevent prompt injection
+    function sanitizeForPrompt(value: string): string {
+      return value
+        .replace(/[\n\r\t]/g, ' ')
+        .replace(/[^\x20-\x7E]/g, '')
+        .trim()
+        .substring(0, 200);
+    }
+
+    const VALID_GENDERS = ['male', 'female', 'non-binary', 'other'];
+    const VALID_OCCASIONS = ['wedding', 'diwali', 'office', 'date-night', 'party', 'casual', 'formal', 'christmas', 'brunch', 'weekend', 'festive', 'traditional', 'college', 'club'];
+    const VALID_SEASONS = ['summer', 'winter', 'monsoon', 'spring', 'all'];
 
     const body: SearchRequest = await req.json();
     const { signatureLooks, budgetMin, budgetMax, gender, occasion, season } = body;
@@ -67,22 +99,28 @@ serve(async (req) => {
       throw new Error("signatureLooks array is required");
     }
 
-    console.log(`Searching products for ${signatureLooks.length} looks, budget: ₹${budgetMin}-₹${budgetMax}`);
+    // Validate enums
+    const safeGender = VALID_GENDERS.includes(gender?.toLowerCase()) ? gender.toLowerCase() : 'unspecified';
+    const safeOccasion = VALID_OCCASIONS.includes(occasion?.toLowerCase()) ? occasion.toLowerCase() : 'casual';
+    const safeSeason = VALID_SEASONS.includes(season?.toLowerCase()) ? season.toLowerCase() : 'all';
+    const safeBudgetMin = Math.max(0, Math.min(1000000, Number(budgetMin) || 0));
+    const safeBudgetMax = Math.max(safeBudgetMin, Math.min(1000000, Number(budgetMax) || 25000));
 
     // For each signature look, search Perplexity for real products
     const outfitResults = [];
 
     for (const look of signatureLooks.slice(0, 4)) {
-      const keyPiecesText = look.keyPieces.join(", ");
+      const keyPiecesText = look.keyPieces.map(p => sanitizeForPrompt(p)).join(", ");
+      const safeLookName = sanitizeForPrompt(look.name);
 
       const searchPrompt = `I need to buy a complete outfit in India. Here are the specific items I need:
 
 ${keyPiecesText}
 
-This is for: ${gender}, ${occasion} occasion, ${season} season.
-Look name: "${look.name}"
+This is for: ${safeGender}, ${safeOccasion} occasion, ${safeSeason} season.
+Look name: "${safeLookName}"
 
-My TOTAL budget for ALL items combined is ₹${budgetMin} to ₹${budgetMax} INR.
+My TOTAL budget for ALL items combined is ₹${safeBudgetMin} to ₹${safeBudgetMax} INR.
 
 Search for each item on Indian e-commerce sites (Myntra, Ajio, Amazon India, Flipkart, Tata CLiQ, Nykaa Fashion, H&M India, Zara India).
 
