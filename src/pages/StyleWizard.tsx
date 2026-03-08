@@ -13,6 +13,7 @@ import wizardBgPhoto from "@/assets/wizard-bg-photo.png";
 import wizardBgAttributes from "@/assets/wizard-bg-attributes.png";
 import wizardBgOccasion from "@/assets/wizard-bg-occasion.png";
 import wizardBgBudget from "@/assets/wizard-bg-budget.png";
+import DesktopBackground from "@/components/DesktopBackground";
 
 const stepBackgrounds: Record<number, string> = {
   1: wizardBgPhoto,
