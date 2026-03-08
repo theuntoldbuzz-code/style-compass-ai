@@ -47,7 +47,8 @@ const Reports = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background relative flex items-center justify-center">
-        <img src={reportsBg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" />
+        <img src={reportsBg} alt="" className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" />
+        <img src={reportsPartyBg} alt="" className="md:hidden absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" />
         <div className="relative z-10 w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold animate-pulse">
           <Sparkles className="w-5 h-5 text-primary-foreground" />
         </div>
