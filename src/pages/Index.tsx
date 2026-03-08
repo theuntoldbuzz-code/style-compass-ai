@@ -314,7 +314,7 @@ const Index = () => {
                     />
                   </div>
                   {/* Icon Badge */}
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#faeebf] via-[#dcb948] to-primary flex items-center justify-center z-10 border-2 border-background shadow-[0_10px_20px_-5px_rgba(220,188,75,0.5),0_0_15px_rgba(175,143,42,0.3)]">
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#faeebf] via-[#dcb948] to-primary flex items-center justify-center z-10 shadow-[0_10px_20px_-5px_rgba(220,188,75,0.5),0_0_15px_rgba(175,143,42,0.3)]">
                     <IconComponent className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
                   </div>
                 </div>
