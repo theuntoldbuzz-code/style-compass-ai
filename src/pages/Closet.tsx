@@ -4,6 +4,7 @@ import {
   Sparkles, ArrowLeft, Heart, ShoppingBag, 
   ExternalLink, Star, Trash2, Tag, Crown, Lock
 } from 'lucide-react';
+import BackButton from '@/components/BackButton';
 import fashionEmpty from '@/assets/fashion-9.avif';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
