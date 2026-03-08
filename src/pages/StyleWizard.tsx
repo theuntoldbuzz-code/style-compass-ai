@@ -9,7 +9,17 @@ import BudgetForm from "@/components/StyleWizard/BudgetForm";
 import ProcessingScreen from "@/components/ProcessingScreen";
 import { UserProfile } from "@/types/outfit";
 import { PhotoAnalysisResult } from "@/types/styleReport";
-import goldBokehBg from "@/assets/gold-bokeh-bg.png";
+import wizardBgPhoto from "@/assets/wizard-bg-photo.png";
+import wizardBgAttributes from "@/assets/wizard-bg-attributes.png";
+import wizardBgOccasion from "@/assets/wizard-bg-occasion.png";
+import wizardBgBudget from "@/assets/wizard-bg-budget.png";
+
+const stepBackgrounds: Record<number, string> = {
+  1: wizardBgPhoto,
+  2: wizardBgAttributes,
+  3: wizardBgOccasion,
+  4: wizardBgBudget,
+};
 
 const steps = [
   { id: 1, title: "Photo", subtitle: "Upload your photo" },
@@ -92,11 +102,12 @@ const StyleWizard = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Mobile luxury background */}
+      {/* Mobile step-specific luxury background */}
       <img 
-        src={goldBokehBg} 
+        src={stepBackgrounds[currentStep]} 
         alt="" 
-        className="md:hidden fixed inset-0 w-full h-full object-cover opacity-20 pointer-events-none z-0" 
+        key={currentStep}
+        className="md:hidden fixed inset-0 w-full h-full object-cover opacity-25 pointer-events-none z-0 transition-opacity duration-500" 
       />
       {/* Desktop subtle gradient overlay */}
       <div className="hidden md:block fixed inset-0 pointer-events-none z-0">
