@@ -56,7 +56,7 @@ const Profile = () => {
   const menuItems = [
     { label: "My Closet", icon: Heart, onClick: () => navigate("/closet") },
     { label: "Explore Styles", icon: Sparkles, onClick: () => navigate("/explore") },
-    { label: "Style Wizard", icon: Star, onClick: () => navigate("/style-wizard") },
+    { label: "Get Outfit", icon: Star, onClick: () => navigate("/get-outfit") },
     { label: "Style Quiz", icon: Settings, onClick: () => navigate("/style-quiz") },
   ];
 
