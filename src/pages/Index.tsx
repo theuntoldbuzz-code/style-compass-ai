@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, ArrowRight, Star, ShoppingBag, Palette, Zap, Heart, User, LogOut, Compass } from "lucide-react";
+import { Sparkles, ArrowRight, Star, ShoppingBag, Palette, Zap, Heart, User, LogOut, Compass, Crown } from "lucide-react";
 import heroImage from "@/assets/fashion-1.avif";
 import fashionImage2 from "@/assets/fashion-2.avif";
 import fashionImage3 from "@/assets/fashion-3.avif";
@@ -12,6 +12,7 @@ import TrendingSection from "@/components/TrendingSection";
 import ColorPaletteForYou from "@/components/ColorPaletteForYou";
 import { useAuth } from "@/hooks/useAuth";
 import { useCloset } from "@/hooks/useCloset";
+import { usePremium } from "@/hooks/usePremium";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 const features = [{
   icon: Sparkles,
