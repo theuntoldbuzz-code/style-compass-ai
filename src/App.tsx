@@ -87,7 +87,7 @@ const App = () => (
               <div className="pb-16 md:pb-0">
                 <AnimatedRoutes />
               </div>
-              <HomeButton />
+              
               <BottomNav />
               <StyleAIChatbot />
             </Suspense>
