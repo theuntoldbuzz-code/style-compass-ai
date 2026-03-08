@@ -54,10 +54,10 @@ const Profile = () => {
   ];
 
   const menuItems = [
-    { label: "My Closet", icon: Heart, onClick: () => navigate("/closet") },
-    { label: "Explore Styles", icon: Sparkles, onClick: () => navigate("/explore") },
-    { label: "Get Outfit", icon: Star, onClick: () => navigate("/get-outfit") },
-    { label: "Style Quiz", icon: Settings, onClick: () => navigate("/style-quiz") },
+    ...(isPremium ? [{ label: "My Closet", icon: Heart, onClick: () => navigate("/closet"), premium: false }] : []),
+    { label: "Explore Styles", icon: Sparkles, onClick: () => navigate("/explore"), premium: false },
+    { label: "Get Outfit", icon: Star, onClick: () => navigate("/get-outfit"), premium: false },
+    { label: "Style Quiz", icon: Settings, onClick: () => navigate("/style-quiz"), premium: false },
   ];
 
   if (loading) {

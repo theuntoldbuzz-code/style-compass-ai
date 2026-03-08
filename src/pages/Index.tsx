@@ -74,14 +74,16 @@ const Index = () => {
             <Compass className="w-5 h-5" />
           </Button>
           {!loading && user ? <>
-              <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="relative text-muted-foreground hover:text-primary">
-                <Heart className="w-5 h-5" />
-                {totalSaved > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
-                    {totalSaved > 99 ? '99+' : totalSaved}
-                  </span>
-                )}
-              </Button>
+              {isPremium && (
+                <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="relative text-muted-foreground hover:text-primary">
+                  <Heart className="w-5 h-5" />
+                  {totalSaved > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
+                      {totalSaved > 99 ? '99+' : totalSaved}
+                    </span>
+                  )}
+                </Button>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
@@ -97,10 +99,18 @@ const Index = () => {
                     <Compass className="w-4 h-4 mr-2" />
                     Explore Styles
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/closet')}>
-                    <Heart className="w-4 h-4 mr-2" />
-                    My Closet
-                  </DropdownMenuItem>
+                  {isPremium ? (
+                    <DropdownMenuItem onClick={() => navigate('/closet')}>
+                      <Heart className="w-4 h-4 mr-2" />
+                      My Closet
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem onClick={() => navigate('/closet')} className="text-muted-foreground">
+                      <Crown className="w-4 h-4 mr-2 text-primary" />
+                      My Closet
+                      <span className="ml-auto text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">PRO</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut} className="text-destructive">
                     <LogOut className="w-4 h-4 mr-2" />
