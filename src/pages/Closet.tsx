@@ -6,7 +6,19 @@ import {
 } from 'lucide-react';
 import BackButton from '@/components/BackButton';
 import fashionEmpty from '@/assets/fashion-9.avif';
-import heroBanner from '@/assets/closet-hero.jpg';
+import heroBannerAll from '@/assets/closet-all.jpg';
+import heroBannerWedding from '@/assets/closet-wedding.jpg';
+import heroBannerOffice from '@/assets/closet-office.jpg';
+import heroBannerCasual from '@/assets/closet-casual.jpg';
+import heroBannerParty from '@/assets/closet-party.jpg';
+
+const heroImages: Record<string, string> = {
+  All: heroBannerAll,
+  Wedding: heroBannerWedding,
+  Office: heroBannerOffice,
+  Casual: heroBannerCasual,
+  Party: heroBannerParty,
+};
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
