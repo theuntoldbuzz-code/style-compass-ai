@@ -51,6 +51,7 @@ const Closet = () => {
             </Button>
           </div>
         </div>
+        </div>
       </div>
     );
   }
