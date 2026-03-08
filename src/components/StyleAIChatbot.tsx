@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { MessageCircle, X, Send, Sparkles, Loader2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +11,7 @@ interface Message {
 }
 
 const StyleAIChatbot = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -36,6 +38,8 @@ const StyleAIChatbot = () => {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  if (location.pathname === "/profile") return null;
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
