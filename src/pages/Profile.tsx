@@ -18,6 +18,7 @@ const Profile = () => {
   const [premiumTier, setPremiumTier] = useState<'gold' | 'platinum' | null>(null);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bgLoaded, setBgLoaded] = useState(false);
   const [tryOnCount, setTryOnCount] = useState(0);
   const [reportCount, setReportCount] = useState(0);
 
