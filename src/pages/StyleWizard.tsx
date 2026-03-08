@@ -263,7 +263,6 @@ const StyleWizard = () => {
           </Button>
         </div>
         </div>
-        </div>
       </main>
     </div>
   );
