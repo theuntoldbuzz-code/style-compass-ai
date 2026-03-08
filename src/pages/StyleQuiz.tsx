@@ -409,7 +409,7 @@ const StyleQuiz = () => {
 
       {/* Question */}
       <main className="relative z-10 container mx-auto px-4 py-8 max-w-2xl">
-        <div className="text-center mb-10 animate-fade-in">
+        <div className="text-center mb-8 md:mb-10 animate-fade-in">
           <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-gold flex items-center justify-center shadow-gold">
             <IconComponent className="w-8 h-8 text-primary-foreground" />
           </div>
