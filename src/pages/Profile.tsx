@@ -195,7 +195,93 @@ const Profile = () => {
           </div>
         </motion.div>
 
-        {/* ── Settings ── */}
+        {/* ── Previous Reports ── */}
+        <motion.div variants={fadeUp} className="mb-7">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-4 rounded-full bg-primary" />
+            <h2 className="font-serif text-xs text-muted-foreground uppercase tracking-[0.2em]">Previous Reports</h2>
+          </div>
+
+          {reportsLoading ? (
+            <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-6 text-center">
+              <Sparkles className="w-5 h-5 text-primary animate-pulse mx-auto mb-2" />
+              <p className="text-xs text-muted-foreground">Loading reports...</p>
+            </div>
+          ) : styleReports.length === 0 ? (
+            <div className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-6 text-center">
+              <FileText className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
+              <p className="text-xs text-muted-foreground mb-3">No reports generated yet</p>
+              <button
+                onClick={() => navigate("/style-quiz")}
+                className="text-[11px] font-bold uppercase tracking-wider text-primary"
+              >
+                Take Style Quiz →
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {styleReports.map((report, index) => (
+                <button
+                  key={report.id}
+                  onClick={() => navigate("/reports")}
+                  className="w-full text-left rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-4 transition-all active:scale-[0.98] hover:border-primary/30"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                      <FileText className="w-4.5 h-4.5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-sm font-semibold text-foreground">
+                          Style Dossier #{styleReports.length - index}
+                        </span>
+                        {index === 0 && (
+                          <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/20">
+                            Latest
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                        <Calendar className="w-3 h-3" />
+                        {format(new Date(report.created_at), "MMM d, yyyy")}
+                        <span className="mx-0.5">·</span>
+                        <Clock className="w-3 h-3" />
+                        {format(new Date(report.created_at), "h:mm a")}
+                      </div>
+                      {/* Color swatches */}
+                      <div className="flex items-center gap-1 mt-2">
+                        {report.report_data?.bestColors?.slice(0, 4).map((c, i) => (
+                          <span
+                            key={i}
+                            className="w-4 h-4 rounded-full border border-border/40"
+                            style={{ backgroundColor: c.hex }}
+                          />
+                        ))}
+                        {report.report_data?.bodyTypeAnalysis?.type && (
+                          <span className="ml-1.5 text-[10px] px-2 py-0.5 rounded-full bg-muted/50 text-muted-foreground">
+                            {report.report_data.bodyTypeAnalysis.type}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteReport(report.id);
+                        toast({ title: "Report deleted" });
+                      }}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 transition-colors flex-shrink-0"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </motion.div>
+
+
         <motion.div variants={fadeUp} className="mb-7">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-4 rounded-full bg-primary" />
