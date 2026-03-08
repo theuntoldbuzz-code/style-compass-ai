@@ -110,9 +110,9 @@ const Closet = () => {
       {/* Hero Banner */}
       <div className="relative w-full h-[120px] overflow-hidden rounded-b-2xl mx-auto max-w-[calc(100%-32px)] mt-3">
         <img 
-          src={heroBanner} 
-          alt="Your Virtual Closet" 
-          className="w-full h-full object-cover object-top"
+          src={heroImages[activeFilter] || heroBannerAll} 
+          alt={`${activeFilter} Fashion`} 
+          className="w-full h-full object-cover object-top transition-all duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         <div className="absolute bottom-4 left-4">
