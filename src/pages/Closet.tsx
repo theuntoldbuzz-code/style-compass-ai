@@ -107,7 +107,8 @@ const Closet = () => {
 
   // ---- MOBILE VIEW ----
   const MobileView = () => (
-    <div className="md:hidden min-h-screen bg-background pb-24">
+    <div className="md:hidden min-h-screen pb-24 relative" style={{ backgroundImage: `url(${closetBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
       {/* Hero Banner */}
       <div className="relative w-full h-[120px] overflow-hidden rounded-b-2xl mx-auto max-w-[calc(100%-32px)] mt-3">
         <img 
