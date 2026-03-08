@@ -117,7 +117,7 @@ const Profile = () => {
               : "bg-muted text-muted-foreground border border-border"
           }`}>
             {isPremium ? <Crown className="w-3.5 h-3.5" /> : <Shield className="w-3.5 h-3.5" />}
-            {isPremium ? "GOLD MEMBER" : "FREE PLAN"}
+            {isPremium ? (premiumTier === 'platinum' ? "PLATINUM MEMBER" : "GOLD MEMBER") : "FREE PLAN"}
           </div>
         </motion.div>
 
