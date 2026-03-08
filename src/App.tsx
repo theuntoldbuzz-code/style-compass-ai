@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +11,11 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { Sparkles } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
+import goldBokehBg from "@/assets/gold-bokeh-bg.png";
+
+// Preload profile background image
+const preloadImg = new Image();
+preloadImg.src = goldBokehBg;
 
 // Lazy load pages for code splitting
 const Index = lazy(() => import("./pages/Index"));

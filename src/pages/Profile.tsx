@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useCloset } from "@/hooks/useCloset";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import {
@@ -74,7 +74,10 @@ const Profile = () => {
         <img
           src={goldBokehBg}
           alt=""
-          className="w-full h-full object-cover opacity-60"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          className="w-full h-full object-cover opacity-60 animate-fade-in"
         />
       </div>
 
