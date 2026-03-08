@@ -26,8 +26,14 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2,
-      staleTime: 5 * 60 * 1000,
+      staleTime: 5 * 60 * 1000,        // 5 min - reduce API calls
+      gcTime: 30 * 60 * 1000,           // 30 min garbage collection
       refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+      refetchOnMount: false,             // Don't refetch when component remounts
+    },
+    mutations: {
+      retry: 1,
     },
   },
 });
