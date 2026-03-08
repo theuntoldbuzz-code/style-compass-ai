@@ -111,8 +111,9 @@ const StyleWizard = () => {
       />
       {/* Desktop subtle gradient overlay */}
       <div className="hidden md:block fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-primary/5 blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-primary/3 blur-[100px]" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary/3 blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/[0.02] blur-[150px]" />
       </div>
 
       {/* Header */}
