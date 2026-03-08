@@ -102,11 +102,12 @@ const StyleWizard = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Mobile luxury background */}
+      {/* Mobile step-specific luxury background */}
       <img 
-        src={goldBokehBg} 
+        src={stepBackgrounds[currentStep]} 
         alt="" 
-        className="md:hidden fixed inset-0 w-full h-full object-cover opacity-20 pointer-events-none z-0" 
+        key={currentStep}
+        className="md:hidden fixed inset-0 w-full h-full object-cover opacity-25 pointer-events-none z-0 transition-opacity duration-500" 
       />
       {/* Desktop subtle gradient overlay */}
       <div className="hidden md:block fixed inset-0 pointer-events-none z-0">
