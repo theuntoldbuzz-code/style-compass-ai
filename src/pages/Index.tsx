@@ -194,43 +194,43 @@ const Index = () => {
       </section>
 
       {/* Fashion Gallery Section */}
-      <section className="relative z-10 container mx-auto px-4 py-16">
-        <div className={`text-center mb-12 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">
+      <section className="relative z-10 container mx-auto px-4 py-10 md:py-16">
+        <div className={`text-center mb-8 md:mb-12 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <h2 className="font-serif text-2xl md:text-4xl text-foreground mb-3 md:mb-4">
             Curated <span className="text-gradient-gold">Fashion</span> Inspiration
           </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
+          <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
             Explore premium styles handpicked by our AI to inspire your next look
           </p>
         </div>
         
-        <div className={`grid grid-cols-2 md:grid-cols-4 gap-4 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card">
-            <img src={fashionImage2} alt="Luxury fashion" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+        <div className={`grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="relative aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden group luxury-card">
+            <img src={fashionImage2} alt="Luxury fashion" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p className="text-sm text-primary font-medium">Casual Elegance</p>
+            <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-xs md:text-sm text-primary font-medium">Casual Elegance</p>
             </div>
           </div>
-          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card md:translate-y-8">
-            <img src={fashionImage3} alt="Premium style" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <div className="relative aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden group luxury-card md:translate-y-8">
+            <img src={fashionImage3} alt="Premium style" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p className="text-sm text-primary font-medium">Evening Glamour</p>
+            <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-xs md:text-sm text-primary font-medium">Evening Glamour</p>
             </div>
           </div>
-          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card">
-            <img src={fashionImage4} alt="Designer wear" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <div className="relative aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden group luxury-card">
+            <img src={fashionImage4} alt="Designer wear" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p className="text-sm text-primary font-medium">Street Style</p>
+            <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-xs md:text-sm text-primary font-medium">Street Style</p>
             </div>
           </div>
-          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden group luxury-card md:translate-y-8">
-            <img src={fashionImage5} alt="Haute couture" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <div className="relative aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden group luxury-card md:translate-y-8">
+            <img src={fashionImage5} alt="Haute couture" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p className="text-sm text-primary font-medium">Haute Couture</p>
+            <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-xs md:text-sm text-primary font-medium">Haute Couture</p>
             </div>
           </div>
         </div>
