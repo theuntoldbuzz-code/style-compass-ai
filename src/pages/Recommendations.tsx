@@ -90,7 +90,19 @@ const Recommendations = () => {
     const report = await generateReport(profile, photoAnalysisFromWizard);
     if (report) {
       setGeneratedReport(report);
-      try { localStorage.setItem("luxfit-last-report", JSON.stringify(report)); } catch {}
+      // Persist to DB and localStorage
+      try {
+        const { supabase: sb } = await import("@/integrations/supabase/client");
+        const { data: userData } = await sb.auth.getUser();
+        if (userData?.user) {
+          await sb.from("style_reports").insert({
+            user_id: userData.user.id,
+            report_data: report as any,
+            quiz_inputs: profile ? { gender: profile.gender, bodyType: profile.bodyType, occasion: profile.occasion } as any : null,
+          });
+        }
+        localStorage.setItem("luxfit-last-report", JSON.stringify(report));
+      } catch {}
       setIsGenerating(false);
 
       // Immediately search for real products using the report
