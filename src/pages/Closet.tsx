@@ -28,7 +28,11 @@ const Closet = () => {
   // Block free users from accessing closet
   if (!authLoading && !premiumLoading && user && !isPremium) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background relative">
+        <div className="absolute top-4 left-4 z-20">
+          <BackButton to="/" label="Back to Home" />
+        </div>
+        <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
           <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20">
             <Lock className="w-10 h-10 text-primary" />
