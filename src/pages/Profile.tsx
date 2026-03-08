@@ -8,6 +8,7 @@ import {
   Sparkles, Crown, User, Bell, Shield, LogOut, ChevronRight,
   HelpCircle, Shirt, Eye, FileText
 } from "lucide-react";
+import goldBokehBg from "@/assets/gold-bokeh-bg.png";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -68,28 +69,13 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Particle / bokeh background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        {/* Large gold bokeh circles */}
-        {[...Array(18)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full animate-float"
-            style={{
-              width: `${8 + Math.random() * 20}px`,
-              height: `${8 + Math.random() * 20}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              background: `radial-gradient(circle, hsl(45 66% 52% / ${0.15 + Math.random() * 0.25}), transparent)`,
-              animationDelay: `${Math.random() * 4}s`,
-              animationDuration: `${3 + Math.random() * 3}s`,
-              filter: `blur(${1 + Math.random() * 2}px)`,
-            }}
-          />
-        ))}
-        {/* Ambient glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute bottom-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-primary/8 blur-3xl" />
+      {/* Gold bokeh background image */}
+      <div className="fixed inset-0 pointer-events-none">
+        <img
+          src={goldBokehBg}
+          alt=""
+          className="w-full h-full object-cover opacity-60"
+        />
       </div>
 
       <motion.div
