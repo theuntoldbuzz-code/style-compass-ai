@@ -374,6 +374,7 @@ const StyleQuiz = () => {
             Generate My Style Report
           </Button>
         </div>
+        </div>
       </div>
     );
   }
