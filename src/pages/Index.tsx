@@ -11,6 +11,7 @@ import SplashScreen from "@/components/SplashScreen";
 import TrendingSection from "@/components/TrendingSection";
 import ColorPaletteForYou from "@/components/ColorPaletteForYou";
 import { useAuth } from "@/hooks/useAuth";
+import { useCloset } from "@/hooks/useCloset";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 const features = [{
   icon: Sparkles,
@@ -36,6 +37,8 @@ const Index = () => {
     signOut,
     loading
   } = useAuth();
+  const { savedItems, savedOutfits } = useCloset();
+  const totalSaved = savedItems.length + savedOutfits.length;
   const [showSplash, setShowSplash] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
@@ -69,8 +72,13 @@ const Index = () => {
             <Compass className="w-5 h-5" />
           </Button>
           {!loading && user ? <>
-              <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="text-muted-foreground hover:text-primary">
+              <Button variant="ghost" size="icon" onClick={() => navigate('/closet')} className="relative text-muted-foreground hover:text-primary">
                 <Heart className="w-5 h-5" />
+                {totalSaved > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center px-1">
+                    {totalSaved > 99 ? '99+' : totalSaved}
+                  </span>
+                )}
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
