@@ -286,7 +286,7 @@ const Profile = () => {
           className={`w-full h-full object-cover transition-opacity duration-500 ${bgLoaded ? 'opacity-60' : 'opacity-0'}`}
         />
       </div>
-      <DesktopBackground />
+      <DesktopBackground variant="profile" />
 
       {/* ── DESKTOP LAYOUT ── */}
       <div className="hidden md:block relative z-10">

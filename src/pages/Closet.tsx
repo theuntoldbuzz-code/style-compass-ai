@@ -290,7 +290,7 @@ const Closet = () => {
   // ---- DESKTOP / TABLET VIEW (premium) ----
   const DesktopView = () => (
     <div className="hidden md:block min-h-screen bg-background relative">
-      <DesktopBackground />
+      <DesktopBackground variant="closet" />
 
       {/* Sticky Nav */}
       <motion.nav

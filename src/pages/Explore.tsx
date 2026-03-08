@@ -83,7 +83,7 @@ const Explore = () => {
     <div className="min-h-screen bg-background relative">
       {/* Mobile background */}
       <img src={exploreMobileBg} alt="" className="md:hidden fixed inset-0 w-full h-full object-cover opacity-30 pointer-events-none z-0" />
-      <DesktopBackground />
+      <DesktopBackground variant="explore" />
 
       {/* ── Hero Section (Reference-inspired) ── */}
       <div className="relative overflow-hidden">

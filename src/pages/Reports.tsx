@@ -90,7 +90,7 @@ const Reports = () => {
   if (!isMobile) {
     return (
       <div className="min-h-screen bg-background relative">
-        <DesktopBackground />
+        <DesktopBackground variant="reports" />
 
         {/* Top navigation bar */}
         <motion.header

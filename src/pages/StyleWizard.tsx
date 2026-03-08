@@ -110,7 +110,7 @@ const StyleWizard = () => {
         key={currentStep}
         className="md:hidden fixed inset-0 w-full h-full object-cover opacity-25 pointer-events-none z-0 transition-opacity duration-500" 
       />
-      <DesktopBackground />
+      <DesktopBackground variant="wizard" />
 
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border/30">
