@@ -18,6 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import goldBokehBg from "@/assets/gold-bokeh-bg.png";
 import mobileHeroBg from "@/assets/mobile-hero-bg.png";
 import goldBokehTop from "@/assets/gold-bokeh-top.png";
+import DesktopBackground from "@/components/DesktopBackground";
 
 const features = [
   {
