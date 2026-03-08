@@ -144,7 +144,11 @@ const Profile = () => {
                   <li>Virtual Try-On Access</li>
                   <li>Priority Processing</li>
                 </ul>
-                <button className="w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all bg-primary/15 text-primary border border-primary/30">
+                <button className={`w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all ${
+                  isPremium
+                    ? "bg-primary/15 text-primary border border-primary/30"
+                    : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
+                }`}>
                   {isPremium ? "ACTIVE" : "UPGRADE"}
                 </button>
               </div>
@@ -162,7 +166,7 @@ const Profile = () => {
                   <li>Early Access</li>
                   <li>Concierge Service</li>
                 </ul>
-                <button className="w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase bg-primary/15 text-primary border border-primary/30 transition-all">
+                <button className="w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase bg-gradient-gold-dark text-primary-foreground shadow-gold transition-all">
                   UPGRADE
                 </button>
               </div>
