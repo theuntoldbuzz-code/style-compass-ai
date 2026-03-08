@@ -18,20 +18,25 @@ const Profile = () => {
   const [premiumTier, setPremiumTier] = useState<'gold' | 'platinum' | null>(null);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
-  const [bgLoaded, setBgLoaded] = useState(false);
+  const [tryOnCount, setTryOnCount] = useState(0);
+  const [reportCount, setReportCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
-      const [profileRes, premiumRes] = await Promise.all([
+      const [profileRes, premiumRes, tryOnsRes, reportsRes] = await Promise.all([
         supabase.from("profiles").select("full_name, avatar_url").eq("id", user.id).single(),
         supabase.from("premium_users").select("is_active, tier").eq("email", user.email!).single(),
+        supabase.from("outfit_generations").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+        supabase.from("photo_analyses").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
       if (profileRes.data) setProfile(profileRes.data);
       if (premiumRes.data?.is_active) {
         setIsPremium(true);
         setPremiumTier((premiumRes.data as any).tier || 'gold');
       }
+      setTryOnCount(tryOnsRes.count ?? 0);
+      setReportCount(reportsRes.count ?? 0);
       setLoading(false);
     };
     fetchData();
@@ -43,9 +48,9 @@ const Profile = () => {
 
   const stats = useMemo(() => [
     { label: "CLOSET", value: savedItems.length, icon: Shirt },
-    { label: "TRY-ONS", value: savedOutfits.length, icon: Eye },
-    { label: "REPORTS", value: 0, icon: FileText },
-  ], [savedItems.length, savedOutfits.length]);
+    { label: "TRY-ONS", value: tryOnCount, icon: Eye },
+    { label: "REPORTS", value: reportCount, icon: FileText },
+  ], [savedItems.length, tryOnCount, reportCount]);
 
   const settingsItems = [
     { label: "Account Information", icon: User, onClick: () => {} },
