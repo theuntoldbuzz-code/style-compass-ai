@@ -206,13 +206,20 @@ const Index = () => {
 
           {/* CTA Buttons */}
           <div className={`flex flex-col gap-4 w-full max-w-[320px] mb-10 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <Button variant="luxury" size="xl" onClick={() => navigate("/style-quiz")} className="w-full uppercase tracking-wider text-sm font-semibold">
+            <button
+              onClick={() => navigate("/style-quiz")}
+              className="w-full py-4 rounded-full bg-gradient-gold text-primary-foreground uppercase tracking-[0.15em] text-sm font-bold shadow-[0_4px_20px_rgba(212,175,55,0.4)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] active:scale-[0.98] transition-all duration-300"
+            >
               Take Style Quiz
-            </Button>
-            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/get-outfit")} className="w-full uppercase tracking-wider text-sm">
+            </button>
+            <button
+              onClick={() => navigate("/get-outfit")}
+              className="w-full py-4 rounded-full bg-transparent border border-primary/50 text-primary uppercase tracking-[0.15em] text-sm font-medium backdrop-blur-sm hover:bg-primary/10 hover:border-primary/70 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              <Sparkles className="w-4 h-4" />
               Upload Photo
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Social Proof */}
