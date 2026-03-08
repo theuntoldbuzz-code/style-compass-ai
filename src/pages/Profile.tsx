@@ -17,6 +17,7 @@ const Profile = () => {
   const [isPremium, setIsPremium] = useState(false);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bgLoaded, setBgLoaded] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
