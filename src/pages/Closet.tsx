@@ -7,6 +7,7 @@ import {
 import BackButton from '@/components/BackButton';
 import fashionEmpty from '@/assets/fashion-9.avif';
 import heroBannerAll from '@/assets/closet-all.jpg';
+import closetBg from '@/assets/closet-bg.png';
 import heroBannerWedding from '@/assets/closet-wedding.jpg';
 import heroBannerOffice from '@/assets/closet-office.jpg';
 import heroBannerCasual from '@/assets/closet-casual.jpg';
@@ -106,9 +107,10 @@ const Closet = () => {
 
   // ---- MOBILE VIEW ----
   const MobileView = () => (
-    <div className="md:hidden min-h-screen bg-background pb-24">
+    <div className="md:hidden min-h-screen pb-24 relative" style={{ backgroundImage: `url(${closetBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
+      <div className="relative z-10">
       {/* Hero Banner */}
-      <div className="relative w-full h-[120px] overflow-hidden rounded-b-2xl mx-auto max-w-[calc(100%-32px)] mt-3">
+      <div className="w-full h-[120px] overflow-hidden rounded-b-2xl mx-auto max-w-[calc(100%-32px)] mt-3 relative">
         <img 
           src={heroImages[activeFilter] || heroBannerAll} 
           alt={`${activeFilter} Fashion`} 
@@ -174,7 +176,7 @@ const Closet = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center mt-16 px-6 text-center">
-            <div className="w-18 h-18 mb-5 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center border border-primary/20 shadow-[0_4px_20px_hsl(var(--primary)/0.1)]">
+            <div className="w-16 h-16 mb-5 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center border border-primary/20 shadow-[0_4px_20px_hsl(var(--primary)/0.1)]">
               <ShoppingBag className="w-8 h-8 text-primary" />
             </div>
             <h3 className="font-serif text-lg text-foreground mb-2">No saved outfits yet</h3>
@@ -200,7 +202,7 @@ const Closet = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center mt-16 px-6 text-center">
-            <div className="w-18 h-18 mb-5 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center border border-primary/20 shadow-[0_4px_20px_hsl(var(--primary)/0.1)]">
+            <div className="w-16 h-16 mb-5 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center border border-primary/20 shadow-[0_4px_20px_hsl(var(--primary)/0.1)]">
               <Heart className="w-8 h-8 text-primary" />
             </div>
             <h3 className="font-serif text-lg text-foreground mb-2">No saved items yet</h3>
@@ -215,6 +217,7 @@ const Closet = () => {
           </div>
         )
       )}
+      </div>
     </div>
   );
 
