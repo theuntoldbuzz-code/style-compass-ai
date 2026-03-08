@@ -210,7 +210,7 @@ const Recommendations = () => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-serif text-lg">LuxFit AI</span>
+            <span className="font-serif text-lg">Aurion AI</span>
           </div>
           <Button variant="ghost" size="icon">
             <Filter className="w-5 h-5" />
