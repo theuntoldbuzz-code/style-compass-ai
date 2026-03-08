@@ -4,6 +4,7 @@ import { Sparkles, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StyleReport } from "@/types/styleReport";
 import StyleReportCard from "@/components/StyleReport/StyleReportCard";
+import reportsBg from "@/assets/reports-bg.png";
 
 const Reports = () => {
   const navigate = useNavigate();
