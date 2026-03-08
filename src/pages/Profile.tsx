@@ -147,7 +147,6 @@ const Profile = () => {
                 <button className="w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all bg-primary/15 text-primary border border-primary/30">
                   {isPremium ? "ACTIVE" : "UPGRADE"}
                 </button>
-                </button>
               </div>
             </div>
 
