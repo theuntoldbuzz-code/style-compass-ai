@@ -151,7 +151,6 @@ const Profile = () => {
                 }`}>
                   {isPremium ? "ACTIVE" : "UPGRADE"}
                 </button>
-                </button>
               </div>
             </div>
 
