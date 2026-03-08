@@ -64,15 +64,15 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="min-h-screen bg-background overflow-hidden pb-[90px] md:pb-0">
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Navigation - Desktop only */}
-      <nav className="relative z-10 container mx-auto px-4 py-4 md:py-6 flex items-center justify-between gap-2">
+      {/* Navigation - Desktop only (hidden on mobile, BottomNav handles it) */}
+      <nav className="relative z-10 container mx-auto px-4 py-4 md:py-6 hidden md:flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
           <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold">
             <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
@@ -139,8 +139,7 @@ const Index = () => {
             </Button>
           )}
           <Button variant="luxuryOutline" onClick={() => navigate("/get-outfit")} className="text-xs sm:text-sm px-3 sm:px-4">
-            <span className="hidden sm:inline">Get Started</span>
-            <span className="sm:hidden">Start</span>
+            Get Started
           </Button>
         </div>
       </nav>
@@ -148,69 +147,103 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative z-10">
         {/* Gold Bokeh Background */}
-        <div className="absolute top-0 left-0 right-0 h-[420px] md:h-[500px] overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 right-0 h-[500px] md:h-[500px] overflow-hidden pointer-events-none">
           <img src={goldBokehBg} alt="" className="w-full h-full object-cover opacity-60" />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
         </div>
 
-        <div className="relative container mx-auto px-4 pt-4 md:pt-16 pb-10 md:pb-16">
-          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+        {/* Mobile Hero - Full centered layout matching reference */}
+        <div className="md:hidden relative flex flex-col items-center justify-center min-h-[80vh] px-6 pt-[60px] pb-10 text-center">
+          {/* Badge */}
+          <div className={`inline-flex items-center gap-2 bg-primary/10 border border-primary/30 px-5 py-2.5 rounded-full text-primary text-[11px] font-semibold tracking-[0.15em] mb-8 uppercase relative overflow-hidden transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <span className="absolute top-0 left-[-100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] animate-[shimmer-badge_3s_infinite]" />
+            AI-Powered Fashion Styling
+          </div>
+
+          {/* Title */}
+          <h1 className={`font-serif text-[48px] leading-[1.1] text-foreground mb-6 tracking-tight transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ textShadow: '0 0 30px rgba(0,0,0,0.5)' }}>
+            Discover
+            <br />
+            Your
+            <br />
+            <span className="text-gradient-gold italic">Perfect Style</span>
+          </h1>
+
+          {/* Info Card - Glassmorphism */}
+          <div className={`flex flex-col items-center gap-5 bg-white/[0.03] backdrop-blur-[10px] border border-primary/30 rounded-[20px] p-4 mb-8 max-w-[260px] w-full transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            {/* Mannequin Image */}
+            <div className="w-full aspect-square rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+              <img src={heroImage} alt="AI Fashion Styling" className="w-full h-full object-cover" />
+            </div>
+            {/* Description */}
+            <p className="text-primary font-serif text-[15px] italic font-normal text-center leading-relaxed tracking-[0.02em]">
+              Upload your photo, tell us the occasion, and let AI curate personalized outfits that match your skin tone, body type, and budget.
+            </p>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className={`flex flex-col gap-4 w-full max-w-[320px] mb-10 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <Button variant="luxury" size="xl" onClick={() => navigate("/style-quiz")} className="w-full uppercase tracking-wider text-sm font-semibold">
+              Take Style Quiz
+            </Button>
+            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/get-outfit")} className="w-full uppercase tracking-wider text-sm">
+              Upload Photo
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+
+          {/* Social Proof */}
+          <div className={`flex items-center gap-3 text-muted-foreground bg-white/[0.03] px-4 py-2 rounded-[20px] border border-white/5 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="flex items-center gap-1">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />
+              ))}
+            </div>
+            <span className="text-[13px]">10k+ Happy Users</span>
+            <span className="text-xs text-muted-foreground">•</span>
+            <span className="text-[13px]">50+ Partner Stores</span>
+          </div>
+        </div>
+
+        {/* Desktop Hero - Keep existing grid layout */}
+        <div className="hidden md:block relative container mx-auto px-4 pt-16 pb-16">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className={`text-center lg:text-left transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 px-4 py-2 rounded-full text-primary text-xs md:text-sm font-medium tracking-widest mb-6 md:mb-8 uppercase">
+              <div className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 px-4 py-2 rounded-full text-primary text-sm font-medium tracking-widest mb-8 uppercase">
                 AI-Powered Fashion Styling
               </div>
-
-              {/* Main Headline */}
-              <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground leading-tight mb-4 md:mb-6">
+              <h1 className="font-serif text-6xl lg:text-7xl text-foreground leading-tight mb-6">
                 Discover
                 <br />
                 Your
                 <br />
                 <span className="text-gradient-gold italic">Perfect Style</span>
               </h1>
-
-              {/* Hero Image - Mobile only */}
-              <div className="lg:hidden mb-6">
-                <div className="relative max-w-[220px] mx-auto">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-gold-dark/20 rounded-2xl blur-xl" />
-                  <div className="relative rounded-2xl overflow-hidden border border-primary/20 shadow-gold bg-card">
-                    <img src={heroImage} alt="AI Fashion Styling" className="w-full h-auto object-cover" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Subheadline */}
-              <p className="text-muted-foreground text-sm md:text-lg max-w-md mx-auto lg:mx-0 mb-8 md:mb-10 font-serif italic leading-relaxed">
+              <p className="text-muted-foreground text-lg max-w-md mx-auto lg:mx-0 mb-10 font-serif italic leading-relaxed">
                 Upload your photo, tell us the occasion, and let AI curate personalized outfits that match your skin tone, body type, and budget.
               </p>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col items-center lg:items-start gap-3 md:gap-4">
-                <Button variant="luxury" size="xl" onClick={() => navigate("/style-quiz")} className="w-full sm:w-auto min-w-[260px] uppercase tracking-wider text-sm font-semibold">
+              <div className="flex flex-col items-center lg:items-start gap-4">
+                <Button variant="luxury" size="xl" onClick={() => navigate("/style-quiz")} className="w-auto min-w-[260px] uppercase tracking-wider text-sm font-semibold">
                   Take Style Quiz
                 </Button>
-                <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/get-outfit")} className="w-full sm:w-auto min-w-[260px] uppercase tracking-wider text-sm">
+                <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/get-outfit")} className="w-auto min-w-[260px] uppercase tracking-wider text-sm">
                   Upload Photo
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
-
-              {/* Trust Badges */}
-              <div className="mt-8 md:mt-12 flex items-center justify-center lg:justify-start gap-3 text-muted-foreground">
+              <div className="mt-12 flex items-center justify-center lg:justify-start gap-3 text-muted-foreground">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />
                   ))}
                 </div>
-                <span className="text-xs md:text-sm">10k+ Happy Users</span>
+                <span className="text-sm">10k+ Happy Users</span>
                 <span className="text-xs text-muted-foreground">•</span>
-                <span className="text-xs md:text-sm">50+ Partner Stores</span>
+                <span className="text-sm">50+ Partner Stores</span>
               </div>
             </div>
 
-            {/* Hero Image - Desktop only */}
-            <div className={`hidden lg:block transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+            <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-gold-dark/20 rounded-3xl blur-2xl" />
                 <div className="relative rounded-2xl overflow-hidden border border-primary/20 shadow-gold">
@@ -228,21 +261,21 @@ const Index = () => {
       </section>
 
       {/* Features / How It Works Section */}
-      <section className="relative z-10 container mx-auto px-4 py-10 md:py-16">
-        <div className={`mb-8 md:mb-12 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <section className="relative z-10 container mx-auto px-6 md:px-4 pt-12 md:py-16">
+        <div className={`mb-6 md:mb-12 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h2 className="font-serif text-lg md:text-4xl text-foreground uppercase tracking-wider">
             <span className="inline-block w-1 h-5 md:h-7 bg-primary mr-3 align-middle rounded-full" />
             How <span className="text-gradient-gold">Aurion AI</span> Works
           </h2>
         </div>
 
-        <div className={`grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
               <div key={index} className="luxury-card overflow-hidden group hover:shadow-gold transition-all duration-500">
-                {/* Feature Image */}
-                <div className="relative aspect-[4/3] overflow-hidden">
+                {/* Feature Image - Square on mobile, 4:3 on desktop */}
+                <div className="relative aspect-square md:aspect-[4/3] overflow-hidden border-b border-primary/10">
                   <img
                     src={feature.image}
                     alt={feature.title}
@@ -250,17 +283,17 @@ const Index = () => {
                     loading="lazy"
                   />
                   {/* Icon Badge */}
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-primary to-gold-dark flex items-center justify-center shadow-gold z-10 border-2 border-card">
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-9 h-9 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#faeebf] via-[#dcb948] to-primary flex items-center justify-center z-10 border-none shadow-[0_10px_20px_-5px_rgba(220,188,75,0.5),0_0_15px_rgba(175,143,42,0.3)]">
                     <IconComponent className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="pt-7 pb-4 px-3 md:pt-8 md:pb-5 md:px-4 text-center">
-                  <h3 className="font-serif text-xs md:text-base text-foreground mb-1 md:mb-2 font-semibold">
+                <div className="pt-6 pb-5 px-4 md:pt-8 md:pb-5 md:px-4 text-center">
+                  <h3 className="font-serif text-[14px] md:text-base text-foreground mb-2 font-semibold">
                     {feature.title}
                   </h3>
-                  <p className="text-[10px] md:text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-[11px] md:text-sm text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -274,7 +307,7 @@ const Index = () => {
       <TrendingSection />
 
       {/* Curated Fashion Inspiration Gallery */}
-      <section className="relative z-10 container mx-auto px-4 py-10 md:py-16">
+      <section className="relative z-10 container mx-auto px-6 md:px-4 pt-12 md:py-16">
         <div className={`mb-6 md:mb-10 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h2 className="font-serif text-lg md:text-4xl text-foreground mb-2 md:mb-3 uppercase tracking-wider">
             <span className="inline-block w-1 h-5 md:h-7 bg-primary mr-3 align-middle rounded-full" />
@@ -287,28 +320,28 @@ const Index = () => {
 
         <div className={`grid grid-cols-2 gap-3 md:gap-4 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {/* Left: Tall image */}
-          <div className="relative row-span-2 rounded-xl md:rounded-2xl overflow-hidden group luxury-card aspect-[3/5]">
+          <div className="relative row-span-2 rounded-xl md:rounded-2xl overflow-hidden group luxury-card h-[372px] md:h-auto md:aspect-[3/5]">
             <img src={fashionImage6} alt="Boutique Collections" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-            <div className="absolute bottom-3 md:bottom-5 left-3 md:left-5 right-3 md:right-5">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4 md:bottom-5 md:left-5 md:right-5">
               <p className="text-sm md:text-lg text-foreground font-serif font-semibold">Boutique Collections</p>
             </div>
           </div>
 
           {/* Right top */}
-          <div className="relative rounded-xl md:rounded-2xl overflow-hidden group luxury-card aspect-[4/3]">
+          <div className="relative rounded-xl md:rounded-2xl overflow-hidden group luxury-card h-[180px] md:h-auto md:aspect-[4/3]">
             <img src={fashionImage4} alt="Resort Elegance" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-            <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            <div className="absolute bottom-3 left-3 right-3 md:bottom-4 md:left-4 md:right-4">
               <p className="text-xs md:text-base text-foreground font-serif font-semibold">Resort Elegance</p>
             </div>
           </div>
 
           {/* Right bottom */}
-          <div className="relative rounded-xl md:rounded-2xl overflow-hidden group luxury-card aspect-[4/3]">
+          <div className="relative rounded-xl md:rounded-2xl overflow-hidden group luxury-card h-[180px] md:h-auto md:aspect-[4/3]">
             <img src={fashionImage7} alt="Evening Gowns" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-            <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            <div className="absolute bottom-3 left-3 right-3 md:bottom-4 md:left-4 md:right-4">
               <p className="text-xs md:text-base text-foreground font-serif font-semibold">Evening Gowns</p>
             </div>
           </div>
@@ -316,7 +349,7 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="relative z-10 container mx-auto px-4 py-10 md:py-16">
+      <section className="relative z-10 container mx-auto px-6 md:px-4 py-12 md:py-16">
         <div className={`luxury-card p-6 md:p-12 text-left max-w-3xl mx-auto relative overflow-hidden transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div className="absolute top-0 left-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
           <div className="absolute bottom-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-2xl" />
@@ -335,7 +368,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer - hidden on mobile (BottomNav is there) */}
       <footer className="relative z-10 border-t border-border/50 mt-8 md:mt-16 py-6 md:py-8 pb-24 sm:pb-8">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-3 md:mb-4">

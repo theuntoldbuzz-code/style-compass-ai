@@ -44,16 +44,16 @@ const TrendingSection = () => {
   };
 
   return (
-    <section className="py-16">
-      <div className="container mx-auto px-4">
+    <section className="py-12 md:py-16">
+      <div className="container mx-auto px-6 md:px-4">
         {/* Section Header */}
-        <div className="mb-8 md:mb-10">
+        <div className="mb-6 md:mb-10">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-serif text-lg md:text-4xl text-foreground uppercase tracking-wider">
               <span className="inline-block w-1 h-5 md:h-7 bg-primary mr-3 align-middle rounded-full" />
               Trending <span className="text-gradient-gold">Styles</span> Today
             </h2>
-            <div className="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full text-primary text-[10px] md:text-xs font-medium uppercase tracking-wider flex-shrink-0">
+            <div className="inline-flex items-center gap-1.5 bg-primary/[0.08] border border-primary/40 px-4 py-2 rounded-full text-primary text-[11px] md:text-xs font-semibold uppercase tracking-[0.1em] backdrop-blur-[5px] shadow-[0_0_10px_rgba(212,175,55,0.1)] flex-shrink-0">
               Updated Daily
             </div>
           </div>
@@ -62,8 +62,8 @@ const TrendingSection = () => {
           </p>
         </div>
 
-        {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
+        {/* Category Tabs - Hidden on mobile */}
+        <div className="hidden md:flex flex-wrap justify-center gap-3 mb-8">
           {trendingCategories.map((category, index) => (
             <button
               key={category.id}
@@ -81,7 +81,7 @@ const TrendingSection = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-6 md:mt-0">
           {trendingCategories[activeCategory].products.map((product, index) => {
             const isSaved = isItemSaved(product.id);
             return (
