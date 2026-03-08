@@ -82,8 +82,11 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
-              <AnimatedRoutes />
+              <div className="pb-16 md:pb-0">
+                <AnimatedRoutes />
+              </div>
               <HomeButton />
+              <BottomNav />
               <StyleAIChatbot />
             </Suspense>
           </BrowserRouter>
