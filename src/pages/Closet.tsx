@@ -107,7 +107,9 @@ const Closet = () => {
 
   // ---- MOBILE VIEW ----
   const MobileView = () => (
-    <div className="md:hidden min-h-screen pb-24 relative" style={{ backgroundImage: `url(${closetBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
+    <div className="md:hidden min-h-screen pb-24 relative overflow-hidden" style={{ backgroundImage: `url(${closetBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
+      <div className="absolute inset-0 bg-background/85 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-primary/[0.05]" />
       <div className="relative z-10">
       {/* Hero Banner */}
       <div className="w-full h-[120px] overflow-hidden rounded-b-2xl mx-auto max-w-[calc(100%-32px)] mt-3 relative">
