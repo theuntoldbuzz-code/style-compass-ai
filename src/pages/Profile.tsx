@@ -25,10 +25,13 @@ const Profile = () => {
       if (!user) return;
       const [profileRes, premiumRes] = await Promise.all([
         supabase.from("profiles").select("full_name, avatar_url").eq("id", user.id).single(),
-        supabase.from("premium_users").select("is_active").eq("email", user.email!).single(),
+        supabase.from("premium_users").select("is_active, tier").eq("email", user.email!).single(),
       ]);
       if (profileRes.data) setProfile(profileRes.data);
-      if (premiumRes.data?.is_active) setIsPremium(true);
+      if (premiumRes.data?.is_active) {
+        setIsPremium(true);
+        setPremiumTier((premiumRes.data as any).tier || 'gold');
+      }
       setLoading(false);
     };
     fetchData();
