@@ -113,8 +113,8 @@ const Profile = () => {
         </motion.div>
 
         {/* ── Stats Row ── */}
-        <motion.div variants={fadeUp} className="luxury-card p-5 mb-7">
-          <div className="grid grid-cols-3 divide-x divide-border/40">
+        <motion.div variants={fadeUp} className="rounded-[18px] border border-border/30 bg-card/40 backdrop-blur-md p-5 mb-7">
+          <div className="grid grid-cols-3 divide-x divide-border/30">
             {stats.map((s) => (
               <div key={s.label} className="text-center">
                 <p className="text-2xl font-serif text-foreground font-semibold">{s.value}</p>
