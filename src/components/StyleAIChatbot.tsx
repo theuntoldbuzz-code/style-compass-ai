@@ -101,7 +101,7 @@ const StyleAIChatbot = () => {
       {/* Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-4 sm:bottom-6 sm:right-6 z-50 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-gold shadow-gold flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+        className={`fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-gold shadow-gold flex items-center justify-center transition-all duration-300 hover:scale-110 md:bottom-6 ${
           isOpen ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       >
