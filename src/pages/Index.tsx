@@ -109,7 +109,7 @@ const Index = () => {
             </> : <Button variant="ghost" onClick={() => navigate('/auth')} className="text-muted-foreground hover:text-foreground">
               Sign In
             </Button>}
-          <Button variant="luxuryOutline" onClick={() => navigate("/style-wizard")}>
+          <Button variant="luxuryOutline" onClick={() => navigate("/get-outfit")}>
             Get Started
           </Button>
         </div>
@@ -144,7 +144,7 @@ const Index = () => {
               Take Style Quiz
               
             </Button>
-            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/style-wizard")}>
+            <Button variant="luxuryOutline" size="xl" onClick={() => navigate("/get-outfit")}>
               Upload Photo
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
@@ -273,7 +273,7 @@ const Index = () => {
             <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
               Join thousands of fashion-forward individuals who've discovered their perfect look with LuxFit AI
             </p>
-            <Button variant="luxury" size="xl" onClick={() => navigate("/style-wizard")}>
+            <Button variant="luxury" size="xl" onClick={() => navigate("/get-outfit")}>
               <Sparkles className="w-5 h-5 mr-2" />
               Get Your Personalized Outfits
             </Button>

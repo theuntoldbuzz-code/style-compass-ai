@@ -148,7 +148,7 @@ const Recommendations = () => {
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <button
-            onClick={() => navigate("/style-wizard")}
+            onClick={() => navigate("/get-outfit")}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -287,7 +287,7 @@ const Recommendations = () => {
                       <RefreshCw className="w-5 h-5 mr-2" />
                       Try Again
                     </Button>
-                    <Button variant="luxuryOutline" onClick={() => navigate("/style-wizard")}>
+                    <Button variant="luxuryOutline" onClick={() => navigate("/get-outfit")}>
                       Adjust Preferences
                     </Button>
                   </div>

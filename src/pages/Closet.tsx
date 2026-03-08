@@ -72,7 +72,7 @@ const Closet = () => {
               </div>
             </div>
           </div>
-          <Button variant="luxuryOutline" onClick={() => navigate('/style-wizard')}>
+          <Button variant="luxuryOutline" onClick={() => navigate('/get-outfit')}>
             <Sparkles className="w-4 h-4 mr-2" />
             Discover More
           </Button>
@@ -101,7 +101,7 @@ const Closet = () => {
                 title="No saved outfits yet"
                 description="Start exploring and save outfits you love to see them here"
                 actionLabel="Discover Outfits"
-                onAction={() => navigate('/style-wizard')}
+                onAction={() => navigate('/get-outfit')}
               />
             ) : (
               <div className="space-y-6">
@@ -125,7 +125,7 @@ const Closet = () => {
                 title="No saved items yet"
                 description="Save individual products you love to build your dream wardrobe"
                 actionLabel="Browse Items"
-                onAction={() => navigate('/style-wizard')}
+                onAction={() => navigate('/get-outfit')}
               />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

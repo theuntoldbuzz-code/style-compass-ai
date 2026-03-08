@@ -51,7 +51,7 @@ const App = () => (
               <Routes>
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-                <Route path="/style-wizard" element={<ProtectedRoute><StyleWizard /></ProtectedRoute>} />
+                <Route path="/get-outfit" element={<ProtectedRoute><StyleWizard /></ProtectedRoute>} />
                 <Route path="/style-quiz" element={<ProtectedRoute><StyleQuiz /></ProtectedRoute>} />
                 <Route path="/recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
                 <Route path="/closet" element={<ProtectedRoute><Closet /></ProtectedRoute>} />
