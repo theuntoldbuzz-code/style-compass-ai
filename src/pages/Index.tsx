@@ -11,6 +11,7 @@ import SplashScreen from "@/components/SplashScreen";
 import TrendingSection from "@/components/TrendingSection";
 import ColorPaletteForYou from "@/components/ColorPaletteForYou";
 import { useAuth } from "@/hooks/useAuth";
+import { useCloset } from "@/hooks/useCloset";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 const features = [{
   icon: Sparkles,
