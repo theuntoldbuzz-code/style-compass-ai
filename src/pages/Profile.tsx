@@ -173,11 +173,11 @@ const Profile = () => {
                 <li>Concierge Service</li>
               </ul>
               <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all mt-auto ${
-                false
+                isPremium && premiumTier === 'platinum'
                   ? "bg-transparent text-primary border-2 border-primary"
                   : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
               }`}>
-                UPGRADE
+                {isPremium && premiumTier === 'platinum' ? "ACTIVE" : "UPGRADE"}
               </button>
             </div>
           </div>
