@@ -5,6 +5,7 @@ import {
   Grid, LayoutGrid, ShoppingBag
 } from "lucide-react";
 import fashionExplore from "@/assets/fashion-10.avif";
+import goldBokehBg from "@/assets/gold-bokeh-bg.png";
 import { Button } from "@/components/ui/button";
 import { infiniteScrollProducts } from "@/data/trendingData";
 import { useAuth } from "@/hooks/useAuth";
@@ -84,8 +85,57 @@ const Explore = () => {
         <div className="absolute bottom-1/3 right-0 w-[300px] h-[300px] bg-primary/6 rounded-full blur-[100px]" />
       </div>
 
-      {/* ── Header ── */}
-      <header className="sticky top-0 z-50 border-b border-border/20"
+      {/* ── Hero Section (Reference-inspired) ── */}
+      <div className="relative overflow-hidden">
+        {/* Gold bokeh background */}
+        <div className="relative w-full flex justify-center pt-4 pb-2">
+          <div className="w-[85%] max-w-md aspect-[16/7] rounded-2xl overflow-hidden relative">
+            <img 
+              src={goldBokehBg} 
+              alt="" 
+              className="w-full h-full object-cover" 
+            />
+            {/* Soft fade edges */}
+            <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
+          </div>
+        </div>
+
+        {/* Centered icon */}
+        <div className="flex justify-center -mt-6 mb-3 relative z-10">
+          <Sparkles className="w-6 h-6 text-primary" />
+        </div>
+
+        {/* Title */}
+        <h1 className="text-center font-serif text-[28px] sm:text-3xl text-foreground leading-tight mb-2 relative z-10">
+          Curated Collections
+        </h1>
+
+        {/* Subtitle */}
+        <p className="text-center text-primary/80 text-[13px] sm:text-sm italic font-serif leading-relaxed px-10 mb-6 relative z-10">
+          Discover handpicked styles from the world's finest fashion houses, tailored to your unique taste.
+        </p>
+
+        {/* Category pills — centered, wrapping */}
+        <div className="flex flex-wrap justify-center gap-2.5 px-6 pb-6 relative z-10">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setFilter(cat)}
+              className={`px-5 py-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-all duration-300 border ${
+                filter === cat
+                  ? 'bg-primary text-primary-foreground border-primary/40 shadow-gold'
+                  : 'bg-transparent text-muted-foreground/80 border-border/30 hover:border-primary/30 hover:text-foreground'
+              }`}
+            >
+              {cat === 'all' ? 'All' : cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Sticky header on scroll (compact) ── */}
+      <header className="sticky top-0 z-50 border-b border-border/20 md:block hidden"
         style={{ background: "linear-gradient(180deg, hsl(0 0% 4% / 0.95), hsl(0 0% 4% / 0.85))", backdropFilter: "blur(20px) saturate(1.8)" }}
       >
         <div className="px-4 py-3 flex items-center justify-between max-w-7xl mx-auto">
@@ -93,55 +143,18 @@ const Explore = () => {
             <button onClick={() => navigate('/')} className="w-9 h-9 rounded-xl bg-card/60 border border-border/20 flex items-center justify-center transition-colors hover:bg-card">
               <ArrowLeft className="w-4 h-4 text-foreground" />
             </button>
-            <div>
-              <h1 className="font-serif text-lg text-foreground leading-tight">Explore</h1>
-              <p className="text-[11px] text-muted-foreground/70">Curated for you</p>
-            </div>
+            <h1 className="font-serif text-lg text-foreground leading-tight">Explore</h1>
           </div>
-          
           <div className="flex items-center gap-1 bg-card/40 border border-border/20 rounded-xl p-1">
-            <button
-              onClick={() => setLayout('grid')}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                layout === 'grid' ? 'bg-primary/15 text-primary' : 'text-muted-foreground/50'
-              }`}
-            >
+            <button onClick={() => setLayout('grid')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${layout === 'grid' ? 'bg-primary/15 text-primary' : 'text-muted-foreground/50'}`}>
               <Grid className="w-4 h-4" />
             </button>
-            <button
-              onClick={() => setLayout('masonry')}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                layout === 'masonry' ? 'bg-primary/15 text-primary' : 'text-muted-foreground/50'
-              }`}
-            >
+            <button onClick={() => setLayout('masonry')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${layout === 'masonry' ? 'bg-primary/15 text-primary' : 'text-muted-foreground/50'}`}>
               <LayoutGrid className="w-4 h-4" />
             </button>
           </div>
         </div>
       </header>
-
-      {/* ── Category Filter ── */}
-      <div className="sticky top-[57px] z-40 border-b border-border/10"
-        style={{ background: "hsl(0 0% 4% / 0.9)", backdropFilter: "blur(16px)" }}
-      >
-        <div className="px-3 py-2.5 overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-2">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={`px-4 py-[7px] rounded-full text-[12px] font-semibold whitespace-nowrap transition-all duration-300 border ${
-                  filter === cat
-                    ? 'bg-gradient-gold-dark text-primary-foreground border-primary/30 shadow-gold'
-                    : 'bg-transparent text-muted-foreground/70 border-border/20 hover:border-border/40 hover:text-foreground'
-                }`}
-              >
-                {cat === 'all' ? 'All Items' : cat}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* ── Products Grid ── */}
       <main className="px-3 py-4 max-w-7xl mx-auto">
