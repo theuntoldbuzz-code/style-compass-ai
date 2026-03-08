@@ -1,5 +1,5 @@
 // Virtual Closet - save/remove items and outfits
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { Product, OutfitRecommendation } from '@/types/outfit';
