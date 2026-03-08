@@ -171,10 +171,10 @@ const Profile = () => {
                   <li>Early Access</li>
                   <li>Concierge Service</li>
                 </ul>
-                <button className={`w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all ${
+                <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all ${
                   false
                     ? "bg-transparent text-primary border-2 border-primary"
-                    : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
+                    : "bg-gradient-gold-dark text-primary-foreground shadow-gold rounded-full"
                 }`}>
                   UPGRADE
                 </button>
