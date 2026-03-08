@@ -9,6 +9,7 @@ import reportsPartyBg from "@/assets/reports-party-bg.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
+import DesktopBackground from "@/components/DesktopBackground";
 
 const Reports = () => {
   const navigate = useNavigate();
