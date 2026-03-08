@@ -17,6 +17,7 @@ const Recommendations = lazy(() => import("./pages/Recommendations"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Closet = lazy(() => import("./pages/Closet"));
 const Explore = lazy(() => import("./pages/Explore"));
+const Profile = lazy(() => import("./pages/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const StyleAIChatbot = lazy(() => import("./components/StyleAIChatbot"));
 
@@ -55,6 +56,7 @@ const App = () => (
                 <Route path="/recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
                 <Route path="/closet" element={<ProtectedRoute><Closet /></ProtectedRoute>} />
                 <Route path="/explore" element={<ProtectedRoute><Explore /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <StyleAIChatbot />
