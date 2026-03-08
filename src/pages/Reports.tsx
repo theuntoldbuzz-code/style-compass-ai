@@ -80,7 +80,8 @@ const Reports = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
-      <img src={reportsBg} alt="" className="fixed inset-0 w-full h-full object-cover opacity-30 pointer-events-none z-0" />
+      <img src={reportsBg} alt="" className="hidden md:block fixed inset-0 w-full h-full object-cover opacity-30 pointer-events-none z-0" />
+      <img src={reportsPartyBg} alt="" className="md:hidden fixed inset-0 w-full h-full object-cover opacity-30 pointer-events-none z-0" />
       <main className="relative z-10 container mx-auto px-4 py-6 max-w-4xl">
         <StyleReportCard report={lastReport} />
       </main>
