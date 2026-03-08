@@ -167,7 +167,7 @@ const Closet = () => {
       </div>
 
       {/* Outfits Grid */}
-      <div className="relative z-10">{mobileTab === 'outfits' && (
+      {mobileTab === 'outfits' && (
         filteredOutfits.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 px-4 mt-5">
             {filteredOutfits.map(outfit => (
