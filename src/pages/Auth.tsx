@@ -226,7 +226,7 @@ const Auth = () => {
               {step === 'email'
                 ? (isLogin
                     ? 'Sign in to access your virtual closet'
-                    : 'Join LuxFit AI and discover your perfect style')
+                    : 'Join Aurion AI and discover your perfect style')
                 : `We've sent a magic link to ${email}. Click it to continue.`
               }
             </p>

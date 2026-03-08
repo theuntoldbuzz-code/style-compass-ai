@@ -107,8 +107,8 @@ const StyleReportCard = ({ report, userName = "Style Enthusiast" }: StyleReportC
   const handleShare = async () => {
     if (navigator.share) {
       await navigator.share({
-        title: 'My Style Dossier - LuxFit AI',
-        text: 'Check out my personalized style report from LuxFit AI!',
+        title: 'My Style Dossier - Aurion AI',
+        text: 'Check out my personalized style report from Aurion AI!',
         url: window.location.href,
       });
     }

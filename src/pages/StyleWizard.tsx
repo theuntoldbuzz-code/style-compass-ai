@@ -105,7 +105,7 @@ const StyleWizard = () => {
           
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
-            <span className="font-serif text-lg">LuxFit AI</span>
+            <span className="font-serif text-lg">Aurion AI</span>
           </div>
 
           <div className="text-sm text-muted-foreground">

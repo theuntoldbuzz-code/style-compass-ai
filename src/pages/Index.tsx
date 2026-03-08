@@ -410,10 +410,10 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-3 md:mb-4">
             <Sparkles className="w-5 h-5 text-primary" />
-            <span className="font-serif text-xl">LuxFit AI</span>
+            <span className="font-serif text-xl">Aurion AI</span>
           </div>
           <p className="text-xs md:text-sm text-muted-foreground">
-            © 2024 LuxFit AI. Your Personal Style Curator.
+            © 2024 Aurion AI. Your Personal Style Curator.
           </p>
         </div>
       </footer>
