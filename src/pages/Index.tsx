@@ -109,7 +109,7 @@ const Index = () => {
             </> : <Button variant="ghost" onClick={() => navigate('/auth')} className="text-muted-foreground hover:text-foreground">
               Sign In
             </Button>}
-          <Button variant="luxuryOutline" onClick={() => navigate("/style-wizard")}>
+          <Button variant="luxuryOutline" onClick={() => navigate("/get-outfit")}>
             Get Started
           </Button>
         </div>
