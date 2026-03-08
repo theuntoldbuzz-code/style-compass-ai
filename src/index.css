@@ -345,55 +345,40 @@
   .glow-border-card {
     position: relative;
     border-radius: 18px;
-    overflow: hidden;
     background: linear-gradient(145deg, hsl(var(--charcoal-light)) 0%, hsl(var(--deep-graphite)) 100%);
+    isolation: isolate;
   }
 
   .glow-border-card::before {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: -1px;
     border-radius: inherit;
-    padding: 1.5px;
     background: conic-gradient(
-      from var(--glow-angle, 0deg),
-      transparent 0%,
-      transparent 25%,
-      hsl(45 66% 52% / 0.9) 30%,
-      hsl(45 80% 70% / 1) 35%,
-      hsl(45 66% 52% / 0.9) 40%,
-      transparent 45%,
-      transparent 100%
+      from var(--glow-angle, 0deg) at 50% 50%,
+      hsl(45 66% 52% / 0.06) 0%,
+      hsl(45 66% 52% / 0.03) 10%,
+      transparent 20%,
+      transparent 40%,
+      hsl(45 66% 52% / 0.7) 45%,
+      hsl(45 80% 65% / 1) 50%,
+      hsl(45 66% 52% / 0.7) 55%,
+      transparent 60%,
+      transparent 80%,
+      hsl(45 66% 52% / 0.03) 90%,
+      hsl(45 66% 52% / 0.06) 100%
     );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: glow-rotate 4s linear infinite;
-    z-index: 1;
+    z-index: -2;
+    animation: glow-rotate 3.5s linear infinite;
   }
 
   .glow-border-card::after {
     content: '';
     position: absolute;
-    inset: -20px;
-    border-radius: inherit;
-    background: conic-gradient(
-      from var(--glow-angle, 0deg),
-      transparent 0%,
-      transparent 28%,
-      hsl(45 66% 52% / 0.15) 33%,
-      transparent 38%,
-      transparent 100%
-    );
-    animation: glow-rotate 4s linear infinite;
-    filter: blur(15px);
-    z-index: 0;
-  }
-
-  .glow-border-card > * {
-    position: relative;
-    z-index: 2;
+    inset: 1.5px;
+    border-radius: calc(18px - 1.5px);
+    background: linear-gradient(145deg, hsl(var(--charcoal-light)) 0%, hsl(var(--deep-graphite)) 100%);
+    z-index: -1;
   }
 
   @property --glow-angle {
