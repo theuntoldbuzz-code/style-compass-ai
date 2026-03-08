@@ -284,7 +284,7 @@ const Closet = () => {
     );
   };
 
-  // ---- DESKTOP VIEW (unchanged) ----
+  // ---- DESKTOP VIEW (enhanced) ----
   const DesktopView = () => (
     <div className="hidden md:block min-h-screen bg-background">
       {/* Background Effects */}
@@ -294,8 +294,8 @@ const Closet = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 border-b border-border/50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <nav className="relative z-10 border-b border-border/30 bg-background/60 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
               <ArrowLeft className="w-5 h-5" />
@@ -306,77 +306,115 @@ const Closet = () => {
               </div>
               <div>
                 <h1 className="font-serif text-xl text-foreground">My Closet</h1>
-                <p className="text-sm text-muted-foreground">Your saved styles</p>
+                <p className="text-xs text-muted-foreground">Your saved styles & curated outfits</p>
               </div>
             </div>
           </div>
-          <Button variant="luxuryOutline" onClick={() => navigate('/get-outfit')}>
-            <Sparkles className="w-4 h-4 mr-2" />
+          <Button variant="luxury" onClick={() => navigate('/get-outfit')} className="gap-2">
+            <Sparkles className="w-4 h-4" />
             Discover More
           </Button>
         </div>
       </nav>
 
+      {/* Hero Banner - Desktop */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 pt-8">
+        <div className="relative h-[200px] rounded-2xl overflow-hidden">
+          <img 
+            src={heroImages[activeFilter] || heroBannerAll} 
+            alt={`${activeFilter} Fashion`} 
+            className="w-full h-full object-cover object-center transition-all duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+          <div className="absolute bottom-8 left-8">
+            <h2 className="font-serif text-3xl text-foreground mb-1">Your Virtual Closet</h2>
+            <p className="text-sm text-muted-foreground">Curated by Aurion AI • {savedOutfits.length} outfits • {savedItems.length} items saved</p>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
-      <main className="relative z-10 container mx-auto px-4 py-8">
-        <Tabs defaultValue="outfits" className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-            <TabsTrigger value="outfits" className="gap-2">
-              <ShoppingBag className="w-4 h-4" />
-              Outfits ({savedOutfits.length})
-            </TabsTrigger>
-            <TabsTrigger value="items" className="gap-2">
-              <Heart className="w-4 h-4" />
-              Items ({savedItems.length})
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="outfits">
-            {savedOutfits.length === 0 ? (
-              <EmptyState
-                icon={ShoppingBag}
-                title="No saved outfits yet"
-                description="Start exploring and save outfits you love to see them here"
-                actionLabel="Discover Outfits"
-                onAction={() => navigate('/get-outfit')}
-              />
-            ) : (
-              <div className="space-y-6">
-                {savedOutfits.map((outfit) => (
-                  <SavedOutfitCard 
-                    key={outfit.id} 
-                    outfit={outfit} 
-                    onRemove={() => removeOutfit(outfit.outfit_id)}
-                    formatCurrency={formatCurrency}
-                  />
+      <main className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 py-8">
+        {/* Filter + Tabs Row */}
+        <div className="flex items-center justify-between gap-4 mb-8">
+          <Tabs defaultValue="outfits" className="w-full">
+            <div className="flex items-center justify-between gap-6 mb-8">
+              <TabsList className="grid w-full max-w-xs grid-cols-2">
+                <TabsTrigger value="outfits" className="gap-2">
+                  <ShoppingBag className="w-4 h-4" />
+                  Outfits ({savedOutfits.length})
+                </TabsTrigger>
+                <TabsTrigger value="items" className="gap-2">
+                  <Heart className="w-4 h-4" />
+                  Items ({savedItems.length})
+                </TabsTrigger>
+              </TabsList>
+              
+              {/* Occasion Filters */}
+              <div className="flex gap-2">
+                {occasionFilters.map(filter => (
+                  <button
+                    key={filter}
+                    onClick={() => setActiveFilter(filter)}
+                    className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 border ${
+                      activeFilter === filter
+                        ? 'bg-primary text-primary-foreground border-primary/40 shadow-gold'
+                        : 'bg-card/60 text-muted-foreground border-border/50 hover:border-primary/40 hover:text-foreground'
+                    }`}
+                  >
+                    {filter}
+                  </button>
                 ))}
               </div>
-            )}
-          </TabsContent>
+            </div>
 
-          <TabsContent value="items">
-            {savedItems.length === 0 ? (
-              <EmptyState
-                icon={Heart}
-                title="No saved items yet"
-                description="Save individual products you love to build your dream wardrobe"
-                actionLabel="Browse Items"
-                onAction={() => navigate('/get-outfit')}
-              />
-            ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {savedItems.map((item) => (
-                  <SavedItemCard 
-                    key={item.id} 
-                    item={item} 
-                    onRemove={() => removeItem(item.product_id)}
-                    formatCurrency={formatCurrency}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="outfits">
+              {savedOutfits.length === 0 ? (
+                <EmptyState
+                  icon={ShoppingBag}
+                  title="No saved outfits yet"
+                  description="Start exploring and save outfits you love to see them here"
+                  actionLabel="Discover Outfits"
+                  onAction={() => navigate('/get-outfit')}
+                />
+              ) : (
+                <div className="grid lg:grid-cols-2 gap-6">
+                  {filteredOutfits.map((outfit) => (
+                    <SavedOutfitCard 
+                      key={outfit.id} 
+                      outfit={outfit} 
+                      onRemove={() => removeOutfit(outfit.outfit_id)}
+                      formatCurrency={formatCurrency}
+                    />
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="items">
+              {savedItems.length === 0 ? (
+                <EmptyState
+                  icon={Heart}
+                  title="No saved items yet"
+                  description="Save individual products you love to build your dream wardrobe"
+                  actionLabel="Browse Items"
+                  onAction={() => navigate('/get-outfit')}
+                />
+              ) : (
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {savedItems.map((item) => (
+                    <SavedItemCard 
+                      key={item.id} 
+                      item={item} 
+                      onRemove={() => removeItem(item.product_id)}
+                      formatCurrency={formatCurrency}
+                    />
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
       </main>
     </div>
   );
