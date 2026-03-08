@@ -147,39 +147,43 @@ const Profile = () => {
 
           <div className="grid grid-cols-2 gap-3">
             {/* Gold Plan */}
-            <div className="luxury-card p-5 text-center relative overflow-hidden border-primary/20">
-              <h3 className="font-serif text-xs uppercase tracking-widest text-foreground mb-2">Aurion Gold</h3>
-              <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
-              <p className="font-serif text-2xl text-primary">₹499</p>
-              <p className="text-[10px] text-muted-foreground mb-4">/month</p>
-              <ul className="space-y-2 text-[11px] text-muted-foreground mb-5">
-                <li>Unlimited Outfits</li>
-                <li>Virtual Try-On Access</li>
-                <li>Priority Processing</li>
-              </ul>
-              <button className={`w-full py-2 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all ${
-                isPremium
-                  ? "bg-primary/15 text-primary border border-primary/30"
-                  : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
-              }`}>
-                {isPremium ? "ACTIVE" : "UPGRADE"}
-              </button>
+            <div className="glow-border-card p-5 text-center">
+              <div>
+                <h3 className="font-serif text-[11px] uppercase tracking-[0.15em] text-foreground mb-2">Aurion Gold</h3>
+                <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
+                <p className="font-serif text-[26px] text-primary leading-none">₹499</p>
+                <p className="text-[10px] text-muted-foreground mt-1 mb-4">/month</p>
+                <ul className="space-y-2.5 text-[11px] text-muted-foreground mb-5">
+                  <li>Unlimited Outfits</li>
+                  <li>Virtual Try-On Access</li>
+                  <li>Priority Processing</li>
+                </ul>
+                <button className={`w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase transition-all ${
+                  isPremium
+                    ? "bg-primary/15 text-primary border border-primary/30"
+                    : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
+                }`}>
+                  {isPremium ? "ACTIVE" : "UPGRADE"}
+                </button>
+              </div>
             </div>
 
             {/* Platinum Plan */}
-            <div className="luxury-card p-5 text-center relative overflow-hidden border-primary/20">
-              <h3 className="font-serif text-xs uppercase tracking-widest text-foreground mb-2">Aurion Platinum</h3>
-              <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
-              <p className="font-serif text-2xl text-primary">₹999</p>
-              <p className="text-[10px] text-muted-foreground mb-4">/month</p>
-              <ul className="space-y-2 text-[11px] text-muted-foreground mb-5">
-                <li>Personal Stylist</li>
-                <li>Early Access</li>
-                <li>Concierge Service</li>
-              </ul>
-              <button className="w-full py-2 rounded-lg text-[11px] font-bold tracking-wider uppercase bg-primary/15 text-primary border border-primary/30 transition-all">
-                UPGRADE
-              </button>
+            <div className="glow-border-card p-5 text-center" style={{ animationDelay: '2s' }}>
+              <div>
+                <h3 className="font-serif text-[11px] uppercase tracking-[0.15em] text-foreground mb-2">Aurion Platinum</h3>
+                <div className="w-8 mx-auto border-t border-primary/40 mb-3" />
+                <p className="font-serif text-[26px] text-primary leading-none">₹999</p>
+                <p className="text-[10px] text-muted-foreground mt-1 mb-4">/month</p>
+                <ul className="space-y-2.5 text-[11px] text-muted-foreground mb-5">
+                  <li>Personal Stylist</li>
+                  <li>Early Access</li>
+                  <li>Concierge Service</li>
+                </ul>
+                <button className="w-full py-2.5 rounded-lg text-[11px] font-bold tracking-wider uppercase bg-primary/15 text-primary border border-primary/30 transition-all">
+                  UPGRADE
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>
