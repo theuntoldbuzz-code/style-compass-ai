@@ -16,6 +16,7 @@ import { useCloset } from "@/hooks/useCloset";
 import { usePremium } from "@/hooks/usePremium";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import goldBokehBg from "@/assets/gold-bokeh-bg.png";
+import mobileHeroBg from "@/assets/mobile-hero-bg.png";
 
 const features = [
   {
@@ -67,8 +68,11 @@ const Index = () => {
     <div className="min-h-screen bg-background overflow-hidden pb-[90px] md:pb-0">
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
+        {/* Mobile: uploaded gold particle background */}
+        <img src={mobileHeroBg} alt="" className="md:hidden absolute inset-0 w-full h-full object-cover" />
+        {/* Desktop: subtle gradient blobs */}
+        <div className="hidden md:block absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
+        <div className="hidden md:block absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
       </div>
 
       {/* Navigation - Desktop only (hidden on mobile, BottomNav handles it) */}
