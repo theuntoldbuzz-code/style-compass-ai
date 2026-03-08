@@ -153,11 +153,11 @@ const Profile = () => {
                 <li>Priority Processing</li>
               </ul>
               <button className={`px-8 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all mt-auto ${
-                isPremium
+                isPremium && premiumTier === 'gold'
                   ? "bg-transparent text-primary border-2 border-primary"
                   : "bg-gradient-gold-dark text-primary-foreground shadow-gold"
               }`}>
-                {isPremium ? "ACTIVE" : "UPGRADE"}
+                {isPremium && premiumTier === 'gold' ? "ACTIVE" : "UPGRADE"}
               </button>
             </div>
 
