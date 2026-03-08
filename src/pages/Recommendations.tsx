@@ -76,6 +76,8 @@ const Recommendations = () => {
 
   const handleGenerateReport = async () => {
     if (!profile) return;
+    if (!canGenerate) return;
+    await recordGeneration();
     setIsGenerating(true);
   };
 
