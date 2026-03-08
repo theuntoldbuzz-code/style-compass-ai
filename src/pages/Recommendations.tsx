@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ArrowLeft, Sparkles, RefreshCw, Filter, Heart, FileText, ShoppingBag, Loader2 } from "lucide-react";
+import { ArrowLeft, Sparkles, RefreshCw, Filter, Heart, FileText, ShoppingBag, Loader2, Crown, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import OutfitCard from "@/components/OutfitCard";
 import { UserProfile, OutfitRecommendation } from "@/types/outfit";
@@ -12,6 +12,7 @@ import { useStyleReport } from "@/hooks/useStyleReport";
 import { useProductSearch } from "@/hooks/useProductSearch";
 import { occasionCategories, getOccasionOutfits } from "@/data/occasionOutfits";
 import { Progress } from "@/components/ui/progress";
+import { usePremium } from "@/hooks/usePremium";
 
 const Recommendations = () => {
   const navigate = useNavigate();
