@@ -88,7 +88,7 @@ const Profile = () => {
       </div>
 
       <motion.div
-        className="relative z-10 px-5 pt-10 pb-32 max-w-md mx-auto"
+        className="relative z-10 px-5 pt-10 pb-10 max-w-md mx-auto"
         variants={stagger}
         initial="hidden"
         animate="show"
