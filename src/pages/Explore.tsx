@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import fashionExplore from "@/assets/fashion-10.avif";
 import exploreSparkle from "@/assets/explore-sparkle-bg.jpg";
+import exploreMobileBg from "@/assets/explore-mobile-bg.png";
 import { Button } from "@/components/ui/button";
 import { infiniteScrollProducts } from "@/data/trendingData";
 import { useAuth } from "@/hooks/useAuth";
@@ -78,9 +79,11 @@ const Explore = () => {
     : products.filter(p => p.category === filter);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Ambient background */}
-      <div className="fixed inset-0 pointer-events-none">
+    <div className="min-h-screen bg-background relative">
+      {/* Mobile background */}
+      <img src={exploreMobileBg} alt="" className="md:hidden fixed inset-0 w-full h-full object-cover opacity-30 pointer-events-none z-0" />
+      {/* Ambient background (desktop) */}
+      <div className="hidden md:block fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/3 right-0 w-[300px] h-[300px] bg-primary/6 rounded-full blur-[100px]" />
       </div>
