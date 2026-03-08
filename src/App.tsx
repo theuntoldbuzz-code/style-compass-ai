@@ -48,6 +48,25 @@ const PageLoader = () => (
   </div>
 );
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/" element={<ProtectedRoute><PageTransition><Index /></PageTransition></ProtectedRoute>} />
+        <Route path="/get-outfit" element={<ProtectedRoute><PageTransition><StyleWizard /></PageTransition></ProtectedRoute>} />
+        <Route path="/style-quiz" element={<ProtectedRoute><PageTransition><StyleQuiz /></PageTransition></ProtectedRoute>} />
+        <Route path="/recommendations" element={<ProtectedRoute><PageTransition><Recommendations /></PageTransition></ProtectedRoute>} />
+        <Route path="/closet" element={<ProtectedRoute><PageTransition><Closet /></PageTransition></ProtectedRoute>} />
+        <Route path="/explore" element={<ProtectedRoute><PageTransition><Explore /></PageTransition></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><PageTransition><Profile /></PageTransition></ProtectedRoute>} />
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -57,17 +76,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-                <Route path="/get-outfit" element={<ProtectedRoute><StyleWizard /></ProtectedRoute>} />
-                <Route path="/style-quiz" element={<ProtectedRoute><StyleQuiz /></ProtectedRoute>} />
-                <Route path="/recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
-                <Route path="/closet" element={<ProtectedRoute><Closet /></ProtectedRoute>} />
-                <Route path="/explore" element={<ProtectedRoute><Explore /></ProtectedRoute>} />
-                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <AnimatedRoutes />
               <HomeButton />
               <StyleAIChatbot />
             </Suspense>
