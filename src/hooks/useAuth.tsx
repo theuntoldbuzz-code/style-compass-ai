@@ -74,6 +74,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
+    try {
+      localStorage.removeItem('luxfit-last-report');
+    } catch {
+      // ignore storage cleanup failures
+    }
     await supabase.auth.signOut();
   };
 

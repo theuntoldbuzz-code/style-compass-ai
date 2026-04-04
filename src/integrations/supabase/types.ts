@@ -75,7 +75,7 @@ export type Database = {
           photo_url: string
           recommended_colors: Json | null
           skin_tone: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           analyzed_at?: string | null
@@ -89,7 +89,7 @@ export type Database = {
           photo_url: string
           recommended_colors?: Json | null
           skin_tone?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           analyzed_at?: string | null
@@ -103,7 +103,7 @@ export type Database = {
           photo_url?: string
           recommended_colors?: Json | null
           skin_tone?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -114,6 +114,7 @@ export type Database = {
           id: string
           is_active: boolean
           tier: string
+          user_id: string
         }
         Insert: {
           created_at?: string
@@ -121,6 +122,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           tier?: string
+          user_id: string
         }
         Update: {
           created_at?: string
@@ -128,6 +130,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           tier?: string
+          user_id?: string
         }
         Relationships: []
       }

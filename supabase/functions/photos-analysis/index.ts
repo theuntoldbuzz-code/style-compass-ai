@@ -57,9 +57,8 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
@@ -74,15 +73,19 @@ serve(async (req) => {
       );
     }
 
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) {
+    const { data: claimsData, error: authError } = await supabase.auth.getClaims(token);
+    if (authError || !claimsData?.claims?.sub) {
       return new Response(
         JSON.stringify({ error: 'Invalid or expired token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    const userId = user.id;
+    const userId = claimsData.claims.sub;
     console.log(`Photo analysis requested by user: ${userId}`);
 
     // Helper function to validate photo URLs (SSRF prevention)
@@ -171,12 +174,20 @@ serve(async (req) => {
         .from('photo_analyses')
         .select('photo_url')
         .eq('photo_id', photoId)
+        .eq('user_id', userId)
         .maybeSingle();
       
       if (existing?.photo_url) {
         photoUrl = existing.photo_url;
+      } else {
+        return new Response(
+          JSON.stringify({ error: 'Photo not found' }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
     }
+
+    const resolvedPhotoUrl = photoUrl ?? null;
 
     const analysisPrompt = `Analyze this image for fashion styling purposes.
 
@@ -328,12 +339,12 @@ Be specific and personalized. Analyze actual visible features.`;
     }
 
     // Store analysis in database if we have a photoId and userId
-    if (photoId && userId) {
+    if (photoId && userId && resolvedPhotoUrl) {
       const { error: upsertError } = await supabase
         .from('photo_analyses')
         .upsert({
           photo_id: photoId,
-          photo_url: photoUrl || '',
+          photo_url: resolvedPhotoUrl,
           user_id: userId,
           body_type: analysisResult.body_type,
           skin_tone: analysisResult.skin_tone,
@@ -355,7 +366,7 @@ Be specific and personalized. Analyze actual visible features.`;
       JSON.stringify({
         isHuman: true,
         photo_id: photoId,
-        photo_url: photoUrl,
+          photo_url: resolvedPhotoUrl,
         analysis: {
           body_type: analysisResult.body_type,
           skin_tone: analysisResult.skin_tone,

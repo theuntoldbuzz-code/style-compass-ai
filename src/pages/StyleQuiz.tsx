@@ -248,8 +248,6 @@ const StyleQuiz = () => {
         setGeneratedReport(data.report);
         // Persist to DB and localStorage
         try {
-          const { useStyleReportHistory } = await import("@/hooks/useStyleReportHistory");
-          // Quick inline save - import supabase directly
           const { supabase: sb } = await import("@/integrations/supabase/client");
           const { data: userData } = await sb.auth.getUser();
           if (userData?.user) {
@@ -259,7 +257,6 @@ const StyleQuiz = () => {
               quiz_inputs: { gender: answers.gender, bodyType: answers.bodyType, occasion: answers.occasion, budget: answers.budget, stylePersonality: answers.stylePersonality } as any,
             });
           }
-          localStorage.setItem("luxfit-last-report", JSON.stringify(data.report));
         } catch {}
       } else {
         throw new Error("No report data received");

@@ -39,10 +39,6 @@ const Reports = () => {
           }
         }
       } catch {}
-      try {
-        const saved = localStorage.getItem("luxfit-last-report");
-        if (saved) setLastReport(JSON.parse(saved));
-      } catch {}
       setLoading(false);
     };
     fetchLatest();

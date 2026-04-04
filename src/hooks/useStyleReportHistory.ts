@@ -52,14 +52,10 @@ export const useStyleReportHistory = () => {
         quiz_inputs: (quizInputs ?? null) as any,
       });
 
-      // Also keep localStorage for quick access
-      try { localStorage.setItem("luxfit-last-report", JSON.stringify(report)); } catch { }
-
       // Refresh list
       fetchReports();
     } catch {
-      // fallback to localStorage only
-      try { localStorage.setItem("luxfit-last-report", JSON.stringify(report)); } catch { }
+      // ignore
     }
   }, [fetchReports]);
 
