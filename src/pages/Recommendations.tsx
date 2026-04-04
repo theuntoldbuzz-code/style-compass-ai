@@ -102,7 +102,6 @@ const Recommendations = () => {
             quiz_inputs: profile ? { gender: profile.gender, bodyType: profile.bodyType, occasion: profile.occasion } as any : null,
           });
         }
-        localStorage.setItem("luxfit-last-report", JSON.stringify(report));
       } catch {}
       setIsGenerating(false);
 

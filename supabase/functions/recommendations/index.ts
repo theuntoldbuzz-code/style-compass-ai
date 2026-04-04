@@ -231,8 +231,10 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
 
     const token = authHeader.replace('Bearer ', '');
     const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
@@ -242,7 +244,8 @@ serve(async (req) => {
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    console.log(`Authenticated user: ${claimsData.claims.sub}`);
+    const userId = claimsData.claims.sub;
+    console.log(`Authenticated user: ${userId}`);
 
     const body = await req.json();
     
@@ -259,8 +262,9 @@ serve(async (req) => {
     if (photo_id) {
       const { data } = await supabase
         .from('photo_analyses')
-        .select('*')
+        .select('body_type')
         .eq('photo_id', photo_id)
+        .eq('user_id', userId)
         .maybeSingle();
       userAnalysis = data;
     }
